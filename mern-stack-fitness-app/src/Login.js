@@ -8,8 +8,8 @@ export const Login = () => {
 	const onSubmit = async (event) => {
 		event.preventDefault();
 		try {
-			const token = await login(event.target.email.value, event.target.password.value)
-			console.log("TOKEN",token)
+			const token = await login(event.target.email.value, event.target.password.value);
+			console.log(token)
 			//history.push("/");
 		} catch (error) {
 			console.error(error);

@@ -5,6 +5,7 @@ const router = express.Router();
 
 const UserModel = require('../models/UserSchema');
 
+/*
 // Consulta de usuarios (MODIFICAR PARA LISTAR OTROS DATOS)
 router.get("/list", async (req, res) => {	
 	UserModel.find((err, users) => {	// Buscamos en el modelo todos los usuarios registrados
@@ -15,6 +16,7 @@ router.get("/list", async (req, res) => {
 		}
 	});
 });
+*/
 
 // Registro de usuarios
 router.post("/register", passport.authenticate("register", {session: false}),	// IMPORTANTE PLANTEARSE LO DE LA SESION {session: false}
@@ -34,7 +36,7 @@ router.post("/login", async (req, res, next) => {
 		try {
 			// Se comprueba que no haya errores
 			if (err || !user) {
-				const error = new Error("Ha ocurrido un al iniciar sesión.");
+				const error = new Error("Ha ocurrido un error al iniciar sesión.");
 				return next(error);
 			}
 			// Se llama a la función login de passport y se introduce el token obtenido en una cookie
@@ -44,12 +46,18 @@ router.post("/login", async (req, res, next) => {
 				async (error) => {
 					if (error) 
 						return next(error);
-
+					/*
+					res.json({
+						message: "Logeado satisfactoriamente",
+						user: body
+					})
+					*/
 					const body = { _id: user._id, email: user.emailUsuario };
 					const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 					res.cookie("token", token, {
 						httpOnly: true
-					}).send();
+					});
+					res.status(200).send({body});
 				}
 			);
 		} catch (error) {
@@ -58,16 +66,6 @@ router.post("/login", async (req, res, next) => {
 	})(req, res, next);
 	// GESTIONAR REDIRECCIÓN
 });
-
-/*
-router.get("/logout", (req, res) => {
-	req.logout()
-	res.cookie("token","", {
-		httpOnly: true,
-		expires: new Date(0)	// Se indica la primera fecha para que la cookie expire
-	}).send();
-});
-*/
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

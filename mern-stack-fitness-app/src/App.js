@@ -6,6 +6,7 @@ import { CreateUser } from './CreateUser';
 import { EditUser } from './EditUser';
 import { DeleteUser } from './DeleteUser';
 import { Login } from './Login';
+import { LogOut } from './Logout';
 import { Register } from './Register';
 import { Profile } from './Profile';
 
@@ -25,6 +26,9 @@ function App() {
 						<Link to="/login" className="nav-link">Login</Link>
 					</li>
 					<li className="navbar-item">
+						<Link to="/logout" className="nav-link">Logout</Link>
+					</li>
+					<li className="navbar-item">
 						<Link to="/register" className="nav-link">Registrarse</Link>
 					</li>
 					<li className="navbar-item">
@@ -39,8 +43,10 @@ function App() {
 				<Route path="/create" component={ CreateUser } />
 				<Route path="/delete/:id" component={ DeleteUser } />
 				<Route path="/login" component={ Login } />
+				<Route path="/logout" component={ LogOut } />
 				<Route path="/register" component={ Register } />
 				<Route path="/user/profile" component={ Profile } />
+				<Route exact path="/user/list" component={ UserList } />
 			</Switch>
 		</div>
   );

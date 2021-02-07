@@ -6,6 +6,7 @@ const router = express.Router();
 
 // Acceso al perfil del usuario activo
 router.get("/profile", passport.authenticate("jwt", {session: false}), async (req, res) => {
+	console.log("COOKIE PROFILE: ", req.cookies.token)
 	res.json({
 		message: "Has llegado a la ruta segura",
 		user: req.user,
@@ -16,13 +17,10 @@ router.get("/profile", passport.authenticate("jwt", {session: false}), async (re
 // Acceso al cierre de sesión del usuario activo
 router.get("/logout", passport.authenticate("jwt", {session: false}), async (req, res) => {
 	req.logout()
+	res.clearCookie("token");
 	res.json({
 		message: "Se ha cerrado sesión de manera satisfactoria"
 	});
-	/*res.cookie("token","", {
-		httpOnly: true,
-		expires: new Date(0)	// Se indica la primera fecha para que la cookie expire
-	}).send();*/
 });
 
 module.exports = router

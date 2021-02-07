@@ -52,7 +52,7 @@ passport.use("login",
 passport.use("jwt",
 	new JWTstrategy( {
 		secretOrKey: process.env.JWT_SECRET,
-		jwtFromRequest: ExtractJWT.fromUrlQueryParameter('secret_token')
+		jwtFromRequest: req => req.cookies.token
 	},
 	async (token, done) => {
 		try {
