@@ -8,7 +8,7 @@ export const DeleteUser = () => {
 
 	const onClick = async (data) => {
 		await deleteUser(data, match.params.id);	// Llamamos a la API para eliminar el usuario
-		history.push("/list");	// Redireccionamos al listado de usuarios
+		//history.push("/admin/list");	// Redireccionamos al listado de usuarios
 	}
 
 	return (

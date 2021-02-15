@@ -17,7 +17,7 @@ function App() {
 			<nav className="navbar bg-light navbar-expand-lg navbar-light">
 				<ul className="navbar-nav mr-auto">
 					<li className="navbar-item">
-						<Link to="/list" className="nav-link">Lista de Usuarios</Link>
+						<Link to="/admin/list" className="nav-link">Lista de Usuarios</Link>
 					</li>
 					<li className="navbar-item">
 						<Link to="/create" className="nav-link">Crear Usuario</Link>
@@ -38,7 +38,6 @@ function App() {
 			</nav>
 			<Switch>
 				<Route exact path="/" component={ Home } />
-				<Route exact path="/list" component={ UserList } />
 				<Route path="/edit/:id" component={ EditUser } />
 				<Route path="/create" component={ CreateUser } />
 				<Route path="/delete/:id" component={ DeleteUser } />
@@ -46,7 +45,7 @@ function App() {
 				<Route path="/logout" component={ LogOut } />
 				<Route path="/register" component={ Register } />
 				<Route path="/user/profile" component={ Profile } />
-				<Route exact path="/user/list" component={ UserList } />
+				<Route exact path="/admin/list" component={ UserList } />
 			</Switch>
 		</div>
   );

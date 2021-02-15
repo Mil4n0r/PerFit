@@ -5,19 +5,6 @@ const router = express.Router();
 
 const UserModel = require('../models/UserSchema');
 
-/*
-// Consulta de usuarios (MODIFICAR PARA LISTAR OTROS DATOS)
-router.get("/list", async (req, res) => {	
-	UserModel.find((err, users) => {	// Buscamos en el modelo todos los usuarios registrados
-		if(err) {	// Se imprime un mensaje de error en consola
-			console.log(err);	
-		} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
-			res.json(users);	
-		}
-	});
-});
-*/
-
 // Registro de usuarios
 router.post("/register", passport.authenticate("register", {session: false}),	// IMPORTANTE PLANTEARSE LO DE LA SESION {session: false}
 	async (req, res) => {
@@ -130,8 +117,9 @@ router.post("/:id", async (req, res) => {
 		if(!user) {
 			res.status(404).send("Usuario no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 		} else {
-			user.emailUsuario = req.body.emailUsuario		// Se reasignan los campos del usuario
-			user.passwordUsuario = req.body.passwordUsuario
+			console.log("Tratando de editar usuario ", req.body)
+			user.emailUsuario = req.body.email		// Se reasignan los campos del usuario
+			user.passwordUsuario = req.body.password
 
 			user
 				.save()		// Se almacena el usuario

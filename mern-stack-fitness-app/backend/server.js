@@ -22,9 +22,13 @@ const PORT = process.env.PORT || 4000;
 // Creación del middleware de Express
 
 const app = express();
-app.use(cors({credentials: true, origin: 'http://localhost:3000'}));				// ???????????????????????????????????????????????????????????????????????????
-app.use(express.json());		// Permite que express sea capaz de procesar las peticiones que tienen Content-Type: application/json
-app.use(cookieParser());
+app.use(cors({	// Middleware que permite a ciertos dominios llamar a las funciones del back-end
+	credentials: true,	// Permite emitir cookies desde el origen
+	origin: ['http://localhost:3000']	// Dominio del front-end
+}));	
+
+app.use(express.json());	// Middleware que permite procesar las peticiones que tienen Content-Type: application/json
+app.use(cookieParser());	// Middleware que permite acceder al contenido de las cookies mediante req.cookies
 
 // Inicialización de sesiones
 // app.use(passport.initialize()); 
