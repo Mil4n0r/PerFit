@@ -6,7 +6,7 @@ const router = express.Router();
 const UserModel = require('../models/UserSchema');
 const FoodModel = require('../models/FoodSchema');
 
-router.get("/list", async (req, res) => {
+router.get("/food/list", async (req, res) => {
 	FoodModel.find((err, foods) => {	// Buscamos en el modelo todas las comidas registradas
 		if(err) {	// Se imprime un mensaje de error en consola
 			console.log(err);	
@@ -17,20 +17,19 @@ router.get("/list", async (req, res) => {
 });
 
 // Registro de usuarios
-router.post("/register", passport.authenticate("register", {session: false}),	// IMPORTANTE PLANTEARSE LO DE LA SESION {session: false}
+router.post("/register", passport.authenticate("register", {session: false}),
 	async (req, res) => {
 		res.json({
 			message: "Registrado satisfactoriamente",
 			user: req.user
 		}) // Se mandan como respuesta los datos del usuario y un mensaje de confirmación
 	}
-	// GESTIONAR REDIRECCIÓN
 );
 
 // Inicio de sesión
 router.post("/login", async (req, res, next) => {
 	// Empleamos la estrategia local definida en '../auth' para autenticar al usuario que trata de iniciar sesión
-	passport.authenticate("login", async (err, user, info) => {
+	passport.authenticate("login", {session: false}, async (err, user, info) => {
 		try {
 			// Se comprueba que no haya errores
 			if (err || !user) {
@@ -62,37 +61,13 @@ router.post("/login", async (req, res, next) => {
 			return next(error);
 		}
 	})(req, res, next);
-	// GESTIONAR REDIRECCIÓN
-});
-
-router.get("/checkloggedin", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false, failureFlash: true}, (err, user, info) => {
-		if(user)
-			res.send(user.rol);
-		else
-			res.send(false);
-			
-	})(req,res,next);
-});
-
-router.get("/checkcurrentuser", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false, failureFlash: true}, (err, user, info) => {
-		if(user)
-			res.json(user._id);
-		else
-			res.send(false);
-			
-	})(req,res,next);
 });
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Creación de alimento (MODIFICAR PARA CREAR OTROS DATOS)
-router.post("/create", async (req, res) => {
+// Creación de alimento
+router.post("/create/food", async (req, res) => {
 	// Creación del alimento
-	console.log("Foodname: ", req.body.foodname)
-	console.log("Foodsize: ",req.body.foodsize)
-	console.log("Unit: ", req.body.unit)
 	const Food = new FoodModel({
 		nombreAlimento: req.body.foodname,
 		tamRacion: req.body.foodsize,
@@ -111,26 +86,90 @@ router.post("/create", async (req, res) => {
 			res.json(Food);		// Se manda como respuesta el alimento
 		})
 		.catch((err) => {
-			console.log(err.message);
+			//console.log(err.message);
 			res.status(500).send(err.message);	// En caso de fallo se manda el mensaje 500 Internal Server Error
 		});
 });
 
-// Consulta del usuario con la id correspondiente (MODIFICAR PARA CONSULTAR OTROS DATOS)
-router.get("/:id", async (req, res) => {
+// Consulta del alimento con la id correspondiente
+router.get("/food/:id", async (req, res) => {
+	const id = req.params.id;
+	FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
+		if(!food) {
+			res.status(404).send("Alimento no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+		}
+		else {
+			res.json(food);		// Se manda como respuesta el alimento encontrado
+		}
+	});
+});
+
+// Modificación del alimento con la id correspondiente
+router.post("/food/:id", async (req, res) => {
+	const id = req.params.id;
+	FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
+		if(!food) {
+			res.status(404).send("Alimento no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+		} else {
+			console.log("Tratando de editar alimento ", req.body)
+			food.emailUsuario = req.body.email		// Se reasignan los campos del alimento
+			food.nombreAlimento = req.body.foodname
+			food.tamRacion = req.body.foodsize
+			food.unidadesRacion = req.body.unit
+			food.nutrientesRacion = {
+				calorias: req.body.calories,
+				carbohidratos: req.body.carbs,
+				proteinas: req.body.proteins,
+				grasas: req.body.fats
+			}
+
+			food
+				.save()		// Se almacena el alimento
+				.then(food => {
+					res.json(food)	// Se manda como respuesta el alimento modificado
+				})
+				.catch((err) => {
+					res.status(500).send(err.message);	// En caso de fallo se manda el mensaje 500 Internal Server Error
+				});
+		}
+	});
+});
+
+// Eliminación del alimento con la id correspondiente
+router.delete("/delete/food/:id", async (req, res) => {
+	const id = req.params.id;
+	FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
+		if(!food) {
+			res.status(404).send("Usuario no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+		}
+		else {		
+			food
+				.remove()	// Se elimina el alimento
+				.then(food => {
+					res.json(food);	// Se manda como respuesta el alimento eliminado
+				})
+				.catch((err) => {
+					res.status(500).send(err.message);	// En caso de fallo se manda el mensaje 500 Internal Server Error
+				});
+		}
+	});
+});
+
+// Consulta del usuario con la id correspondiente
+router.get("/user/:id", async (req, res) => {
 	const id = req.params.id;
 	UserModel.findById(id, (err, user) => {	// Se busca el usuario cuya id coincida
 		if(!user) {
 			res.status(404).send("Usuario no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 		}
 		else {
-			res.json(user);		// Se manda como respuesta el usuario encontrado
+			res.json(user);		// Se manda como respuesta el alimento encontrado
 		}
 	});
 });
 
-// Modificación del usuario con la id correspondiente (MODIFICAR PARA MODIFICAR OTROS DATOS)
-router.post("/:id", async (req, res) => {
+// Modificación del usuario con la id correspondiente
+router.post("/user/:id", async (req, res) => {
 	const id = req.params.id;
 	UserModel.findById(id, (err, user) => {	// Se busca el usuario cuya id coincida
 		if(!user) {
@@ -153,7 +192,7 @@ router.post("/:id", async (req, res) => {
 });
 
 // Eliminación del usuario con la id correspondiente (MODIFICAR PARA ELIMINAR OTROS DATOS)
-router.delete("/delete/:id", async (req, res) => {
+router.delete("/delete/user/:id", async (req, res) => {
 	const id = req.params.id;
 	UserModel.findById(id, (err, user) => {	// Se busca el usuario cuya id coincida
 		if(!user) {

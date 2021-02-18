@@ -1,14 +1,12 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
-import UserContext from '../../context/UserContext';
 
 import { LogOut } from '../Logout';
 
 function NavBar() {
 
 	const { loggedIn } = useContext(AuthContext);
-	const { user } = useContext(UserContext);
 	// DIFERENCIAR ENTRE 'socio', 'entrenador_personal', 'monitor', 'moderador', 'admin'
 
 	return(
@@ -19,19 +17,19 @@ function NavBar() {
 						<Link to="/" className="nav-link">Home</Link>
 					</li>
 					{
-						loggedIn === "socio" && (
+						loggedIn && loggedIn.rol === "socio" && (
 							<>
 								<li className="navbar-item">
-									<Link to="/create" className="nav-link">Crear Alimento</Link>
+									<Link to="/create/food" className="nav-link">Crear Alimento</Link>
 								</li>
 								<li className="navbar-item">
-									<Link to="/list" className="nav-link">Lista de Alimentos</Link>
+									<Link to="/food/list" className="nav-link">Lista de Alimentos</Link>
 								</li>
 								<li className="navbar-item">
 									<Link to="/admin/list" className="nav-link">Lista de Usuarios</Link>
 								</li>
 								<li className="navbar-item">
-									<Link to={`/user/profile/${user}`} className="nav-link">Perfil</Link>
+									<Link to={`/user/profile/${loggedIn._id}`} className="nav-link">Perfil</Link>
 								</li>
 								<li className="navbar-item">
 									<LogOut/>
@@ -40,7 +38,7 @@ function NavBar() {
 						)
 					}
 					{
-						loggedIn === false && (
+						!loggedIn && (
 							<>
 								<li className="navbar-item">
 									<Link to="/login" className="nav-link">Login</Link>

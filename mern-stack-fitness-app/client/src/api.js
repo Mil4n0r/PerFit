@@ -11,22 +11,35 @@ axios.defaults.withCredentials = true;
 export const getUsers = () => axios.get("http://localhost:4000/admin/list")
 	.then(res => res.data)
 
-export const getFoods = () => axios.get("http://localhost:4000/list")
+export const getFoods = () => axios.get("http://localhost:4000/food/list")
 	.then(res => res.data)
 
-export const createFood = (food) => axios.post("http://localhost:4000/create", food, {
+export const createFood = (food) => axios.post("http://localhost:4000/create/food", food, {
 	data: food
 })
-	.then(res => console.log(res.data))
+	.then(res => console.log(res.data));
+	/*.catch((err) => {
+		console.log("ERROR HANDLING: ", err.response.data)
+	})*/
 
-export const getUser = (id) => axios.get(`http://localhost:4000/${id}`)
+export const getUser = (id) => axios.get(`http://localhost:4000/admin/user/${id}`)
 	.then(res => res.data);
 
-export const updateUser = (user,id) => axios.post(`http://localhost:4000/${id}`, user, {
+export const updateUser = (user,id) => axios.post(`http://localhost:4000/user/${id}`, user, {
 	data: user
 });
 
-export const deleteUser = (id) => axios.delete(`http://localhost:4000/delete/${id}`)
+export const deleteUser = (id) => axios.delete(`http://localhost:4000/delete/user/${id}`)
+
+export const getFood = (id) => axios.get(`http://localhost:4000/food/${id}`)
+	.then(res => res.data);
+
+export const updateFood = (user,id) => axios.post(`http://localhost:4000/food/${id}`, user, {
+	data: user
+});
+
+export const deleteFood = (id) => axios.delete(`http://localhost:4000/delete/food/${id}`)
+
 
 // AUTENTICACIÓN
 
@@ -39,12 +52,12 @@ export const login = (email, password) => axios.post("http://localhost:4000/logi
 	data: {email,password}
 });
 
-export const logOut = () => axios.get("http://localhost:4000/user/logout")
+export const logOut = () => axios.get("http://localhost:4000/admin/logout")
 
-export const checkLoggedIn = () => axios.get("http://localhost:4000/checkloggedin")
+export const checkLoggedIn = () => axios.get("http://localhost:4000/admin/checkloggedin")
 	.then(res => res.data)
 
-export const checkCurrentUser = () => axios.get("http://localhost:4000/checkcurrentuser")
+export const checkCurrentUser = () => axios.get("http://localhost:4000/admin/checkcurrentuser")
 	.then(res => res.data)
 
 export const profile = () => axios.get("http://localhost:4000/user/profile")

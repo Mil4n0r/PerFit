@@ -5,6 +5,8 @@ import { UserList } from './components/UserList';
 import { CreateFood } from './components/CreateFood';
 import { EditUser } from './components/EditUser';
 import { DeleteUser } from './components/DeleteUser';
+import { EditFood } from './components/EditFood';
+import { DeleteFood } from './components/DeleteFood';
 import { Login } from './components/Login';
 import { LogOut } from './components/Logout';
 import { Register } from './components/Register';
@@ -22,20 +24,22 @@ function Router() {
 			<Switch>
 				<Route exact path="/" component={ Home } />
 				{
-					loggedIn === "socio" && (
+					loggedIn && loggedIn.rol === "socio" && (
 						<>
-							<Route path="/edit/:id" component={ EditUser } />
-							<Route path="/create" component={ CreateFood } />
-							<Route path="/delete/:id" component={ DeleteUser } />
+							<Route path="/create/food" component={ CreateFood } />
+							<Route path="/edit/food/:id" component={ EditFood } />
+							<Route path="/delete/food/:id" component={ DeleteFood } />
+							<Route path="/edit/user/:id" component={ EditUser } />
+							<Route path="/delete/user/:id" component={ DeleteUser } />
 							<Route path="/user/profile/:id" component={ Profile } />
 							<Route exact path="/admin/list" component={ UserList } />
-							<Route exact path="/list" component={ FoodList } />
-							<Route path="/logout" component={ LogOut } />
+							<Route exact path="/food/list" component={ FoodList } />
+							<Route path="/admin/logout" component={ LogOut } />
 						</>
 					)
 				}
 				{
-					loggedIn === false && (
+					!loggedIn && (
 						<>
 							<Route path="/login" component={ Login } />
 							<Route path="/register" component={ Register } />

@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { checkCurrentUser } from '../api';
-
+/*
 const UserContext = createContext();
 
 export const UserContextProvider = (props) => {
@@ -23,3 +23,4 @@ export const UserContextProvider = (props) => {
 }
 
 export default UserContext;
+*/
