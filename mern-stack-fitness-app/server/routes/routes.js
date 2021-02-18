@@ -4,6 +4,17 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 
 const UserModel = require('../models/UserSchema');
+const FoodModel = require('../models/FoodSchema');
+
+router.get("/list", async (req, res) => {
+	FoodModel.find((err, foods) => {	// Buscamos en el modelo todas las comidas registradas
+		if(err) {	// Se imprime un mensaje de error en consola
+			console.log(err);	
+		} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
+			res.json(foods);	
+		}
+	});
+});
 
 // Registro de usuarios
 router.post("/register", passport.authenticate("register", {session: false}),	// IMPORTANTE PLANTEARSE LO DE LA SESION {session: false}
@@ -39,7 +50,7 @@ router.post("/login", async (req, res, next) => {
 						user: body
 					})
 					*/
-					const body = { _id: user._id, email: user.emailUsuario };
+					const body = { _id: user._id, email: user.emailUsuario, rol: user.rolUsuario };
 					const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 					res.cookie("token", token, {
 						httpOnly: true
@@ -54,42 +65,50 @@ router.post("/login", async (req, res, next) => {
 	// GESTIONAR REDIRECCIÓN
 });
 
+router.get("/checkloggedin", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false, failureFlash: true}, (err, user, info) => {
+		if(user)
+			res.send(user.rol);
+		else
+			res.send(false);
+			
+	})(req,res,next);
+});
+
+router.get("/checkcurrentuser", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false, failureFlash: true}, (err, user, info) => {
+		if(user)
+			res.json(user._id);
+		else
+			res.send(false);
+			
+	})(req,res,next);
+});
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-// Creación de usuario (MODIFICAR PARA CREAR OTROS DATOS)
+// Creación de alimento (MODIFICAR PARA CREAR OTROS DATOS)
 router.post("/create", async (req, res) => {
-	
-	// Filtros de errores
-	/*
-	if(req.body.email === ???) {
-
-	}
-	
-
-	if(req.body.password.length < 8) {
-		return res.status(400).json({
-			errorMessage: "Por favor introduzca una contraseña de al menos 8 caracteres.",
-		})
-	}
-	
-	if(req.body.password === req.body.passwordConfirm) {
-		return res.status(400).json({
-			errorMessage: "Por favor introduzca el mismo password en ambos campos.",
-		})
-	}
-	*/
-
-	// Creación del usuario
-	
-	const User = new UserModel({
-		emailUsuario: req.body.email,
-		passwordUsuario: req.body.password,
+	// Creación del alimento
+	console.log("Foodname: ", req.body.foodname)
+	console.log("Foodsize: ",req.body.foodsize)
+	console.log("Unit: ", req.body.unit)
+	const Food = new FoodModel({
+		nombreAlimento: req.body.foodname,
+		tamRacion: req.body.foodsize,
+		unidadesRacion: req.body.unit,
+		nutrientesRacion:{
+			calorias: req.body.calories,
+			carbohidratos: req.body.carbs,
+			proteinas: req.body.proteins,
+			grasas: req.body.fats
+		}
 	});
-	User
+	Food
 		.save()		// Se almacena el usuario
-		.then((User) => {
-			console.log(JSON.stringify(User))
-			res.json(User);		// Se manda como respuesta el usuario
+		.then((Food) => {
+			console.log(JSON.stringify(Food))
+			res.json(Food);		// Se manda como respuesta el alimento
 		})
 		.catch((err) => {
 			console.log(err.message);
@@ -139,7 +158,9 @@ router.delete("/delete/:id", async (req, res) => {
 	UserModel.findById(id, (err, user) => {	// Se busca el usuario cuya id coincida
 		if(!user) {
 			res.status(404).send("Usuario no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-		} else {			
+		}
+		else {		
+			//console.log("!!!!!!!!!!!!!!!", req.cookies);
 			user
 				.remove()	// Se elimina el usuario
 				.then(user => {

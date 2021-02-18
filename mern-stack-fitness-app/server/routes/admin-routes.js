@@ -9,10 +9,6 @@ const UserModel = require('../models/UserSchema');
 // Consulta de usuarios
 router.get("/list", passport.authenticate("jwt", {session: false}), async (req, res) => {
 	const token = req.cookies.token;
-	if(!token)
-		console.log("NO HAY TOKEN");
-	else
-		console.log("HAY TOKEN: ", token);
 
 	UserModel.find((err, users) => {	// Buscamos en el modelo todos los usuarios registrados
 		if(err) {	// Se imprime un mensaje de error en consola

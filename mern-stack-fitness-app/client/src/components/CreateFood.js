@@ -1,21 +1,21 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { createUser } from './api';
-import { UserForm } from './UserForm';
+import { createFood } from '../api';
+import { FoodForm } from './FoodForm';
 
-export const CreateUser = () => {
+export const CreateFood = () => {
 	const history = useHistory();
 	
 	const onSubmit = async (data) => {
-		await createUser(data);	// Llamamos a la API para crear el usuario
+		await createFood(data);	// Llamamos a la API para crear el usuario
 		history.push("/list");	// Redireccionamos al listado de usuarios
 	};
 
 	return (
 		<div className="container">
 			<div className="mt-3">
-				<h3>Crear usuario</h3>
-				<UserForm onSubmit={onSubmit} />
+				<h3>Crear alimento</h3>
+				<FoodForm onSubmit={onSubmit} />
 			</div>
 		</div>
 	);

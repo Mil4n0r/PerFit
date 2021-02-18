@@ -15,11 +15,13 @@ const UserSchema = mongoose.Schema({
 		telefonoUsuario: { type: String, trim: true },
 		fechaNacUsuario: { type: Date, required: true }		
 	},
+	*/
 	rolUsuario: { 
 		type: String,
 		default: 'socio',
 		enum: ['socio', 'entrenador_personal', 'monitor', 'moderador', 'admin']
 	},
+	/*
 	aliasUsuario: { type: String, required: true, unique: true, trim: true },
 	}, {
 	timestamps: true

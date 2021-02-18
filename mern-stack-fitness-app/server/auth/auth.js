@@ -56,7 +56,10 @@ passport.use("jwt",
 	},
 	async (token, done) => {
 		try {
-			return done(null, token.user);
+			if(token)
+				return done(null, token.user);
+			else
+				return done(null, false, { message: "No tiene token"});
 		} catch (error) {
 			done(error);
 		}

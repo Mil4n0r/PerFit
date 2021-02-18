@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { getUsers } from './api';
+import { getUsers } from '../api';
 
 export const UserList = () => {
 	const [users, setUsers] = useState([])	// Creamos una variable de estado para almacenar la información del usuario y una función para actualizarla

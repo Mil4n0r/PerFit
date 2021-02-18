@@ -1,16 +1,37 @@
-import React from 'react';
-//import { useHistory } from 'react-router-dom';
-import { profile } from './api'
+import React, {useState, useEffect} from 'react';
+import { getUser } from '../api'; 
+import { useRouteMatch, useHistory } from "react-router-dom";
 
 export const Profile = () => {
+
+	const match = useRouteMatch();
+	const [user, setUser] = useState();
+
+	useEffect(() => {
+		const fetchUser = async () => {
+			const user = await getUser(match.params.id);
+			setUser(user);
+		}
+		fetchUser();
+		// (Evita que salte warning por usar cadena vacía)
+		// eslint-disable-next-line 
+	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
+
+
 	return (
 	<>
-		<h1>PRUEBA</h1>
+		<h1>Perfil</h1>
+		{
+			user && (
+				<>
+					<p>Email: {user.emailUsuario}</p>
+					<p>Rol: {user.rolUsuario}</p>
+				</>
+			)
+		}
 	</>
 	)
 /*
-	//const history = useHistory();
-
 	const onSubmit = async (event) => {
 		event.preventDefault();
 		try {

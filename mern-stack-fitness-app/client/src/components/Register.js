@@ -1,14 +1,14 @@
 import React from 'react';
-//import { useHistory } from 'react-router-dom';
-import { registerUser } from './api';
+import { useHistory } from 'react-router-dom';
+import { registerUser } from '../api';
 import { UserForm } from './UserForm';
 
 export const Register = () => {
-	//const history = useHistory();
+	const history = useHistory();
 	
 	const onSubmit = async (data) => {
 		await registerUser(data);	// Llamamos a la API para registrar al usuario
-		//history.push("/list");	// Redireccionamos al listado de usuarios
+		history.push("/");	// Redireccionamos al listado de usuarios
 	};
 
 	return (
