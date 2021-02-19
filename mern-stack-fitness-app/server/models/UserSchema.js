@@ -4,7 +4,12 @@ const SALT_WORK_FACTOR = 10;
 
 const UserSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
-	emailUsuario: { type: String, required: true, trim: true, unique: true },
+	emailUsuario: {
+		type: String,
+		required: true,
+		trim: true,
+		unique: true,
+	},
 	passwordUsuario: { type: String, required: true },
 	/*
 	datosPersonales: { // FALTA VALIDACIÓN DE LOS DATOS (EMAIL, TLFN, FECHA...)

@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { getUser, updateUser } from '../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
-import { UserForm } from './UserForm';
+import { UserForm } from './forms/UserForm';
 
 export const EditUser = () => {
 	const match = useRouteMatch();

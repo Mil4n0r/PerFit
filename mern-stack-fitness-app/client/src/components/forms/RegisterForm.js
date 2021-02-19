@@ -5,10 +5,7 @@ import { ErrorMessage } from '@hookform/error-message';
 export const RegisterForm = ({ user, onSubmit }) => {
 	
 	const { register, getValues, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
-		defaultValues: {
-			email: user ? user.emailUsuario : "",
-			password: user ? user.passwordUsuario : "",
-		}	// Asignamos valores por defecto en caso de estar modificando
+		
 	});
 
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario

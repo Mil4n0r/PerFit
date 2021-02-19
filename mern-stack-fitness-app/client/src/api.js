@@ -25,17 +25,17 @@ export const createFood = (food) => axios.post("http://localhost:4000/create/foo
 export const getUser = (id) => axios.get(`http://localhost:4000/admin/user/${id}`)
 	.then(res => res.data);
 
-export const updateUser = (user,id) => axios.post(`http://localhost:4000/user/${id}`, user, {
+export const updateUser = (user,id) => axios.post(`http://localhost:4000/admin/user/${id}`, user, {
 	data: user
 });
 
-export const deleteUser = (id) => axios.delete(`http://localhost:4000/delete/user/${id}`)
+export const deleteUser = (id) => axios.delete(`http://localhost:4000/admin/delete/user/${id}`)
 
 export const getFood = (id) => axios.get(`http://localhost:4000/food/${id}`)
 	.then(res => res.data);
 
-export const updateFood = (user,id) => axios.post(`http://localhost:4000/food/${id}`, user, {
-	data: user
+export const updateFood = (food,id) => axios.post(`http://localhost:4000/food/${id}`, food, {
+	data: food
 });
 
 export const deleteFood = (id) => axios.delete(`http://localhost:4000/delete/food/${id}`)

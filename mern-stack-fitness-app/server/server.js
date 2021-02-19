@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
-const passport = require('passport');
 const cookieParser = require('cookie-parser');
 
 const routes = require("./routes/routes");
@@ -39,7 +38,7 @@ require('./auth/auth');	// Importación de las estrategias de passport
 // Agregación de rutas
 
 app.use(routes);
-app.use('/user',memberRoutes);
+//app.use('/user',memberRoutes);
 app.use('/admin',adminRoutes);
 
 app.listen(PORT, () => {

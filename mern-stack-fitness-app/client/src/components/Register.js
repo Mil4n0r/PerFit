@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { registerUser } from '../api';
-import { RegisterForm } from './RegisterForm';
+import { RegisterForm } from './forms/RegisterForm';
 
 export const Register = () => {
 	const history = useHistory();

@@ -6,7 +6,7 @@ export const UserForm = ({ user, onSubmit }) => {
 	
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: {
-			email: user ? user.emailUsuario : ""
+			email: user ? user.userInfo.emailUsuario : ""
 		}	// Asignamos valores por defecto en caso de estar modificando
 	});
 

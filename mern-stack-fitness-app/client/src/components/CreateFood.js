@@ -1,7 +1,7 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { createFood } from '../api';
-import { FoodForm } from './FoodForm';
+import { FoodForm } from './forms/FoodForm';
 
 export const CreateFood = () => {
 	const history = useHistory();
