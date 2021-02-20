@@ -29,7 +29,7 @@ export const updateUser = (user,id) => axios.post(`http://localhost:4000/admin/u
 	data: user
 });
 
-export const deleteUser = (id) => axios.delete(`http://localhost:4000/admin/delete/user/${id}`)
+export const deleteUser = (id) => axios.delete(`http://localhost:4000/admin/user/${id}`)
 
 export const getFood = (id) => axios.get(`http://localhost:4000/food/${id}`)
 	.then(res => res.data);
@@ -38,7 +38,7 @@ export const updateFood = (food,id) => axios.post(`http://localhost:4000/food/${
 	data: food
 });
 
-export const deleteFood = (id) => axios.delete(`http://localhost:4000/delete/food/${id}`)
+export const deleteFood = (id) => axios.delete(`http://localhost:4000/food/${id}`)
 
 
 // AUTENTICACIÓN

@@ -17,7 +17,7 @@ function NavBar() {
 						<Link to="/" className="nav-link">Home</Link>
 					</li>
 					{
-						loggedIn && loggedIn.rol === "socio" && (
+						loggedIn && (//loggedIn.rol === "socio" && (
 							<>
 								<li className="navbar-item">
 									<Link to="/create/food" className="nav-link">Crear Alimento</Link>
@@ -44,7 +44,7 @@ function NavBar() {
 									<Link to="/login" className="nav-link">Login</Link>
 								</li>
 								<li className="navbar-item">
-									<Link to="/register" className="nav-link">Registrarse</Link>
+									<Link to="/register/step/1" className="nav-link">Registrarse</Link>
 								</li>
 							</>
 						)

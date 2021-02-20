@@ -24,7 +24,7 @@ function Router() {
 			<Switch>
 				<Route exact path="/" component={ Home } />
 				{
-					loggedIn && loggedIn.rol === "socio" && (
+					loggedIn && (//loggedIn.rol === "socio" && (
 						<>
 							<Route path="/create/food" component={ CreateFood } />
 							<Route path="/edit/food/:id" component={ EditFood } />
@@ -42,7 +42,7 @@ function Router() {
 					!loggedIn && (
 						<>
 							<Route path="/login" component={ Login } />
-							<Route path="/register" component={ Register } />
+							<Route path="/register/step/:step" component={ Register } />
 						</>
 					)
 				}

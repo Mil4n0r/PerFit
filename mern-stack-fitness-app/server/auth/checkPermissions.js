@@ -5,6 +5,7 @@ module.exports = checkPermissions = async (activeUser, req, res) => {
 	const id = req.params.id;
 	const userFound = await UserModel.findById(id);
 	if(!userFound) {
+		console.log("A")
 		return {
 			error: {
 				code: 404,
@@ -13,7 +14,8 @@ module.exports = checkPermissions = async (activeUser, req, res) => {
 			user: null
 		};
 	}
-	else if(userFound._id.equals(activeUser._id)) { // === no funcionaría dado que uno es un objectID y otro un string
+	else if(userFound._id.equals(activeUser._id)) { // "===" no funcionaría dado que uno es un objectID y otro un string
+		console.log("B")
 		return {
 			error: null,
 			user: {
@@ -22,7 +24,8 @@ module.exports = checkPermissions = async (activeUser, req, res) => {
 			}
 		};
 	}
-	else if(activeUser.rolUsuario === "admin") {
+	else if(activeUser.rol === "admin") {
+		console.log("C")
 		return {
 			error: null,
 			user: {
@@ -31,7 +34,7 @@ module.exports = checkPermissions = async (activeUser, req, res) => {
 			}
 		};
 	}
-	else if(activeUser.rolUsuario === "entrenador personal"  // Añadir en el futuro la condición de que, además de ser entrenador, entrene al usuario en cuestión
+	else if(activeUser.rol === "entrenador personal"  // Añadir en el futuro la condición de que, además de ser entrenador, entrene al usuario en cuestión
 			||  userFound.privacidadUsuario === "publico"
 			|| (userFound.privacidadUsuario === "solo amigos")) {// && areFriends(activeUser, userFound)))
 		return {
@@ -52,34 +55,3 @@ module.exports = checkPermissions = async (activeUser, req, res) => {
 		};
 	}
 }
-/*
-module.exports = checkPermissions = async (activeUser, req, res) => {
-	const id = req.params.id;
-	await UserModel.findById(id, (err, userFound) => {
-		if(!userFound) {
-			
-			res.status(404).send("Usuario no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-		}
-		else if(userFound._id.equals(activeUser._id)) { // === no funcionaría dado que uno es un objectID y otro un string
-			
-			res.json({
-				userInfo: userFound,
-				permission: 'readwrite'
-			});
-		}
-		else if(activeUser.rolUsuario === "admin"
-				||	activeUser.rolUsuario === "entrenador personal"  // Añadir en el futuro la condición de que, además de ser entrenador, entrene al usuario en cuestión
-				||  userFound.privacidadUsuario === "publico"
-				|| (userFound.privacidadUsuario === "solo amigos")) {// && areFriends(activeUser, userFound)))
-			
-			res.json({
-				userInfo: userFound,
-				permission: 'read'
-			});
-		}
-		else {
-			res.status(401).send("Usuario no autorizado"); // En caso de que no se cumpla alguna de las condiciones anteriores se lanza el mensaje 401 Unauthorized
-		}		
-	});
-}
-*/

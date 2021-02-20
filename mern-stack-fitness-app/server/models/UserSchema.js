@@ -11,7 +11,7 @@ const UserSchema = mongoose.Schema({
 		unique: true,
 	},
 	passwordUsuario: { type: String, required: true },
-	/*
+	
 	datosPersonales: { // FALTA VALIDACIÓN DE LOS DATOS (EMAIL, TLFN, FECHA...)
 		nombreUsuario: { type: String, required: true, trim: true },
 		apellidosUsuario: { type: String, required: true, trim: true },
@@ -20,7 +20,7 @@ const UserSchema = mongoose.Schema({
 		telefonoUsuario: { type: String, trim: true },
 		fechaNacUsuario: { type: Date, required: true }		
 	},
-	*/
+	
 	rolUsuario: { 
 		type: String,
 		default: 'socio',
@@ -31,17 +31,19 @@ const UserSchema = mongoose.Schema({
 		default: 'publico',
 		enum: ['publico', 'solo amigos', 'privado']
 	},
-	/*
+	
 	aliasUsuario: { type: String, required: true, unique: true, trim: true },
-	}, {
-	timestamps: true
-	*/
 
+	/*
 	// Componentes de seguridad
 	loginAttempts: { type: Number, required: true, default: 0 },
 	lockUntil: { type: Number }
+	*/
 	// https://www.mongodb.com/blog/post/password-authentication-with-mongoose-part-2
-});
+}, 
+{
+	timestamps: true}
+);
 
 // https://www.mongodb.com/blog/post/password-authentication-with-mongoose-part-1
 

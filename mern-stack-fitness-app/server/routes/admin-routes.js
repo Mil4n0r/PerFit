@@ -86,7 +86,7 @@ router.post("/user/:id", async (req, res, next) => {
 			else if(resUser && resUser.permission.includes("write")) {
 				const userData = resUser.userInfo
 				userData.emailUsuario = req.body.email		// Se reasignan los campos del usuario
-
+				
 				userData
 					.save()		// Se almacena el usuario
 					.then(userData => {
@@ -104,7 +104,7 @@ router.post("/user/:id", async (req, res, next) => {
 });
 
 // Eliminación del usuario con la id correspondiente (MODIFICAR PARA ELIMINAR OTROS DATOS)
-router.delete("/delete/user/:id", async (req, res, next) => {
+router.delete("/user/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false, failureFlash: true}, async (err, user, info) => {
 		if(!user) {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
