@@ -12,10 +12,9 @@ export const Register = () => {
 	const history = useHistory();
 
 	const onSubmit = async (data) => {
-		//await data.preventDefault();
 		await registerUser(data);	// Llamamos a la API para registrar al usuario
 		//history.push("/");	// Redireccionamos al listado de usuarios
-		console.log(JSON.stringify(data));
+		//console.log(JSON.stringify(data));
 	};
 
 	const selectStep = (step) => {

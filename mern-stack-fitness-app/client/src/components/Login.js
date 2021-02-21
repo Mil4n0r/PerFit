@@ -16,7 +16,6 @@ export const Login = () => {
 			history.push("/");
 		} catch (error) {
 			console.error(error);
-			alert("Error logging in please try again");
 		}
 	};
 

@@ -28,7 +28,7 @@ export const Profile = () => {
 					<p>Email: {user.userInfo.emailUsuario}</p>
 					<p>Rol: {user.userInfo.rolUsuario}</p>
 					{
-						user.permission === 'readwrite' && (
+						user.permission.includes('write') && (
 							<Link to={`/edit/user/${user.userInfo._id}`}>Editar</Link>
 						)
 					}

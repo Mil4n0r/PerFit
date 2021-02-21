@@ -50,7 +50,7 @@ export const registerUser = (user) => axios.post("http://localhost:4000/register
 
 export const login = (email, password) => axios.post("http://localhost:4000/login", {email,password}, {	// Por defecto se le aplica JSON.stringify al segundo argumento
 	data: {email,password}
-});
+})
 
 export const logOut = () => axios.get("http://localhost:4000/admin/logout")
 

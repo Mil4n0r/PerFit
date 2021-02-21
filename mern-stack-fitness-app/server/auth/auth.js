@@ -56,46 +56,55 @@ passport.use("register",
 
 // Estrategia local para login de usuarios
 passport.use("login",
-	new LocalStrategy( {
-		usernameField: 'email',
-		passwordField: 'password'
-	},
-	async (email, password, done) => {
-		try {
-			const user = await UserModel.findOne({ emailUsuario: email });
+	new LocalStrategy
+	(
+		{
+			usernameField: "email",
+			passwordField: "password"
+		},
+		(email, password, done) => {
+			UserModel.findOne({ emailUsuario: email }, async (err, user) => {
+				if(err) {
+					done(err);
+				}
+				else if (!user) {
+					return done(null, false, { message: "Usuario incorrecto." });
+				}
+				else {
+					const validate = user.comparePassword(password);
 
-			if (!user) {
-				return done(null, false, { message: 'Usuario no encontrado.' });
-			}
-
-			const validate = await user.comparePassword(password);
-
-			if (!validate) {
-				return done(null, false, { message: 'Password incorrecto.' });
-			}
-
-			return done(null, user, { message: 'Ha iniciado sesión satisfactoriamente.' });
-		} catch (error) {
-			return done(error);
-		}
-	})
+					if (!validate) {
+						return done(null, false, { message: "Password incorrecto." });
+					}
+					else {
+						return done(null, user, { message: "Ha iniciado sesión satisfactoriamente." });
+					}
+				}
+			});
+		} 	
+	)
 );
 
 // Estrategia JWT para autenticar usuarios
 passport.use("jwt",
-	new JWTstrategy( {
-		secretOrKey: process.env.JWT_SECRET,
-		jwtFromRequest: req => req.cookies.token
-	},
-	async (token, done) => {
-		try {
-			if(token)
-				return done(null, token.user);
-			else
-				return done(null, false, { message: "No tiene token"});
-		} catch (error) {
-			done(error);
+	new JWTstrategy( 
+		{
+			secretOrKey: process.env.JWT_SECRET,
+			jwtFromRequest: req => req.cookies.token,
+		},
+		(token, done) => {
+			const id = token.user._id;
+			UserModel.findById(id, (err, user) => {
+				if(err) {
+					return done(err)
+				}
+				else if(!user) {
+					return done(null, false, { message: "Usuario no encontrado"});
+				}
+				else {
+					return done(null, user, { message: "Ha sido validado satisfactoriamente"});
+				}
+			})			
 		}
-	}
 	)
 );

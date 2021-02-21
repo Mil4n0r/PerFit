@@ -7,6 +7,9 @@ const cookieParser = require('cookie-parser');
 const routes = require("./routes/routes");
 const memberRoutes = require("./routes/member-routes");
 const adminRoutes = require("./routes/admin-routes");
+
+const {errorHandler,logErrors} = require('./errors/defaultErrors');
+
 dotenv.config();
 
 // Conexión con la base de datos
@@ -40,6 +43,9 @@ require('./auth/auth');	// Importación de las estrategias de passport
 app.use(routes);
 //app.use('/user',memberRoutes);
 app.use('/admin',adminRoutes);
+
+app.use(logErrors);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
 	console.log("El servidor está funcionando en el puerto " + PORT);

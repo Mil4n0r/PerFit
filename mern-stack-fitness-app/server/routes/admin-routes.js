@@ -7,12 +7,12 @@ const checkPermissions = require('../auth/checkPermissions');
 // RUTAS SÓLO ACCESIBLES POR ADMINISTRADORES
 
 // Consulta de usuarios
-router.get("/list", passport.authenticate("jwt", {session: false}), async (req, res) => {
+router.get("/list", passport.authenticate("jwt", {session: false}), async (req, res, next) => {
 	const token = req.cookies.token;
 
-	UserModel.find((err, users) => {	// Buscamos en el modelo todos los usuarios registrados
+	await UserModel.find((err, users) => {	// Buscamos en el modelo todos los usuarios registrados
 		if(err) {	// Se imprime un mensaje de error en consola
-			console.log(err);	
+			next(err);
 		} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
 			res.json(users);	
 		}
@@ -20,7 +20,7 @@ router.get("/list", passport.authenticate("jwt", {session: false}), async (req, 
 });
 
 // Acceso al perfil del usuario activo
-router.get("/profile", passport.authenticate("jwt", {session: false}), async (req, res) => {
+router.get("/profile", passport.authenticate("jwt", {session: false}), (req, res) => {
 	res.json({
 		message: "Has llegado a la ruta segura",
 		user: req.user,
@@ -28,18 +28,19 @@ router.get("/profile", passport.authenticate("jwt", {session: false}), async (re
 	});
 });
 
-router.get("/checkloggedin", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(user)
+router.get("/checkloggedin", (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+		if(user) {
 			res.send(user);
-		else
+		}
+		else {
 			res.send(false);
-			
+		}
 	})(req,res,next);
 });
 
 // Acceso al cierre de sesión del usuario activo
-router.get("/logout", passport.authenticate("jwt", {session: false}), async (req, res) => {
+router.get("/logout", passport.authenticate("jwt", {session: false}), (req, res, next) => {
 	req.logout()
 	res.clearCookie("token");
 	res.json({
@@ -48,21 +49,25 @@ router.get("/logout", passport.authenticate("jwt", {session: false}), async (req
 });
 
 router.get("/user/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false, failureFlash: true}, async (err, user, info) => {
-		if(!user) {
-			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err || !user) {
+			if(info.name === "JsonWebTokenError") {
+				info.message = "Token no válido";
+			}
+			next(info.message);
 		}
 		else {
 			const permissionsRes = await checkPermissions(user, req, res);	// Se busca el usuario cuya id coincida
-			const error = permissionsRes.error;
+			const resError = permissionsRes.error;
 			const resUser = permissionsRes.user;
-			if(error) {
-				res.status(error.code).send(error.text);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			const resPermission = permissionsRes.permission;
+			if(resError || !resUser) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 			}
 			else if(resUser) {
 				res.json({
-					userInfo: resUser.userInfo,
-					permission: resUser.permission
+					userInfo: resUser,
+					permission: resPermission
 				});
 			}
 		}			
@@ -72,28 +77,27 @@ router.get("/user/:id", async (req, res, next) => {
 });
 
 router.post("/user/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false, failureFlash: true}, async (err, user, info) => {
-		if(!user) {
-			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err || !user) {
+			next(info.message);
 		}
 		else {
-			const permissionsRes = await checkPermissions(user, req, res);	// Se busca el usuario cuya id coincida
-			const error = permissionsRes.error;
-			const resUser = permissionsRes.user;
-			if(error) {
-				res.status(error.code).send(error.text);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			const permissionsResData = await checkPermissions(user, req, res);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resUser = permissionsResData.user;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				resError.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 			}
-			else if(resUser && resUser.permission.includes("write")) {
-				const userData = resUser.userInfo
-				userData.emailUsuario = req.body.email		// Se reasignan los campos del usuario
-				
-				userData
+			else if(permissionsResData && resPermission.includes("write")) {
+				resUser.emailUsuario = req.body.email		// Se reasignan los campos del usuario
+				resUser
 					.save()		// Se almacena el usuario
 					.then(userData => {
 						res.json(userData)	// Se manda como respuesta el usuario modificado
 					})
 					.catch((err) => {
-						res.status(500).send(err.message);	// En caso de fallo se manda el mensaje 500 Internal Server Error
+						next(err.message);
 					});
 			}
 			else {
@@ -110,23 +114,23 @@ router.delete("/user/:id", async (req, res, next) => {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
 		}
 		else {
-			const permissionsRes = await checkPermissions(user, req, res);	// Se busca el usuario cuya id coincida
-			const error = permissionsRes.error;
-			const resUser = permissionsRes.user;
-			if(error) {
-				res.status(error.code).send(error.text);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			const permissionsResData = await checkPermissions(user, req, res);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resUser = permissionsResData.user;
+			const resPermission = permissionsResData.permission;
+
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 			}
-			else if(resUser && resUser.permission.includes("delete")) {
-				const userData = resUser.userInfo
-				userData.emailUsuario = req.body.email		// Se reasignan los campos del usuario
-				console.log("PERMISOS: ", resUser.permission)
-				userData
+			else if(permissionsResData && resPermission.includes("delete")) {
+				resUser.emailUsuario = req.body.email		// Se reasignan los campos del usuario
+				resUser
 					.remove()	// Se elimina el usuario
 					.then(userData => {
 						res.json(userData);	// Se manda como respuesta el usuario eliminado
 					})
 					.catch((err) => {
-						res.status(500).send(err.message);	// En caso de fallo se manda el mensaje 500 Internal Server Error
+						next(err.message)	// En caso de fallo se manda el mensaje 500 Internal Server Error
 					});
 			}
 			else

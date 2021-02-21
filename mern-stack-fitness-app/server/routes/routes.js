@@ -6,10 +6,10 @@ const router = express.Router();
 const UserModel = require('../models/UserSchema');
 const FoodModel = require('../models/FoodSchema');
 
-router.get("/food/list", async (req, res) => {
+router.get("/food/list", async (req, res, next) => {
 	FoodModel.find((err, foods) => {	// Buscamos en el modelo todas las comidas registradas
-		if(err) {	// Se imprime un mensaje de error en consola
-			console.log(err);	
+		if(err) {
+			next(err);	
 		} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
 			res.json(foods);	
 		}
@@ -18,9 +18,7 @@ router.get("/food/list", async (req, res) => {
 
 // Registro de usuarios
 router.post("/register", 
-	passport.authenticate("register", {session: false}),
-	async (req, res) => {
-		console.log(req.body);
+	passport.authenticate("register", {session: false, badRequestMessage: "Faltan datos por rellenar"}), async (req, res) => {
 		res.json({
 			message: "Registrado satisfactoriamente",
 			user: req.user
@@ -29,32 +27,35 @@ router.post("/register",
 );
 
 // Inicio de sesión
-router.post("/login", async (req, res, next) => {
+router.post("/login", (req, res, next) => {
 	// Empleamos la estrategia local definida en '../auth' para autenticar al usuario que trata de iniciar sesión
-	passport.authenticate("login", {session: false}, async (err, user, info) => {
-		try {
-			// Se comprueba que no haya errores
-			if (err || !user) {
-				const error = new Error("Ha ocurrido un error al iniciar sesión.");
-				return next(error);
-			}
+	passport.authenticate("login", {session: false, badRequestMessage: "Faltan datos por rellenar"}, (err, user, info) => {
+		// Se comprueba que no haya errores
+		if (err || !user) {
+			const error = new Error(info.message);
+			next(error);
+		}
+		else {
 			// Se llama a la función login de passport y se introduce el token obtenido en una cookie
 			req.login(
 				user,
 				{session: false},	// IMPORTANTE PLANTEARSE LO DE LA SESION 
-				async (error) => {
-					if (error) 
-						return next(error);
-					const body = { _id: user._id, email: user.emailUsuario, rol: user.rolUsuario };
-					const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
-					res.cookie("token", token, {
-						httpOnly: true
-					});
-					res.status(200).send({body});
+				(error) => {
+					if (error) {
+						next(error);
+					}
+					else
+					{
+						const body = { _id: user._id, email: user.emailUsuario, rol: user.rolUsuario };
+						const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
+						res.cookie("token", token, {
+							httpOnly: true
+						});
+						return res.status(200).send(body);
+					}
+					
 				}
 			);
-		} catch (error) {
-			return next(error);
 		}
 	})(req, res, next);
 });
@@ -62,7 +63,7 @@ router.post("/login", async (req, res, next) => {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // Creación de alimento
-router.post("/create/food", async (req, res) => {
+router.post("/create/food", async (req, res, next) => {
 	// Creación del alimento
 	const Food = new FoodModel({
 		nombreAlimento: req.body.foodname,
@@ -78,20 +79,18 @@ router.post("/create/food", async (req, res) => {
 	Food
 		.save()		// Se almacena el usuario
 		.then((Food) => {
-			console.log(JSON.stringify(Food))
 			res.json(Food);		// Se manda como respuesta el alimento
 		})
 		.catch((err) => {
-			//console.log(err.message);
-			res.status(500).send(err.message);	// En caso de fallo se manda el mensaje 500 Internal Server Error
+			next(err.message);
 		});
 });
 
 // Consulta del alimento con la id correspondiente
-router.get("/food/:id", async (req, res) => {
+router.get("/food/:id", async (req, res, next) => {
 	const id = req.params.id;
-	FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
-		if(!food) {
+	await FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
+		if(err || !food) {
 			res.status(404).send("Alimento no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 		}
 		else {
@@ -101,13 +100,13 @@ router.get("/food/:id", async (req, res) => {
 });
 
 // Modificación del alimento con la id correspondiente
-router.post("/food/:id", async (req, res) => {
+router.post("/food/:id", async (req, res, next) => {
 	const id = req.params.id;
-	FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
-		if(!food) {
+	await FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
+		if(err || !food) {
 			res.status(404).send("Alimento no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-		} else {
-			console.log("Tratando de editar alimento ", req.body)
+		} 
+		else {
 			food.emailUsuario = req.body.email		// Se reasignan los campos del alimento
 			food.nombreAlimento = req.body.foodname
 			food.tamRacion = req.body.foodsize
@@ -125,27 +124,27 @@ router.post("/food/:id", async (req, res) => {
 					res.json(food)	// Se manda como respuesta el alimento modificado
 				})
 				.catch((err) => {
-					res.status(500).send(err.message);	// En caso de fallo se manda el mensaje 500 Internal Server Error
+					next(err.message);
 				});
 		}
 	});
 });
 
 // Eliminación del alimento con la id correspondiente
-router.delete("/food/:id", async (req, res) => {
+router.delete("/food/:id", async (req, res, next) => {
 	const id = req.params.id;
-	FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
-		if(!food) {
-			res.status(404).send("Usuario no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+	await FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
+		if(err || !food) {
+			res.status(404).send("Alimento no encontrado");
 		}
-		else {		
+		else {
 			food
 				.remove()	// Se elimina el alimento
 				.then(food => {
 					res.json(food);	// Se manda como respuesta el alimento eliminado
 				})
 				.catch((err) => {
-					res.status(500).send(err.message);	// En caso de fallo se manda el mensaje 500 Internal Server Error
+					next(err.message);
 				});
 		}
 	});
