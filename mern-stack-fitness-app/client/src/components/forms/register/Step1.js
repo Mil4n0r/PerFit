@@ -2,14 +2,14 @@ import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
-import { joiResolver } from '@hookform/resolvers/joi';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-import FormContext from '../../context/FormContext';
+import FormContext from '../../../context/FormContext';
 import { RegisterSchema1 } from './schemas/RegisterSchema1';
 
 export const Step1 = () => {
-	
 	const { data, getData } = useContext(FormContext);
+
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: { 
 			alias: data ? data.alias : "",
@@ -17,9 +17,11 @@ export const Step1 = () => {
 			password: data ? data.password : "",
 			passwordConfirm: data ? data.passwordConfirm : ""
 		},
-		resolver: joiResolver(RegisterSchema1),
+		resolver: yupResolver(RegisterSchema1),
+		criteriaMode: 'all',
 		mode: "onTouched"
 	});
+
 	const history = useHistory();
 
 	const onSubmit = (data) => {	// Pasamos los datos del formulario
@@ -39,7 +41,19 @@ export const Step1 = () => {
 							register({})
 						} 
 						/>
-						<ErrorMessage errors={errors} name="alias" as="p" />
+						<ErrorMessage
+							errors={errors} name="alias" render={
+								({ messages }) =>
+									messages &&
+										Object.entries(messages).map(([typeArray, messageArray]) => (
+											<div key={"alias " + typeArray}>
+												{Array.isArray(messageArray) ? (
+													messageArray.map((message, id) => <p key={"alias" + id}>{message}</p>)
+												) : <p>{messageArray}</p>}
+											</div>
+										))
+							}
+						/>
 						<label htmlFor="text">
 							Email de usuario:
 						</label>
@@ -57,7 +71,20 @@ export const Step1 = () => {
 							register({})
 						}
 						/>
-						<ErrorMessage errors={errors} name="password" as="p" />
+						<ErrorMessage
+							errors={errors} name="password" render={
+								({ messages }) =>
+									messages &&
+										Object.entries(messages).map(([typeArray, messageArray]) => (
+											<div key={"password " + typeArray}>
+												{Array.isArray(messageArray) ? (
+													messageArray.map((message,id) => <p key={"password" + id}>{message}</p>)
+												) : <p>{messageArray}</p>}
+											</div>
+										))
+							}
+						/>
+						
 						<label htmlFor="text">
 							Confirmar contraseña:
 						</label>

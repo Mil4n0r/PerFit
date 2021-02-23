@@ -2,24 +2,24 @@ import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
-import { joiResolver } from '@hookform/resolvers/joi';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-import FormContext from '../../context/FormContext';
+import FormContext from '../../../context/FormContext';
 import { RegisterSchema2 } from './schemas/RegisterSchema2';
 
 export const Step2 = () => {
-	
 	const { data, getData } = useContext(FormContext);
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
-		defaultValues: { 
-			name: data ? data.name : "",
-			surname: data ? data.surname : "",
-			dni: data ? data.dni : "",
-			address: data ? data.address : "",
-			telephone: data ? data.telephone : "",
-			birthdate: data ? data.birthdate : "",
+		defaultValues: { // Asignamos los valores previamente introducidos como valores por defecto
+			name: data.name ? data.name : "",
+			surname: data.surname ? data.surname : "",
+			dni: data.dni ? data.dni : "",
+			address: data.address ? data.address : "",
+			telephone: data.telephone ? data.telephone : "",
+			birthdate: data.birthdate ? data.birthdate.toISOString().substr(0,10) : "" // Ajustamos la fecha al formato del formulario
 		},
-		resolver: joiResolver(RegisterSchema2),
+		resolver: yupResolver(RegisterSchema2),
+		criteriaMode: 'all',
 		mode: "onTouched"
 	});
 	const history = useHistory();
@@ -56,7 +56,19 @@ export const Step2 = () => {
 						ref={
 							register({})
 						} />
-						<ErrorMessage errors={errors} name="dni" as="p" />
+						<ErrorMessage
+							errors={errors} name="dni" render={
+								({ messages }) =>
+									messages &&
+										Object.entries(messages).map(([typeArray, messageArray]) => (
+											<div key={"dni " + typeArray}>
+												{Array.isArray(messageArray) ? (
+													messageArray.map((message, id) => <p key={"dni" + id}>{message}</p>)
+												) : <p>{messageArray}</p>}
+											</div>
+										))
+							}
+						/>
 						<label htmlFor="text">
 							Dirección:
 						</label>
@@ -64,7 +76,19 @@ export const Step2 = () => {
 						ref={
 							register({})
 						} />
-						<ErrorMessage errors={errors} name="address" as="p" />
+						<ErrorMessage
+							errors={errors} name="address" render={
+								({ messages }) =>
+									messages &&
+										Object.entries(messages).map(([typeArray, messageArray]) => (
+											<div key={"address " + typeArray}>
+												{Array.isArray(messageArray) ? (
+													messageArray.map((message, id) => <p key={"address" + id}>{message}</p>)
+												) : <p>{messageArray}</p>}
+											</div>
+										))
+							}
+						/>
 						<label htmlFor="text">
 							Teléfono:
 						</label>

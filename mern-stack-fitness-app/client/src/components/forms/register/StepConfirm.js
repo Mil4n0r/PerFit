@@ -3,8 +3,8 @@ import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
 import { joiResolver } from '@hookform/resolvers/joi';
-
-import FormContext from '../../context/FormContext';
+import { Link } from "react-router-dom";
+import FormContext from '../../../context/FormContext';
 
 export const StepConfirm = ({ onSubmit }) => {
 	const { data } = useContext(FormContext);
@@ -28,6 +28,7 @@ export const StepConfirm = ({ onSubmit }) => {
 						<button type="submit" className="btn btn-primary">
 							Registrarse
 						</button>
+						<Link to={"./1"}>Volver a rellenar</Link>
 					</div>
 				</form>
 	);

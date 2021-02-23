@@ -2,20 +2,19 @@ import React, { useContext } from 'react';
 import { useForm } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
-import { joiResolver } from '@hookform/resolvers/joi';
+import { yupResolver } from '@hookform/resolvers/yup';
 
-import FormContext from '../../context/FormContext';
+import FormContext from '../../../context/FormContext';
 import { RegisterSchema3 } from './schemas/RegisterSchema3';
 
 export const Step3 = () => {
-	
 	const { data, getData } = useContext(FormContext);
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: { 
 			role: data ? data.role : "",
 			privacy: data ? data.privacy : "",
 		},
-		resolver: joiResolver(RegisterSchema3),
+		resolver: yupResolver(RegisterSchema3),
 		mode: "onTouched"
 	});
 	const history = useHistory();

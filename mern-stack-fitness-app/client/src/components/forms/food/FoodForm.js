@@ -1,9 +1,19 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
 
+import { ErrorMessage } from '@hookform/error-message';
+import { yupResolver } from '@hookform/resolvers/yup';
+
+import { FoodSchema } from './schemas/FoodSchema';
+
+const normalizeFloat = (value) => {
+	const normalizedFloat = value.replace(",", ".")
+	return normalizedFloat;
+};
+
 export const FoodForm = ({ food, onSubmit }) => {
 	
-	const { register, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
+	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: {
 			foodname: food ? food.nombreAlimento : "",
 			foodsize: food ? food.tamRacion : "",
@@ -12,7 +22,9 @@ export const FoodForm = ({ food, onSubmit }) => {
 			carbs: food ? food.nutrientesRacion.carbohidratos : "",
 			proteins: food ? food.nutrientesRacion.proteinas : "",
 			fats: food ? food.nutrientesRacion.grasas : ""
-		}	// Asignamos valores por defecto en caso de estar modificando
+		},	// Asignamos valores por defecto en caso de estar modificando
+		resolver: yupResolver(FoodSchema),
+		mode: "onTouched"
 	});
 
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
@@ -26,11 +38,14 @@ export const FoodForm = ({ food, onSubmit }) => {
 							Nombre del alimento:
 						</label>
 						<input className="form-control" ref={register} type="text" name="foodname" id="foodname" />
+						<ErrorMessage errors={errors} name="foodname" as="p" />
 						<label htmlFor="text">
 							Tamaño de la ración:
 						</label>
 						<input className="form-control" ref={register} type="text" name="foodsize" id="foodsize" />
+						<ErrorMessage errors={errors} name="foodsize" as="p" />
 						<input className="form-control" ref={register} type="text" name="unit" id="unit" placeholder="Unidad"/>
+						<ErrorMessage errors={errors} name="unit" as="p" />
 						<label htmlFor="text">
 							Nutrientes:
 						</label>
@@ -38,18 +53,30 @@ export const FoodForm = ({ food, onSubmit }) => {
 							Calorías:
 						</label>
 						<input className="form-control" ref={register} type="text" name="calories" id="calories" />
+						<ErrorMessage errors={errors} name="calories" as="p" />
 						<label htmlFor="text">
 							Carbohidratos:
 						</label>
-						<input className="form-control" ref={register} type="text" name="carbs" id="carbs" />
+						<input className="form-control" ref={register} type="text" name="carbs" id="carbs" onChange={(event) => {
+							event.target.value = normalizeFloat(event.target.value);
+						}}/>
+						<ErrorMessage errors={errors} name="carbs" as="p" onChange={(event) => {
+							event.target.value = normalizeFloat(event.target.value);
+						}}/>
 						<label htmlFor="text">
 							Proteinas:
 						</label>
-						<input className="form-control" ref={register} type="text" name="proteins" id="proteins" />
+						<input className="form-control" ref={register} type="text" name="proteins" id="proteins" onChange={(event) => {
+							event.target.value = normalizeFloat(event.target.value);
+						}}/>
+						<ErrorMessage errors={errors} name="proteins" as="p" />
 						<label htmlFor="text">
 							Grasas:
 						</label>
-						<input className="form-control" ref={register} type="text" name="fats" id="fats" />
+						<input className="form-control" ref={register} type="text" name="fats" id="fats" onChange={(event) => {
+							event.target.value = normalizeFloat(event.target.value);
+						}}/>
+						<ErrorMessage errors={errors} name="fats" as="p" />
 					</div>
 					<div className="form-group">
 						<button type="submit" className="btn btn-primary">

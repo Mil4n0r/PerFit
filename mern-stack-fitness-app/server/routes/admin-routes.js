@@ -89,8 +89,17 @@ router.post("/user/:id", async (req, res, next) => {
 			if(resError) {
 				resError.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 			}
-			else if(permissionsResData && resPermission.includes("write")) {
-				resUser.emailUsuario = req.body.email		// Se reasignan los campos del usuario
+			else if(permissionsResData && resPermission.includes("write")) {	// Se reasignan los campos del usuario
+				resUser.aliasUsuario = req.body.alias;
+				resUser.emailUsuario = req.body.email;		
+				resUser.datosPersonales.nombreUsuario = req.body.name;
+				resUser.datosPersonales.apellidosUsuario = req.body.surname;
+				resUser.datosPersonales.dniUsuario = req.body.dni;
+				resUser.datosPersonales.direccionUsuario = req.body.address;
+				resUser.datosPersonales.telefonoUsuario = req.body.telephone;
+				resUser.datosPersonales.fechaNacUsuario = req.body.birthdate;
+				resUser.rolUsuario = req.body.role;
+				resUser.privacidadUsuario = req.body.privacy;
 				resUser
 					.save()		// Se almacena el usuario
 					.then(userData => {

@@ -1,11 +1,10 @@
 import React from 'react';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { registerUser } from '../api';
-import { RegisterForm } from './forms/RegisterForm';
-import { Step1 } from './forms/Step1';
-import { Step2 } from './forms/Step2';
-import { Step3 } from './forms/Step3';
-import { StepConfirm } from './forms/StepConfirm';
+import { Step1 } from './forms/register/Step1';
+import { Step2 } from './forms/register/Step2';
+import { Step3 } from './forms/register/Step3';
+import { StepConfirm } from './forms/register/StepConfirm';
 
 export const Register = () => {
 	const match = useRouteMatch();
@@ -13,8 +12,7 @@ export const Register = () => {
 
 	const onSubmit = async (data) => {
 		await registerUser(data);	// Llamamos a la API para registrar al usuario
-		//history.push("/");	// Redireccionamos al listado de usuarios
-		//console.log(JSON.stringify(data));
+		history.push("/");	// Redireccionamos al listado de usuarios
 	};
 
 	const selectStep = (step) => {
