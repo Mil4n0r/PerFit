@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { getUser } from '../api'; 
+import { getUser } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 

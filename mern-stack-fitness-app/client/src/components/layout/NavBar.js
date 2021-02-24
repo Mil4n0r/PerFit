@@ -2,14 +2,14 @@ import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import AuthContext from '../../context/AuthContext';
 
-import { LogOut } from '../Logout';
+import { LogOut } from '../user/Logout';
 
 function NavBar() {
 
 	const { loggedIn } = useContext(AuthContext);
 	// DIFERENCIAR ENTRE 'socio', 'entrenador_personal', 'monitor', 'moderador', 'admin'
 
-	return(
+	return (
 		<div>
 			<nav className="navbar bg-light navbar-expand-lg navbar-light">
 				<ul className="navbar-nav mr-auto">
@@ -53,7 +53,7 @@ function NavBar() {
 				</ul>
 			</nav>
 		</div>
-	)
+	);
 }
 
 export default NavBar;

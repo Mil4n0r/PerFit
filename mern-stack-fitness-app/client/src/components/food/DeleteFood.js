@@ -1,20 +1,20 @@
 import React from 'react';
-import { deleteUser } from '../api'; 
+import { deleteFood } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
 
-export const DeleteUser = () => {
+export const DeleteFood = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
 
 	const onClick = async () => {
-		await deleteUser(match.params.id);	// Llamamos a la API para eliminar el usuario
-		history.push("/admin/list");	// Redireccionamos al listado de usuarios
+		await deleteFood(match.params.id);	// Llamamos a la API para crear el alimento
+		history.push("/food/list");	// Redireccionamos al listado de alimentos
 	}
 
 	return (
 		<div className="container">
 			<div className="mt-3">
-				<h3>Eliminar usuario</h3>
+				<h3>Eliminar alimento</h3>
 				<button onClick={onClick}>Eliminar</button>
 			</div>
 		</div>

@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { getUser, updateUser } from '../api'; 
+import { getUser, updateUser } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { UserForm } from './forms/user/UserForm';
 

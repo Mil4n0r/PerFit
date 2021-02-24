@@ -1,6 +1,6 @@
 import React from 'react';
 import { useRouteMatch, useHistory } from "react-router-dom";
-import { registerUser } from '../api';
+import { registerUser } from '../../api';
 import { Step1 } from './forms/register/Step1';
 import { Step2 } from './forms/register/Step2';
 import { Step3 } from './forms/register/Step3';

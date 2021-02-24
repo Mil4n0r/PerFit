@@ -10,28 +10,41 @@ router.get("/food/list", async (req, res, next) => {
 	FoodModel.find((err, foods) => {	// Buscamos en el modelo todas las comidas registradas
 		if(err) {
 			next(err);	
-		} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
+		} 
+		else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
 			res.json(foods);	
 		}
 	});
 });
 
 // Registro de usuarios
-router.post("/register", 
-	passport.authenticate("register", {session: false, badRequestMessage: "Faltan datos por rellenar"}), async (req, res) => {
-		res.json({
-			message: "Registrado satisfactoriamente",
-			user: req.user
-		})
-	}
-);
+router.post("/register", async (req, res,next) => {
+	passport.authenticate("register", {session: false, badRequestMessage: "Faltan datos por rellenar"}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		} 
+		else if(!user) {
+			const error = new Error(info.message);
+			next(error);
+		}
+		else {
+			res.json({
+				message: info.message,
+				user: user
+			})
+		}
+	})(req,res,next)
+});
 
 // Inicio de sesión
 router.post("/login", (req, res, next) => {
 	// Empleamos la estrategia local definida en '../auth' para autenticar al usuario que trata de iniciar sesión
 	passport.authenticate("login", {session: false, badRequestMessage: "Faltan datos por rellenar"}, (err, user, info) => {
 		// Se comprueba que no haya errores
-		if (err || !user) {
+		if (err) {
+			next(err);
+		}
+		else if(!user) {
 			const error = new Error(info.message);
 			next(error);
 		}
@@ -82,7 +95,7 @@ router.post("/create/food", async (req, res, next) => {
 			res.json(Food);		// Se manda como respuesta el alimento
 		})
 		.catch((err) => {
-			next(err.message);
+			next(err);
 		});
 });
 
@@ -90,7 +103,10 @@ router.post("/create/food", async (req, res, next) => {
 router.get("/food/:id", async (req, res, next) => {
 	const id = req.params.id;
 	await FoodModel.findById(id, (err, food) => {	// Se busca el alimento cuya id coincida
-		if(err || !food) {
+		if(err) {
+			next(err);
+		}
+		else if(!food) {
 			res.status(404).send("Alimento no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 		}
 		else {
@@ -124,7 +140,7 @@ router.post("/food/:id", async (req, res, next) => {
 					res.json(food)	// Se manda como respuesta el alimento modificado
 				})
 				.catch((err) => {
-					next(err.message);
+					next(err);
 				});
 		}
 	});
@@ -144,7 +160,7 @@ router.delete("/food/:id", async (req, res, next) => {
 					res.json(food);	// Se manda como respuesta el alimento eliminado
 				})
 				.catch((err) => {
-					next(err.message);
+					next(err);
 				});
 		}
 	});

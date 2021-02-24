@@ -57,26 +57,12 @@ UserSchema.pre('save', async function(next) {
 	// Genera una sal (cadena aleatoria que modificará el resultado de la función hash para que no sea predecible)
 	
 	const salt = await bcrypt.genSalt(SALT_WORK_FACTOR);
+
+	// Se aplica la función hash sobre nuestro password usando la sal anterior
 	const hash = await bcrypt.hash(user.passwordUsuario, salt);
 
 	user.passwordUsuario = hash;
 	next();
-
-	/*bcrypt.genSalt(SALT_WORK_FACTOR, async function(err, salt) {
-		if (err)
-			return next(err);
-
-		// Se aplica la función hash sobre nuestro password usando la sal anterior
-		bcrypt.hash(user.passwordUsuario, salt, async function(err, hash) {
-			if (err) return next(err);
-
-			// Se sobreescribe el password con la nueva cadena obtenida
-			console.log(hash)
-			user.passwordUsuario = hash;
-			next();
-		});
-	});
-	*/
 });
 
 UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB = Callback para recoger los errores

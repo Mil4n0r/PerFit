@@ -7,45 +7,56 @@ const checkPermissions = require('../auth/checkPermissions');
 // RUTAS SÓLO ACCESIBLES POR ADMINISTRADORES
 
 // Consulta de usuarios
-router.get("/list", passport.authenticate("jwt", {session: false}), async (req, res, next) => {
-	const token = req.cookies.token;
-
-	await UserModel.find((err, users) => {	// Buscamos en el modelo todos los usuarios registrados
-		if(err) {	// Se imprime un mensaje de error en consola
+router.get("/list", async (req,res,next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
 			next(err);
-		} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
-			res.json(users);	
 		}
-	});
-});
-
-// Acceso al perfil del usuario activo
-router.get("/profile", passport.authenticate("jwt", {session: false}), (req, res) => {
-	res.json({
-		message: "Has llegado a la ruta segura",
-		user: req.user,
-		token: req.query.secret_token
-	});
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const token = req.cookies.token;
+			await UserModel.find((queryErr, users) => {	// Buscamos en el modelo todos los usuarios registrados
+				if(queryErr) {	// Se imprime un mensaje de error en consola
+					next(queryErr);
+				} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
+					res.json(users);	
+				}
+			});
+		}
+	})(req,res,next);
 });
 
 router.get("/checkloggedin", (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, (err, user, info) => {
-		if(user) {
-			res.send(user);
+		if(err || !user) {
+			res.send(false)
 		}
 		else {
-			res.send(false);
+			res.send(user);
 		}
 	})(req,res,next);
 });
 
 // Acceso al cierre de sesión del usuario activo
-router.get("/logout", passport.authenticate("jwt", {session: false}), (req, res, next) => {
-	req.logout()
-	res.clearCookie("token");
-	res.json({
-		message: "Se ha cerrado sesión de manera satisfactoria"
-	});
+router.get("/logout", (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message);
+			next(error);
+		}
+		else {
+			const message = "Se ha cerrado sesión de manera satisfactoria"
+			req.logout()
+			res.clearCookie("token");
+			res.status(200).send(message);
+		}
+	})(req,res,next);
 });
 
 router.get("/user/:id", async (req, res, next) => {
@@ -106,7 +117,7 @@ router.post("/user/:id", async (req, res, next) => {
 						res.json(userData)	// Se manda como respuesta el usuario modificado
 					})
 					.catch((err) => {
-						next(err.message);
+						next(err);
 					});
 			}
 			else {
@@ -139,7 +150,7 @@ router.delete("/user/:id", async (req, res, next) => {
 						res.json(userData);	// Se manda como respuesta el usuario eliminado
 					})
 					.catch((err) => {
-						next(err.message)	// En caso de fallo se manda el mensaje 500 Internal Server Error
+						next(err);	// En caso de fallo se manda el mensaje 500 Internal Server Error
 					});
 			}
 			else

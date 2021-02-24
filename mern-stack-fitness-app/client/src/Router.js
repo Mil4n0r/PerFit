@@ -1,17 +1,17 @@
 import React, { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Home } from './components/Home';
-import { UserList } from './components/UserList';
-import { CreateFood } from './components/CreateFood';
-import { EditUser } from './components/EditUser';
-import { DeleteUser } from './components/DeleteUser';
-import { EditFood } from './components/EditFood';
-import { DeleteFood } from './components/DeleteFood';
-import { Login } from './components/Login';
-import { LogOut } from './components/Logout';
-import { Register } from './components/Register';
-import { Profile } from './components/Profile';
-import { FoodList } from './components/FoodList';
+import { Home } from './components/layout/Home';
+import { UserList } from './components/user/UserList';
+import { CreateFood } from './components/food/CreateFood';
+import { EditUser } from './components/user/EditUser';
+import { DeleteUser } from './components/user/DeleteUser';
+import { EditFood } from './components/food/EditFood';
+import { DeleteFood } from './components/food/DeleteFood';
+import { Login } from './components/user/Login';
+import { LogOut } from './components/user/Logout';
+import { Register } from './components/user/Register';
+import { Profile } from './components/user/Profile';
+import { FoodList } from './components/food/FoodList';
 
 import AuthContext from "./context/AuthContext";
 

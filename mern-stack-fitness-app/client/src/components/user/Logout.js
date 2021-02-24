@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import { logOut } from '../api'; 
+import { logOut } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
-import AuthContext from '../context/AuthContext';
+import AuthContext from '../../context/AuthContext';
 
 export const LogOut = () => {
 	const match = useRouteMatch();
