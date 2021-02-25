@@ -27,6 +27,7 @@ export const RegisterSchema2 = yup.object().shape({
 		.phone("ES", true, "El número de teléfono introducido no tiene un formato válido")
 		.required("Por favor introduzca su número de teléfono"),
 	birthdate: yup.date()
+		.typeError("Por favor introduzca una fecha válida")
 		.required("Por favor introduzca su fecha de nacimiento")
 		.test(
 			"future-birthdate",

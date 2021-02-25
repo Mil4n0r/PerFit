@@ -1,10 +1,10 @@
 import React from 'react';
-import { useRouteMatch, useHistory } from "react-router-dom";
+import { useRouteMatch, useHistory } from 'react-router-dom';
 import { registerUser } from '../../api';
-import { Step1 } from './forms/register/Step1';
-import { Step2 } from './forms/register/Step2';
-import { Step3 } from './forms/register/Step3';
-import { StepConfirm } from './forms/register/StepConfirm';
+import { Step1 } from '../common/forms/user/register/Step1';
+import { Step2 } from '../common/forms/user/register/Step2';
+import { Step3 } from '../common/forms/user/register/Step3';
+import { StepConfirm } from '../common/forms/user/register/StepConfirm';
 
 export const Register = () => {
 	const match = useRouteMatch();

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
 import { joiResolver } from '@hookform/resolvers/joi';
 import { Link } from "react-router-dom";
-import FormContext from '../../../../context/FormContext';
+import FormContext from '../../../../../context/FormContext';
 
 export const StepConfirm = ({ onSubmit }) => {
 	const { data } = useContext(FormContext);

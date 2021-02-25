@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { login } from '../../api'
 import AuthContext from '../../context/AuthContext';
 
-import { LoginForm } from './forms/login/LoginForm';
+import { LoginForm } from '../common/forms/user/login/LoginForm';
 
 export const Login = () => {
 	const history = useHistory();
@@ -11,13 +11,9 @@ export const Login = () => {
 	const { getLoggedIn } = useContext(AuthContext);
 
 	const onSubmit = async (data) => {
-		try {
-			await login(data.email, data.password);
-			await getLoggedIn();
-			history.push("/");
-		} catch (error) {
-			console.error(error);
-		}
+		await login(data.email, data.password);
+		await getLoggedIn();
+		history.push("/");
 	};
 
 	return (

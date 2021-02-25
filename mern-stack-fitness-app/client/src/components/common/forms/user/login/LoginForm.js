@@ -4,7 +4,7 @@ import { ErrorMessage } from '@hookform/error-message';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { LoginSchema } from './schemas/LoginSchema';
+import { LoginSchema } from '../../../schemas/user/login/LoginSchema';
 
 export const LoginForm = ({ onSubmit }) => {
 	

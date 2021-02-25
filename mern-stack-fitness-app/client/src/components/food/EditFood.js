@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { getFood, updateFood } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
-import { FoodForm } from './forms/FoodForm';
+import { FoodForm } from '../common/forms/food/FoodForm';
 
 export const EditFood = () => {
 	const match = useRouteMatch();

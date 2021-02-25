@@ -4,8 +4,8 @@ import { useHistory } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import FormContext from '../../../../context/FormContext';
-import { RegisterSchema1 } from './schemas/RegisterSchema1';
+import FormContext from '../../../../../context/FormContext';
+import { RegisterSchema1 } from '../../../schemas/user/register/RegisterSchema1';
 
 export const Step1 = () => {
 	const { data, getData } = useContext(FormContext);

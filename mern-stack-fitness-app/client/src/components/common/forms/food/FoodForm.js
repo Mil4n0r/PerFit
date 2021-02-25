@@ -4,7 +4,7 @@ import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { FoodSchema } from './schemas/FoodSchema';
+import { FoodSchema } from '../../schemas/food/FoodSchema';
 
 const normalizeFloat = (value) => {
 	const normalizedFloat = value.replace(",", ".")
