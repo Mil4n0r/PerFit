@@ -1,17 +1,12 @@
 import React, { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import { Home } from './components/layout/Home';
-import { UserList } from './components/user/UserList';
-import { CreateFood } from './components/food/CreateFood';
-import { EditUser } from './components/user/EditUser';
-import { DeleteUser } from './components/user/DeleteUser';
-import { EditFood } from './components/food/EditFood';
-import { DeleteFood } from './components/food/DeleteFood';
-import { Login } from './components/user/Login';
-import { LogOut } from './components/user/Logout';
-import { Register } from './components/user/Register';
-import { Profile } from './components/user/Profile';
-import { FoodList } from './components/food/FoodList';
+import { Home } from './components/common/layout/Home';
+
+import ExerciseRoutes from './routes/admin/ExerciseRoutes';
+import RoutineRoutes from './routes/admin/RoutineRoutes';
+import FoodRoutes from './routes/member/FoodRoutes';
+import UserRoutes from './routes/admin/UserRoutes';
+import AuthenticationRoutes from './routes/unprotected/AuthenticationRoutes';
 
 import AuthContext from "./context/AuthContext";
 
@@ -26,23 +21,17 @@ function Router() {
 				{
 					loggedIn && (//loggedIn.rol === "socio" && (
 						<>
-							<Route path="/create/food" component={ CreateFood } />
-							<Route path="/edit/food/:id" component={ EditFood } />
-							<Route path="/delete/food/:id" component={ DeleteFood } />
-							<Route path="/edit/user/:id" component={ EditUser } />
-							<Route path="/delete/user/:id" component={ DeleteUser } />
-							<Route path="/user/profile/:id" component={ Profile } />
-							<Route exact path="/admin/list" component={ UserList } />
-							<Route exact path="/food/list" component={ FoodList } />
-							<Route path="/admin/logout" component={ LogOut } />
+							{ExerciseRoutes()}
+							{RoutineRoutes()}
+							{FoodRoutes()}
+							{UserRoutes()}
 						</>
 					)
 				}
 				{
 					!loggedIn && (
 						<>
-							<Route path="/login" component={ Login } />
-							<Route path="/register/step/:step" component={ Register } />
+							{AuthenticationRoutes()}
 						</>
 					)
 				}

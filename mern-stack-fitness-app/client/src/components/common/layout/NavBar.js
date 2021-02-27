@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-import AuthContext from '../../context/AuthContext';
+import AuthContext from '../../../context/AuthContext';
 
-import { LogOut } from '../user/Logout';
+import { LogOut } from '../../user/Logout';
 
 function NavBar() {
 
@@ -26,7 +26,19 @@ function NavBar() {
 									<Link to="/food/list" className="nav-link">Lista de Alimentos</Link>
 								</li>
 								<li className="navbar-item">
-									<Link to="/admin/list" className="nav-link">Lista de Usuarios</Link>
+									<Link to="/create/routine" className="nav-link">Crear Rutina</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/routine/list" className="nav-link">Lista de Rutinas</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/create/exercise" className="nav-link">Crear Ejercicio</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/exercise/list" className="nav-link">Lista de Ejercicios</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/user/list" className="nav-link">Lista de Usuarios</Link>
 								</li>
 								<li className="navbar-item">
 									<Link to={`/user/profile/${loggedIn._id}`} className="nav-link">Perfil</Link>

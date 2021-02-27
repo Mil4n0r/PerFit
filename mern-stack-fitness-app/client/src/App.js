@@ -1,5 +1,5 @@
 import React from 'react';
-import NavBar from './components/layout/NavBar';
+import NavBar from './components/common/layout/NavBar';
 import Router from './Router';
 import { AuthContextProvider } from './context/AuthContext';
 import { FormContextProvider } from './context/FormContext';

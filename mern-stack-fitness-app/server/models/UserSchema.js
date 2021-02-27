@@ -34,6 +34,7 @@ const UserSchema = mongoose.Schema({
 	
 	aliasUsuario: { type: String, required: true, unique: true, trim: true },
 
+	//planUsuario: {  }
 	/*
 	// Componentes de seguridad
 	loginAttempts: { type: Number, required: true, default: 0 },
