@@ -36,6 +36,8 @@ export const UserList = () => {
 										{user.passwordUsuario}
 									</td>
 									<td>
+										<Link to={`/routine/list/${user._id}`}>Obtener rutinas</Link>
+										<Link to={`/associate/routine/${user._id}`}>Asociar rutina</Link>
 										<Link to={`/edit/user/${user._id}`}>Editar</Link>
 										<Link to={`/delete/user/${user._id}`}>Eliminar</Link>
 									</td>

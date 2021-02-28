@@ -306,7 +306,7 @@ router.delete("/exercise/:id", async (req, res, next) => {
 });
 
 // Creación de rutina
-router.post("/create/routine", async (req, res, next) => {
+router.post("/create/routine/", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -321,6 +321,7 @@ router.post("/create/routine", async (req, res, next) => {
 				nombreRutina: req.body.routinename,
 				tiempoRutina: req.body.routinetime,
 				//entrenamientosRutina: req.body.routinetrainings
+				nombrePlan: req.body.routinename
 			});
 			Routine
 				.save()		// Se almacena la rutina
@@ -345,6 +346,29 @@ router.get("/routine/list", async (req, res, next) => {
 		}
 		else {
 			await RoutineModel.find((err, routines) => {	// Buscamos en el modelo todas las rutinas registradas
+				if(err) {
+					next(err);	
+				} 
+				else {	// Se manda como respuesta el contenido de la lista de rutinas (en JSON)
+					res.json(routines);	
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/routine/list/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const userid = req.params.id;
+			await RoutineModel.find({usuarioPlan: userid},(err, routines) => {	// Buscamos en el modelo todas las rutinas registradas
 				if(err) {
 					next(err);	
 				} 
@@ -400,9 +424,8 @@ router.post("/routine/:id", async (req, res, next) => {
 					res.status(404).send("Rutina no encontrada");	// En caso de no encontrarla se lanza el mensaje 404 Not Found
 				} 
 				else {
-					routine.nombreRutina = req.body.routinename		// Se reasignan los campos de la rutina
-					routine.tiempoRutina = req.body.routinetime
-
+					routine.nombrePlan = req.body.routinename;
+					routine.tiempoRutina = req.body.routinetime;
 					routine
 						.save()		// Se almacena la rutina
 						.then(routine => {
@@ -444,6 +467,36 @@ router.delete("/routine/:id", async (req, res, next) => {
 						});
 				}
 			});
+		}
+	})(req,res,next);
+});
+
+router.post("/associate/routine/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			// Creación de la rutina
+			const Routine = new RoutineModel({
+				nombreRutina: req.body.routinename,
+				tiempoRutina: req.body.routinetime,
+				//entrenamientosRutina: req.body.routinetrainings
+				nombrePlan: req.body.routinename,
+				usuarioPlan: req.params.id
+			});
+			Routine
+				.save()		// Se almacena la rutina
+				.then((Routine) => {
+					res.json(Routine);		// Se manda como respuesta la rutina
+				})
+				.catch((err) => {
+					next(err);
+				});
 		}
 	})(req,res,next);
 });

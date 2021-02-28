@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
+import { useRouteMatch } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { getRoutines } from '../../api';
+import { getRoutinesForUser } from '../../api';
 
-export const RoutineList = () => {
+export const UserRoutineList = () => {
+	const match = useRouteMatch();
 	const [routines, setRoutines] = useState([])	// Creamos una variable de estado para almacenar la información de los ejercicios y una función para actualizarla
 
 	useEffect(() => {
 		const fetchRoutines = async () => {
-			const routines = await getRoutines();	// Llamamos a la API para obtener la información de los ejercicios
+			console.log("!", match.params.id);
+			const routines = await getRoutinesForUser(match.params.id);	// Llamamos a la API para obtener la información de los ejercicios
 			setRoutines(routines);	// Actualizamos la información de nuestra variable de estado para que contenga la información de los ejercicios
 		}
 		fetchRoutines();	// Llamamos aparte a fetchRoutines para no hacer el useEffect completo asíncrono (práctica no recomendada)

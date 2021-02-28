@@ -1,15 +1,15 @@
 import React, {useState, useEffect} from 'react';
 import { useRouteMatch, useHistory } from "react-router-dom";
-import { createRoutine } from '../../api';
+import { associateRoutine } from '../../api';
 import { RoutineForm } from '../common/forms/routine/RoutineForm';
 
-export const CreateRoutine = () => {
+export const AssociateRoutine = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
 
 	const onSubmit = async (data) => {
-		await createRoutine(data);	// Llamamos a la API para crear el ejercicio
-		history.push("/routine/list");	// Redireccionamos al listado de ejercicio
+		await associateRoutine(data, match.params.id);	// Llamamos a la API para crear el ejercicio
+		history.push(`/routine/list/${match.params.id}`);	// Redireccionamos al listado de ejercicio
 	};
 
 	return (

@@ -6,7 +6,7 @@ const options = {
 
 const PlanSchema = mongoose.Schema({
 	nombrePlan: { type: String, required: true },
-	}, options
-);
+	usuarioPlan: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"}
+}, options);
 
 module.exports = mongoose.model("Plan", PlanSchema);
