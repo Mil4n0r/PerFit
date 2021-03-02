@@ -19,7 +19,6 @@ export const EditRoutine = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		console.log(data)
 		await updateRoutine(data, match.params.id);
 		history.push("/routine/list");
 	}

@@ -5,6 +5,7 @@ const router = express.Router();
 const UserModel = require('../models/UserSchema');
 const ExerciseModel = require('../models/ExerciseSchema');
 const RoutineModel = require('../models/RoutineSchema');
+const TrainingModel = require('../models/TrainingSchema');
 const checkPermissions = require('../auth/checkPermissions');
 // RUTAS SÓLO ACCESIBLES POR ADMINISTRADORES
 
@@ -131,7 +132,7 @@ router.post("/user/:id", async (req, res, next) => {
 
 // Eliminación del usuario con la id correspondiente (MODIFICAR PARA ELIMINAR OTROS DATOS)
 router.delete("/user/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false, failureFlash: true}, async (err, user, info) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(!user) {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
 		}
@@ -497,6 +498,106 @@ router.post("/associate/routine/:id", async (req, res, next) => {
 				.catch((err) => {
 					next(err);
 				});
+		}
+	})(req,res,next);
+});
+
+router.post("/associate/routine/training/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const Training = new TrainingModel({
+				diaEntrenamiento: req.body.trainingday,
+				trabajoEntrenamiento: {
+					ejercicioEntrenamiento: req.body.trainingexercise,
+					numSeries: req.body.numberofseries,
+					numRepeticiones: req.body.numberofreps,
+					pesosUtilizados: req.body.weightsused,
+				}
+			});
+			
+			Training.save(async () => {
+				if(err) {
+					next(err);
+				}
+				else {
+					try {
+						const routine = await RoutineModel.findByIdAndUpdate(req.params.id, {$push: {entrenamientosRutina: Training._id} }, {useFindAndModify: false} );
+						if(!routine) {
+							res.status(404).send("Rutina no encontrada");
+						}
+						else {
+							res.json(routine);
+						}
+					} catch(err) {
+						next(err);
+					}
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/training/list/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await RoutineModel.findById(id).populate("entrenamientosRutina").exec((err, trainings) => {	// Buscamos en el modelo todas las rutinas registradas
+				if(err) {
+					next(err);	
+				} 
+				else {	// Se manda como respuesta el contenido de la lista de rutinas (en JSON)
+					res.json(trainings.entrenamientosRutina);	
+				}
+			});
+			
+		}
+	})(req,res,next);
+});
+
+// Eliminación del entrenamiento con la id correspondiente
+router.delete("/training/:routineid/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			try {
+				const training = await TrainingModel.findByIdAndDelete(id, {useFindAndModify: false})	// Se busca el ejercicio cuya id coincida
+				if(!training) {
+					res.status(404).send("Entrenamiento no encontrado");
+				}
+				else {
+					const routine = await RoutineModel.findByIdAndUpdate(req.params.routineid, {$pull: {entrenamientosRutina: id} }, {useFindAndModify: false} );
+					if(!routine) {
+						res.status(404).send("Rutina no encontrada");
+					}
+					else {
+						res.json(routine);
+					}
+				} 
+			} catch(err_routine) {
+				next(err_routine);
+			}
+			
 		}
 	})(req,res,next);
 });

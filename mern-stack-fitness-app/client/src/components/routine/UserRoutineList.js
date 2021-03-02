@@ -9,7 +9,6 @@ export const UserRoutineList = () => {
 
 	useEffect(() => {
 		const fetchRoutines = async () => {
-			console.log("!", match.params.id);
 			const routines = await getRoutinesForUser(match.params.id);	// Llamamos a la API para obtener la información de los ejercicios
 			setRoutines(routines);	// Actualizamos la información de nuestra variable de estado para que contenga la información de los ejercicios
 		}

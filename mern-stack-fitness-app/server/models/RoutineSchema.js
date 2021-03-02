@@ -7,14 +7,7 @@ const RoutineSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
 	nombreRutina: { type: String, required: true },
 	tiempoRutina: { type: Number, required: true },
-	entrenamientosRutina: 
-	[{
-		ejercicioEntrenamiento: { type: mongoose.Schema.Types.ObjectId, ref: "Ejercicio" },
-		numSeries: { type: Number, required: true, trim: true },
-		numRepeticiones: [{ type: Number, required: true, trim: true }],
-		pesosUtilizados: [{ type: Number, required: true, trim: true }],
-		diaEntrenamiento: { type: Date, required: true, trim: true },
-	}]
+	entrenamientosRutina: [{ type: mongoose.Schema.Types.ObjectId, ref: "Entrenamiento" }]
 });
 /*
 const RoutineSchema = mongoose.Schema({
