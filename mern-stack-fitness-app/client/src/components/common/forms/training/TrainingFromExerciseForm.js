@@ -7,32 +7,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { TrainingSchema } from '../../schemas/training/TrainingSchema';
 
-export const TrainingForm = ({ training, onSubmit }) => {
-
-	const [exercise, setExercise] = useState();	
-
-	useEffect(() => {
-		const fetchExercise = async () => {
-			const exercise = await getExercise(training.trabajoEntrenamiento.ejercicioEntrenamiento); // Habría que almacenar todos los ejercicios (cambiar diseño)
-			setExercise(exercise);
-		}
-		fetchExercise();	// Llamamos aparte a fetchUser para no hacer el useEffect completo asíncrono (práctica no recomendada)
-		// (Evita que salte warning por usar cadena vacía)
-		// eslint-disable-next-line 
-	}, []);
+export const TrainingFromExerciseForm = ({ exercise, onSubmit }) => {
 
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-			trainingday: training ? training.diaEntrenamiento : "",
-			trabajoEntrenamiento: 
-			[{
-				ejercicioEntrenamiento: { type: mongoose.Schema.Types.ObjectId, ref: "Ejercicio" },
-				numSeries: { type: Number, required: true, trim: true },
-				numRepeticiones: [{ type: Number, required: true, trim: true }],
-				pesosUtilizados: [{ type: Number, required: true, trim: true }],
-			}],
-			exercisepreview: training.trabajoEntrenamiento ? exercise.exercisename : "",
-			trainingexercise: training.trabajoEntrenamiento ? training.trabajoEntrenamiento.ejercicioEntrenamiento : "",
+			exercisepreview: exercise ? exercise.nombreEjercicio : "",
+			trainingexercise: exercise ? exercise._id : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(TrainingSchema),
 		mode: "onTouched"

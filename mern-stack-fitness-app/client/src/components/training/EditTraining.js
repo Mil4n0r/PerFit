@@ -26,7 +26,7 @@ export const CreateTraining = () => { // Hay que pasar como parámetro la id de 
 	return exercise ? (
 		<div className="container">
 			<div className="mt-3">
-				<h3>Asociar entrenamiento</h3>
+				<h3>Editar entrenamiento</h3>
 				<TrainingFromExerciseForm exercise={exercise} onSubmit={onSubmit} />
 			</div>
 		</div>

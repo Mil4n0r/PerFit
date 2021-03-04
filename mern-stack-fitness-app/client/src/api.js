@@ -24,6 +24,10 @@ export * from './api/exercise_api';
 
 export * from './api/routine_api';
 
+// ENTRENAMIENTO
+
+export * from './api/training_api';
+
 //////////////////////////////////////////////
 
 // CONTEXTO

@@ -24,12 +24,3 @@ export const associateRoutine = (routine,id) => axios.post(`http://localhost:400
 	data: routine
 })
 	.then(res => res.data);
-
-export const addTraining = (training, id) => axios.post(`http://localhost:4000/admin/associate/routine/training/${id}`, training, { // id = id rutina
-	data: training
-})
-
-export const deleteTraining = (routineid, id) => axios.delete(`http://localhost:4000/admin/training/${routineid}/${id}`)// id = id entrenamiento
-
-export const getTrainings = (id) => axios.get(`http://localhost:4000/admin/training/list/${id}`) // id = id rutina
-	.then(res => res.data)

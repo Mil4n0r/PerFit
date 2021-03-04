@@ -1,15 +1,14 @@
-import React, {useState, useEffect} from 'react';
+/*import React, {useState, useEffect} from 'react';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
-//import { associateRoutine } from '../../api';
-import { getExercises, deleteTraining, getRoutine, getTrainings } from '../../api';
+import { getExercises, getTraining, getWorkouts, deleteWorkout } from '../../api';
 
-export const AssociateExercisesToRoutine = () => {
+export const AssociateExercisesToTraining = () => {
 	const match = useRouteMatch();
 
 	const [exercises, setExercises] = useState();
-	const [routine, setRoutine] = useState();
-	const [trainings, setTrainings] = useState();
+	const [training, setTraining] = useState();
+	const [workouts, setWorkouts] = useState();
 	
 	const [deleted, setDeleted] = useState(); // Permite recargar la lista de entrenamientos al borrar
 
@@ -18,57 +17,55 @@ export const AssociateExercisesToRoutine = () => {
 			const exercises = await getExercises();
 			setExercises(exercises);
 		}
-		const fetchRoutine = async () => {
-			const routine = await getRoutine(match.params.id);
-			setRoutine(routine);
+		const fetchTraining = async () => {
+			const training = await getTraining(match.params.id);
+			setTraining(training);
 		}
-		
 		fetchExercises();
-		fetchRoutine();
-
+		fetchTraining();
 		// (Evita que salte warning por usar cadena vacía)
 		// eslint-disable-next-line 
 	}, []);
 
 	useEffect(() => {
-		const fetchTrainings = async () => {
-			const trainings = await getTrainings(match.params.id);
-			setTrainings(trainings);
+		const fetchWorkouts = async () => {
+			const workouts = await getWorkouts(match.params.id);
+			setWorkouts(workouts);
 		}
-		fetchTrainings();
+		fetchWorkouts();
 	}, [deleted]);
 	
-	const deleteTrainingFromRoutine = async (trainingid) => {
-		await deleteTraining(match.params.id, trainingid); // Debemos borrar tanto el entrenamiento como su referencia en la rutina...
+	const deleteWorkoutFromTraining = async (workoutid) => {
+		await deleteWorkout(match.params.id, workoutid);
 	}
 
 	return (
 		<>
 			{
-				routine && routine.entrenamientosRutina && (
+				training && training.trabajoEntrenamiento && (
 					<>
-						<h3>Entrenamientos asociados</h3>
+						<h3>Ejercicios asociados</h3>
 						<table className="table table-stripped mt-3">
 							<thead>
 								<tr>
-									<th>Entrenamiento</th>
+									<th>Ejercicio</th>
 									<th>Acción</th>
 								</tr>
 							</thead>
 							<tbody>
 							{
-								trainings && trainings.map((training) => (
-									<tr key={training._id}>
+								workouts && workouts.map((workout) => (
+									<tr key={workout._id}>
 										<td>
-											{JSON.stringify(training.trabajoEntrenamiento)}
+											{JSON.stringify(workout.trabajoEntrenamiento)}
 										</td>
 										<td>
-											<Link to={`/edit/training/${training._id}`}>Editar entrenamiento</Link>
+											<Link to={`/edit/workout/${workout._id}`}>Editar ejercicio</Link>
 											<button onClick={() => {
-												deleteTrainingFromRoutine(training._id)
-												setDeleted(training._id);
+												deleteWorkoutFromTraining(workout._id)
+												setDeleted(workout._id);
 											}
-											}>Eliminar de la rutina</button>
+											}>Eliminar del entrenamiento</button>
 										</td>
 									</tr>
 									
@@ -100,7 +97,7 @@ export const AssociateExercisesToRoutine = () => {
 									{exercise.tipoEjercicio}
 								</td>
 								<td>
-									<Link to={`/create/training/${match.params.id}/${exercise._id}`}>Añadir entrenamiento</Link>
+									<Link to={`/create/workout/${match.params.id}/${exercise._id}`}>Añadir ejercicio al entrenamiento</Link>
 								</td>
 							</tr>
 						))
@@ -111,4 +108,4 @@ export const AssociateExercisesToRoutine = () => {
 		</>
 	);
 }
-
+*/

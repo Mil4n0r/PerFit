@@ -12,7 +12,11 @@ const DietSchema = Plan.discriminator("Diet",
 			proteinas: { type: Number, required: true, trim: true },
 			grasas: { type: Number, required: true, trim: true }
 		},
-		comidasDieta: { type: mongoose.Schema.Types.ObjectId, ref: "Comida"}
+		diarioDieta: [{
+			comida: [{ type: mongoose.Schema.Types.ObjectId, ref: "Comida"}],
+			diaComida: { type: Date, required: true, trim: true },
+		}]
+			
 	})
 );
 
