@@ -1,4 +1,4 @@
-/*import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { getExercises, getTraining, getWorkouts, deleteWorkout } from '../../api';
@@ -53,24 +53,26 @@ export const AssociateExercisesToTraining = () => {
 								</tr>
 							</thead>
 							<tbody>
-							{
-								workouts && workouts.map((workout) => (
-									<tr key={workout._id}>
-										<td>
-											{JSON.stringify(workout.trabajoEntrenamiento)}
-										</td>
-										<td>
-											<Link to={`/edit/workout/${workout._id}`}>Editar ejercicio</Link>
-											<button onClick={() => {
-												deleteWorkoutFromTraining(workout._id)
-												setDeleted(workout._id);
-											}
-											}>Eliminar del entrenamiento</button>
-										</td>
-									</tr>
-									
-								))
-							}
+								{
+									workouts && (
+										workouts.map(workout => (
+											<tr key={workout._id}>
+												{console.log(workout)}
+												<td>
+													{JSON.stringify(workout)}
+												</td>
+												<td>
+													<Link to={`/edit/workout/${workout._id}`}>Editar ejercicio</Link>
+														<button onClick={() => {
+															deleteWorkoutFromTraining(workout._id)
+															setDeleted(workout._id);
+														}
+													}>Eliminar del entrenamiento</button>
+												</td>
+											</tr>
+										)
+									))
+								}
 							</tbody>
 						</table>
 					</>
@@ -108,4 +110,3 @@ export const AssociateExercisesToTraining = () => {
 		</>
 	);
 }
-*/

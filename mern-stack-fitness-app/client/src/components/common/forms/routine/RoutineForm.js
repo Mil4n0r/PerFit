@@ -37,7 +37,7 @@ export const RoutineForm = ({ routine, onSubmit }) => {
 						<ErrorMessage errors={errors} name="routinetype" as="p" />
 						{
 							routine && (
-								<Link to={`/associate/routine/exercise/${routine._id}`}>Asociar ejercicios a la rutina</Link>
+								<Link to={`/associate/routine/training/${routine._id}`}>Asociar entrenamientos a la rutina</Link>
 							)
 						}
 					</div>

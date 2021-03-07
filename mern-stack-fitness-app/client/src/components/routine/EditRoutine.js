@@ -26,7 +26,7 @@ export const EditRoutine = () => {
 	return routine ? (
 		<div className="container">
 			<div className="mt-3">
-				<h3>Editar ejercicio</h3>
+				<h3>Editar rutina</h3>
 				<RoutineForm routine={routine} onSubmit={onSubmit} />
 			</div>
 		</div>

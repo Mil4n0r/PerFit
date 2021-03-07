@@ -18,7 +18,7 @@ export const updateRoutine = (routine,id) => axios.post(`http://localhost:4000/a
 	data: routine
 });
 
-export const deleteRoutine = (id) => axios.delete(`http://localhost:4000/admin/routine/${id}`)
+export const deleteRoutine = (id) => axios.delete(`http://localhost:4000/admin/routine/${id}`);
 
 export const associateRoutine = (routine,id) => axios.post(`http://localhost:4000/admin/associate/routine/${id}`, routine, {
 	data: routine

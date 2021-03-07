@@ -1,33 +1,34 @@
 import React, {useState, useEffect} from 'react';
 import { useRouteMatch, useHistory } from "react-router-dom";
-import { addTraining, getExercise } from '../../api';
-import { TrainingFromExerciseForm } from '../common/forms/training/TrainingFromExerciseForm';
+import { addTraining, getExercises } from '../../api';
+import { TrainingForm } from '../common/forms/training/TrainingForm';
 
-export const CreateTraining = () => { // Hay que pasar como parámetro la id de la rutina!!!!
+export const CreateTraining = () => {
 	const match = useRouteMatch();
-	const [exercise, setExercise] = useState();	
+	const [exercises, setExercises] = useState();	
 	const history = useHistory();
-
+	
 	useEffect(() => {
-		const fetchExercise = async () => {
-			const exercise = await getExercise(match.params.exerciseid);
-			setExercise(exercise);
+		const fetchExercises = async () => {
+			const exercises = await getExercises();
+			setExercises(exercises);
 		}
-		fetchExercise();	// Llamamos aparte a fetchUser para no hacer el useEffect completo asíncrono (práctica no recomendada)
+		fetchExercises();	// Llamamos aparte a fetchUser para no hacer el useEffect completo asíncrono (práctica no recomendada)
 		// (Evita que salte warning por usar cadena vacía)
 		// eslint-disable-next-line 
 	}, []);
 
 	const onSubmit = async (data) => {
-		await addTraining(data, match.params.routineid); // ID rutina
-		history.push(`/associate/routine/exercise/${match.params.routineid}`);
+		const training = await addTraining(data, match.params.id); // ID rutina
+		//history.push(`/associate/routine/exercise/${match.params.id}`);
+		history.push(`/associate/training/exercise/${training._id}`);
 	};
 
-	return exercise ? (
+	return exercises ? (
 		<div className="container">
 			<div className="mt-3">
 				<h3>Asociar entrenamiento</h3>
-				<TrainingFromExerciseForm exercise={exercise} onSubmit={onSubmit} />
+				<TrainingForm onSubmit={onSubmit} />
 			</div>
 		</div>
 	) : (

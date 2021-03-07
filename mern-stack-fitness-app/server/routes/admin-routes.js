@@ -513,33 +513,34 @@ router.post("/associate/routine/training/:id", async (req, res, next) => {
 		}
 		else {
 			const Training = new TrainingModel({
-				diaEntrenamiento: req.body.trainingday,
-				trabajoEntrenamiento: {
-					ejercicioEntrenamiento: req.body.trainingexercise,
-					numSeries: req.body.numberofseries,
-					numRepeticiones: req.body.numberofreps,
-					pesosUtilizados: req.body.weightsused,
-				}
+				nombreEntrenamiento: req.body.trainingname,
+				diaEntrenamiento: req.body.trainingday
 			});
 			
-			Training.save(async () => {
-				if(err) {
-					next(err);
-				}
-				else {
-					try {
-						const routine = await RoutineModel.findByIdAndUpdate(req.params.id, {$push: {entrenamientosRutina: Training._id} }, {useFindAndModify: false} );
-						if(!routine) {
-							res.status(404).send("Rutina no encontrada");
-						}
-						else {
-							res.json(routine);
-						}
-					} catch(err) {
-						next(err);
+			Training
+				.save()
+				.then((Training) => {
+					return RoutineModel.findByIdAndUpdate(
+						req.params.id,
+						{
+							$push: {
+								entrenamientosRutina: Training._id
+							}
+						},
+						{useFindAndModify: false}
+					)
+				})
+				.then((Routine) => {
+					if(!Routine) {
+						res.status(404).send("Rutina no encontrada");
 					}
-				}
-			});
+					else {
+						res.json(Training)
+					}
+				})
+				.catch((err) => {
+					next(err);
+				})
 		}
 	})(req,res,next);
 });
@@ -598,6 +599,118 @@ router.delete("/training/:routineid/:id", async (req, res, next) => {
 				next(err_routine);
 			}
 			
+		}
+	})(req,res,next);
+});
+router.get("/routine/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await RoutineModel.findById(id, (err, routine) => {	// Se busca la rutina cuya id coincida
+				if(err) {
+					next(err);
+				}
+				else if(!routine) {
+					res.status(404).send("Rutina no encontrado");	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+				}
+				else {
+					res.json(routine);		// Se manda como respuesta la rutina encontrada
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/training/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await TrainingModel.findById(id, (err, training) => {	// Se busca el entrenamiento cuya id coincida
+				if(err) {
+					next(err);
+				}
+				else if(!training) {
+					res.status(404).send("Rutina no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				}
+				else {
+					res.json(training);		// Se manda como respuesta el entrenamiento encontrado
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/workout/list/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await TrainingModel.findById(id).populate("trabajoEntrenamiento").exec((err, workouts) => {	// Buscamos en el modelo todos los ejercicios del entrenamiento
+				if(err) {
+					next(err);	
+				} 
+				else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
+					res.json(workouts.trabajoEntrenamiento);	
+				}
+			});
+			
+		}
+	})(req,res,next);
+});
+
+router.post("/associate/training/workout/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			try {
+				const Training = await TrainingModel.findByIdAndUpdate(
+					req.params.id,
+					{
+						$push: { 
+							trabajoEntrenamiento: {
+								ejercicioEntrenamiento: req.body.trainingexercise,
+								numSeries: req.body.numberofseries,
+								numRepeticiones: req.body.numberofreps,
+								pesosUtilizados: req.body.weightsused
+							}
+						}
+					},
+					{useFindAndModify: false} );
+				if(!Training) {
+					res.status(404).send("Entrenamiento no encontrado");
+				}
+				else {
+					res.json(Training)
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });

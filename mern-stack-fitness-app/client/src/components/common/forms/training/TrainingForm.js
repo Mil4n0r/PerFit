@@ -9,30 +9,9 @@ import { TrainingSchema } from '../../schemas/training/TrainingSchema';
 
 export const TrainingForm = ({ training, onSubmit }) => {
 
-	const [exercise, setExercise] = useState();	
-
-	useEffect(() => {
-		const fetchExercise = async () => {
-			const exercise = await getExercise(training.trabajoEntrenamiento.ejercicioEntrenamiento); // Habría que almacenar todos los ejercicios (cambiar diseño)
-			setExercise(exercise);
-		}
-		fetchExercise();	// Llamamos aparte a fetchUser para no hacer el useEffect completo asíncrono (práctica no recomendada)
-		// (Evita que salte warning por usar cadena vacía)
-		// eslint-disable-next-line 
-	}, []);
-
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-			trainingday: training ? training.diaEntrenamiento : "",
-			trabajoEntrenamiento: 
-			[{
-				ejercicioEntrenamiento: { type: mongoose.Schema.Types.ObjectId, ref: "Ejercicio" },
-				numSeries: { type: Number, required: true, trim: true },
-				numRepeticiones: [{ type: Number, required: true, trim: true }],
-				pesosUtilizados: [{ type: Number, required: true, trim: true }],
-			}],
-			exercisepreview: training.trabajoEntrenamiento ? exercise.exercisename : "",
-			trainingexercise: training.trabajoEntrenamiento ? training.trabajoEntrenamiento.ejercicioEntrenamiento : "",
+			trainingname: training ? training.nombreEntrenamiento : ""
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(TrainingSchema),
 		mode: "onTouched"
@@ -46,30 +25,20 @@ export const TrainingForm = ({ training, onSubmit }) => {
 				<form onSubmit={submitHandler}>
 					<div className="form-group">
 						<label htmlFor="text">
-							Ejercicio
+							Nombre del entrenamiento
 						</label>
-						<input className="form-control" ref={register} type="text" name="exercisepreview" id="exercisepreview" disabled />
-						<input className="form-control" ref={register} type="text" name="trainingexercise" id="trainingexercise" readOnly /><p>Hay que marcarlo como hidden</p>
+						<input className="form-control" ref={register} type="text" name="trainingname" id="trainingname" />
+						<ErrorMessage errors={errors} name="trainingname" as="p" />
 						<label htmlFor="text">
-							Número de series
-						</label>
-						<input className="form-control" ref={register} type="number" name="numberofseries" id="numberofseries" />
-						<ErrorMessage errors={errors} name="numberofseries" as="p" />
-						<label htmlFor="text">
-							Número de repeticiones
-						</label>
-						<input className="form-control" ref={register} type="number" name="numberofreps" id="numberofreps" />
-						<ErrorMessage errors={errors} name="numberofreps" as="p" />
-						<label htmlFor="text">
-							Pesos utilizados
-						</label>
-						<input className="form-control" ref={register} type="number" name="weightsused" id="weightsused" />
-						<ErrorMessage errors={errors} name="weightsused" as="p" />
-						<label htmlFor="text">
-							Fecha
+							Fecha del entrenamiento
 						</label>
 						<input className="form-control" ref={register} type="date" name="trainingday" id="trainingday" />
 						<ErrorMessage errors={errors} name="trainingday" as="p" />
+						{
+							training && (
+								<Link to={`/associate/training/exercise/${training._id}`}>Asociar ejercicios al entrenamiento</Link>
+							)
+						}
 					</div>
 					<div className="form-group">
 						<button type="submit" className="btn btn-primary">
