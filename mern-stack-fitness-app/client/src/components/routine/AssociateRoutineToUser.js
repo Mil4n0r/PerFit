@@ -3,7 +3,7 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { associateRoutine } from '../../api';
 import { RoutineForm } from '../common/forms/routine/RoutineForm';
 
-export const AssociateRoutine = () => {
+export const AssociateRoutineToUser = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
 

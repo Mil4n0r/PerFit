@@ -35,8 +35,7 @@ export const ExerciseList = () => {
 										{exercise.tipoEjercicio}
 									</td>
 									<td>
-										<Link to={`/edit/exercise/${exercise._id}`}>Editar</Link>
-										<Link to={`/delete/exercise/${exercise._id}`}>Eliminar</Link>
+										<Link to={`/exercise/info/${exercise._id}`}>Ver</Link>
 									</td>
 								</tr>
 							))

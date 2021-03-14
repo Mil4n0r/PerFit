@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 const cookieParser = require('cookie-parser');
 
 const routes = require("./routes/routes");
-const memberRoutes = require("./routes/member-routes");
+const userRoutes = require("./routes/user-routes");
 const adminRoutes = require("./routes/admin-routes");
 
 const {errorHandler,logErrors} = require('./errors/defaultErrors');
@@ -41,7 +41,7 @@ require('./auth/auth');	// Importación de las estrategias de passport
 // Agregación de rutas
 
 app.use(routes);
-//app.use('/user',memberRoutes);
+app.use('/user',userRoutes);
 app.use('/admin',adminRoutes);
 
 app.use(logErrors);

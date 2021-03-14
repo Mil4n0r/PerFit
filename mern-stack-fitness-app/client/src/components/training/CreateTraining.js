@@ -20,7 +20,6 @@ export const CreateTraining = () => {
 
 	const onSubmit = async (data) => {
 		const training = await addTraining(data, match.params.id); // ID rutina
-		//history.push(`/associate/routine/exercise/${match.params.id}`);
 		history.push(`/associate/training/exercise/${training._id}`);
 	};
 

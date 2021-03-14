@@ -10,7 +10,8 @@ const FoodSchema = mongoose.Schema({
         carbohidratos: { type: Number, required: true, trim: true },
         proteinas: { type: Number, required: true, trim: true },
         grasas: { type: Number, required: true, trim: true }
-    }
+    },
+    creadoPor: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario" }
 });
 
 module.exports = mongoose.model("Alimento", FoodSchema);

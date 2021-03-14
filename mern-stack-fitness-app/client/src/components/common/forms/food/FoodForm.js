@@ -15,13 +15,13 @@ export const FoodForm = ({ food, onSubmit }) => {
 	
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: {
-			foodname: food ? food.nombreAlimento : "",
-			foodsize: food ? food.tamRacion : "",
-			unit: food ? food.unidadesRacion : "",
-			calories: food ? food.nutrientesRacion.calorias : "",
-			carbs: food ? food.nutrientesRacion.carbohidratos : "",
-			proteins: food ? food.nutrientesRacion.proteinas : "",
-			fats: food ? food.nutrientesRacion.grasas : ""
+			foodname: food ? food.foodInfo.nombreAlimento : "",
+			foodsize: food ? food.foodInfo.tamRacion : "",
+			unit: food ? food.foodInfo.unidadesRacion : "",
+			calories: food ? food.foodInfo.nutrientesRacion.calorias : "",
+			carbs: food ? food.foodInfo.nutrientesRacion.carbohidratos : "",
+			proteins: food ? food.foodInfo.nutrientesRacion.proteinas : "",
+			fats: food ? food.foodInfo.nutrientesRacion.grasas : ""
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(FoodSchema),
 		mode: "onTouched"

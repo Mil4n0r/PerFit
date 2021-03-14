@@ -3,11 +3,31 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { getExercises, getTraining, getWorkouts, deleteWorkout } from '../../api';
 
+const workoutFormat = (w) => {
+	const reps = w.numRepeticiones;
+	const weights = w.pesosUtilizados;
+	const exercisename = w.ejercicioEntrenamiento.nombreEjercicio;
+	const exercisetype = w.ejercicioEntrenamiento.tipoEjercicio;
+
+	const items = reps.map((_, i) => {
+		return <li key={i}>{reps[i]} x {weights[i]}</li>;
+	});
+	
+	return (
+		<>
+			<p>{exercisename} ({exercisetype}):</p>
+			<p>Series:</p>
+			<ol>
+				{items}
+			</ol>
+		</>
+	)
+}
+
 export const AssociateExercisesToTraining = () => {
 	const match = useRouteMatch();
 
 	const [exercises, setExercises] = useState();
-	const [training, setTraining] = useState();
 	const [workouts, setWorkouts] = useState();
 	
 	const [deleted, setDeleted] = useState(); // Permite recargar la lista de entrenamientos al borrar
@@ -17,12 +37,7 @@ export const AssociateExercisesToTraining = () => {
 			const exercises = await getExercises();
 			setExercises(exercises);
 		}
-		const fetchTraining = async () => {
-			const training = await getTraining(match.params.id);
-			setTraining(training);
-		}
 		fetchExercises();
-		fetchTraining();
 		// (Evita que salte warning por usar cadena vacía)
 		// eslint-disable-next-line 
 	}, []);
@@ -37,12 +52,13 @@ export const AssociateExercisesToTraining = () => {
 	
 	const deleteWorkoutFromTraining = async (workoutid) => {
 		await deleteWorkout(match.params.id, workoutid);
+		setDeleted(workoutid);
 	}
 
 	return (
 		<>
 			{
-				training && training.trabajoEntrenamiento && (
+				workouts && (
 					<>
 						<h3>Ejercicios asociados</h3>
 						<table className="table table-stripped mt-3">
@@ -54,23 +70,19 @@ export const AssociateExercisesToTraining = () => {
 							</thead>
 							<tbody>
 								{
-									workouts && (
-										workouts.map(workout => (
-											<tr key={workout._id}>
-												{console.log(workout)}
-												<td>
-													{JSON.stringify(workout)}
-												</td>
-												<td>
-													<Link to={`/edit/workout/${workout._id}`}>Editar ejercicio</Link>
-														<button onClick={() => {
-															deleteWorkoutFromTraining(workout._id)
-															setDeleted(workout._id);
-														}
-													}>Eliminar del entrenamiento</button>
-												</td>
-											</tr>
-										)
+									workouts.map(workout => (
+										<tr key={workout._id}>
+											<td>
+												{workoutFormat(workout)}
+											</td>
+											<td>
+												<Link to={`/edit/workout/${match.params.id}/${workout._id}`}>Editar ejercicio</Link>
+													<button onClick={async () => {
+														deleteWorkoutFromTraining(workout._id)
+													}
+												}>Eliminar del entrenamiento</button>
+											</td>
+										</tr>
 									))
 								}
 							</tbody>

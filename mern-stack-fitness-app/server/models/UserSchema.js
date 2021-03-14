@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
+const RoutineModel = require('./RoutineSchema');
+const DietModel = require('./DietSchema');
+
 const UserSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
 	emailUsuario: {
@@ -64,6 +67,11 @@ UserSchema.pre('save', async function(next) {
 
 	user.passwordUsuario = hash;
 	next();
+});
+
+UserSchema.post('remove', async function() {
+	await RoutineModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
+	//await DietModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
 });
 
 UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB = Callback para recoger los errores

@@ -11,7 +11,8 @@ export const TrainingForm = ({ training, onSubmit }) => {
 
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-			trainingname: training ? training.nombreEntrenamiento : ""
+			trainingname: training ? training.nombreEntrenamiento : "",
+			trainingday: training ? training.diaEntrenamiento.substr(0,10) : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(TrainingSchema),
 		mode: "onTouched"

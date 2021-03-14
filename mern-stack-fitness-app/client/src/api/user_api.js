@@ -18,7 +18,7 @@ export const logIn = (email, password) => axios.post("http://localhost:4000/logi
 	data: {email,password}
 })
 
-export const logOut = () => axios.get("http://localhost:4000/admin/logout")
+export const logOut = () => axios.get("http://localhost:4000/user/logout")
 
 export const updateUser = (user,id) => axios.post(`http://localhost:4000/admin/user/${id}`, user, {
 	data: user

@@ -10,8 +10,8 @@ export const ExerciseForm = ({ exercise, onSubmit }) => {
 	
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-			exercisename: exercise ? exercise.nombreEjercicio : "",
-			exercisetype: exercise ? exercise.tipoEjercicio : "",
+			exercisename: exercise ? exercise.exerciseInfo.nombreEjercicio : "",
+			exercisetype: exercise ? exercise.exerciseInfo.tipoEjercicio : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(ExerciseSchema),
 		mode: "onTouched"

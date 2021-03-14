@@ -3,10 +3,13 @@ const passport = require('passport');
 const router = express.Router();
 
 const UserModel = require('../models/UserSchema');
-const ExerciseModel = require('../models/ExerciseSchema');
 const RoutineModel = require('../models/RoutineSchema');
+const WorkoutModel = require('../models/WorkoutSchema');
 const TrainingModel = require('../models/TrainingSchema');
-const checkPermissions = require('../auth/checkPermissions');
+const { checkPermissionsUser } = require('../auth/checkPermissions');
+
+const mongoose = require('mongoose');
+
 // RUTAS SÓLO ACCESIBLES POR ADMINISTRADORES
 
 // Consulta de usuarios
@@ -32,36 +35,6 @@ router.get("/list", async (req,res,next) => {
 	})(req,res,next);
 });
 
-router.get("/checkloggedin", (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
-		if(err || !user) {
-			res.send(false)
-		}
-		else {
-			res.send(user);
-		}
-	})(req,res,next);
-});
-
-// Acceso al cierre de sesión del usuario activo
-router.get("/logout", (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message);
-			next(error);
-		}
-		else {
-			const message = "Se ha cerrado sesión de manera satisfactoria"
-			req.logout()
-			res.clearCookie("token");
-			res.status(200).send(message);
-		}
-	})(req,res,next);
-});
-
 router.get("/user/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err || !user) {
@@ -71,7 +44,7 @@ router.get("/user/:id", async (req, res, next) => {
 			next(info.message);
 		}
 		else {
-			const permissionsRes = await checkPermissions(user, req, res);	// Se busca el usuario cuya id coincida
+			const permissionsRes = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
 			const resError = permissionsRes.error;
 			const resUser = permissionsRes.user;
 			const resPermission = permissionsRes.permission;
@@ -96,7 +69,7 @@ router.post("/user/:id", async (req, res, next) => {
 			next(info.message);
 		}
 		else {
-			const permissionsResData = await checkPermissions(user, req, res);	// Se busca el usuario cuya id coincida
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
 			const resError = permissionsResData.error;
 			const resUser = permissionsResData.user;
 			const resPermission = permissionsResData.permission;
@@ -137,7 +110,7 @@ router.delete("/user/:id", async (req, res, next) => {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
 		}
 		else {
-			const permissionsResData = await checkPermissions(user, req, res);	// Se busca el usuario cuya id coincida
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
 			const resError = permissionsResData.error;
 			const resUser = permissionsResData.user;
 			const resPermission = permissionsResData.permission;
@@ -164,150 +137,8 @@ router.delete("/user/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-// Creación de ejercicio
-router.post("/create/exercise", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			// Creación del ejercicio
-			const Exercise = new ExerciseModel({
-				nombreEjercicio: req.body.exercisename,
-				tipoEjercicio: req.body.exercisetype
-			});
-			Exercise
-				.save()		// Se almacena el ejercicio
-				.then((Exercise) => {
-					res.json(Exercise);		// Se manda como respuesta el ejercicio
-				})
-				.catch((err) => {
-					next(err);
-				});
-		}
-	})(req,res,next);
-});
-
-router.get("/exercise/list", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			ExerciseModel.find((err, exercises) => {	// Buscamos en el modelo todos los ejercicios registrados
-				if(err) {
-					next(err);	
-				} 
-				else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
-					res.json(exercises);	
-				}
-			});
-		}
-	})(req,res,next);
-});
-
-// Consulta del ejercicio con la id correspondiente
-router.get("/exercise/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			await ExerciseModel.findById(id, (err, exercise) => {	// Se busca el ejercicio cuya id coincida
-				if(err) {
-					next(err);
-				}
-				else if(!exercise) {
-					res.status(404).send("Ejercicio no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-				}
-				else {
-					res.json(exercise);		// Se manda como respuesta el ejercicio encontrado
-				}
-			});
-		}
-	})(req,res,next);
-});
-
-// Modificación del ejercicio con la id correspondiente
-router.post("/exercise/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			await ExerciseModel.findById(id, (err, exercise) => {	// Se busca el ejercicio cuya id coincida
-				if(err || !exercise) {
-					res.status(404).send("Ejercicio no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-				} 
-				else {
-					exercise.nombreEjercicio = req.body.exercisename		// Se reasignan los campos del ejercicio
-					exercise.tipoEjercicio = req.body.exercisetype
-
-					exercise
-						.save()		// Se almacena el ejercicio
-						.then(exercise => {
-							res.json(exercise)	// Se manda como respuesta el ejercicio modificado
-						})
-						.catch((err) => {
-							next(err);
-						});
-				}
-			});
-		}
-	})(req,res,next);
-});
-
-// Eliminación del ejercicio con la id correspondiente
-router.delete("/exercise/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			await ExerciseModel.findById(id, (err, exercise) => {	// Se busca el ejercicio cuya id coincida
-				if(err || !exercise) {
-					res.status(404).send("Ejercicio no encontrado");
-				}
-				else {
-					exercise
-						.remove()	// Se elimina el ejercicio
-						.then(exercise => {
-							res.json(exercise);	// Se manda como respuesta el ejercicio eliminado
-						})
-						.catch((err) => {
-							next(err);
-						});
-				}
-			});
-		}
-	})(req,res,next);
-});
-
 // Creación de rutina
-router.post("/create/routine/", async (req, res, next) => {
+router.post("/create/routine", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -524,7 +355,7 @@ router.post("/associate/routine/training/:id", async (req, res, next) => {
 						req.params.id,
 						{
 							$push: {
-								entrenamientosRutina: Training._id
+								entrenamientosRutina: mongoose.Types.ObjectId(Training._id)
 							}
 						},
 						{useFindAndModify: false}
@@ -598,7 +429,6 @@ router.delete("/training/:routineid/:id", async (req, res, next) => {
 			} catch(err_routine) {
 				next(err_routine);
 			}
-			
 		}
 	})(req,res,next);
 });
@@ -639,7 +469,7 @@ router.get("/training/:id", async (req, res, next) => {
 		}
 		else {
 			const id = req.params.id;
-			await TrainingModel.findById(id, (err, training) => {	// Se busca el entrenamiento cuya id coincida
+			await TrainingModel.findById(id).populate("trabajoEntrenamiento").exec((err, training) => {	// Se busca el entrenamiento cuya id coincida
 				if(err) {
 					next(err);
 				}
@@ -656,6 +486,7 @@ router.get("/training/:id", async (req, res, next) => {
 
 router.get("/workout/list/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		
 		if(err) {
 			next(err);
 		}
@@ -665,19 +496,24 @@ router.get("/workout/list/:id", async (req, res, next) => {
 		}
 		else {
 			const id = req.params.id;
-			await TrainingModel.findById(id).populate("trabajoEntrenamiento").exec((err, workouts) => {	// Buscamos en el modelo todos los ejercicios del entrenamiento
+			await TrainingModel.findById(id)
+				.populate({
+					path: "trabajoEntrenamiento",
+					populate: {path: "ejercicioEntrenamiento"}
+				})
+				.exec((err, training) => {	// Buscamos en el modelo todos los ejercicios del entrenamiento
 				if(err) {
 					next(err);	
 				} 
 				else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
-					res.json(workouts.trabajoEntrenamiento);	
+					res.json(training.trabajoEntrenamiento);	
 				}
 			});
 			
 		}
 	})(req,res,next);
 });
-
+/*
 router.post("/associate/training/workout/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
@@ -711,6 +547,204 @@ router.post("/associate/training/workout/:id", async (req, res, next) => {
 			} catch(err) {
 				next(err);
 			}
+		}
+	})(req,res,next);
+});
+*/
+
+router.post("/associate/training/workout/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const Workout = new WorkoutModel({
+				ejercicioEntrenamiento: req.body.trainingexercise,
+				numSeries: req.body.numberofseries,
+				numRepeticiones: req.body.numberofreps,
+				pesosUtilizados: req.body.weightsused
+			});
+			
+			Workout
+				.save()
+				.then((Workout) => {
+					return TrainingModel.findByIdAndUpdate(
+						req.params.id,
+						{
+							$push: {
+								trabajoEntrenamiento: mongoose.Types.ObjectId(Workout._id)
+							}
+						},
+						{useFindAndModify: false}
+					)
+				})
+				.then((Training) => {
+					if(!Training) {
+						res.status(404).send("Entrenamiento no encontrado");
+					}
+					else {
+						res.json(Training)
+					}
+				})
+				.catch((err) => {
+					next(err);
+				})
+		}
+	})(req,res,next);
+});
+
+router.delete("/workout/:trainingid/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const trainingid = req.params.trainingid;
+			const id = req.params.id;
+			try {
+				const workout = await WorkoutModel.findByIdAndDelete(id, {useFindAndModify: false})	// Se busca el ejercicio cuya id coincida
+				if(!workout) {
+					res.status(404).send("Trabajo no encontrado");
+				}
+				else {
+					const training = await TrainingModel.findByIdAndUpdate(
+						trainingid,
+						{$pull: {trabajoEntrenamiento: id } },
+						{useFindAndModify: false}
+					);
+					if(!training) {
+						res.status(404).send("Entrenamiento no encontrado");
+					}
+					else {
+						res.json(training);
+					}
+				}
+			} catch(err) {
+				next(err);
+			}
+		}
+		/*else {
+			const trainingid = req.params.trainingid;
+			const id = req.params.id;
+			try {
+				const training = await TrainingModel.findByIdAndUpdate(
+					trainingid,
+					{$pull: {trabajoEntrenamiento: {_id: id} } },//{ $elemMatch: {ejercicioEntrenamiento: id} } } },
+					{useFindAndModify: false}
+				);
+				if(!training) {
+					res.status(404).send("Entrenamiento no encontrado");
+				}
+				else {
+					res.json(training);
+				} 
+			} catch(err) {
+				next(err);
+			}
+			
+		}
+		*/
+	})(req,res,next);
+});
+
+// Consulta del ejercicio con la id correspondiente
+router.get("/workout/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await WorkoutModel.findById(id).populate("ejercicioEntrenamiento").exec((err, workout) => {	// Se busca el ejercicio cuya id coincida
+				if(err) {
+					next(err);
+				}
+				else if(!workout) {
+					res.status(404).send("Trabajo no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				}
+				else {
+					res.json(workout);		// Se manda como respuesta el ejercicio encontrado
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.post("/workout/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await WorkoutModel.findById(id, (err, workout) => {
+				if(err || !workout) {
+					res.status(404).send("Trabajo no encontrado");
+				} 
+				else {
+					workout.ejercicioEntrenamiento = req.body.trainingexercise;
+					workout.numSeries = req.body.numberofseries;
+					workout.numRepeticiones = req.body.numberofreps;
+					workout.pesosUtilizados = req.body.weightsused;
+
+					workout
+						.save()
+						.then(workout => {
+							res.json(workout)
+						})
+						.catch((err) => {
+							next(err);
+						});
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.post("/training/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await TrainingModel.findById(id, (err, training) => {
+				if(err || !training) {
+					res.status(404).send("Entrenamiento no encontrado");
+				} 
+				else {
+					training.nombreEntrenamiento = req.body.trainingname;
+					training.diaEntrenamiento = req.body.trainingday;
+					training
+						.save()
+						.then(training => {
+							res.json(training)
+						})
+						.catch((err) => {
+							next(err);
+						});
+				}
+			});
 		}
 	})(req,res,next);
 });

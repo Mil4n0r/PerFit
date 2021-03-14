@@ -1,6 +1,8 @@
 const UserModel = require('../models/UserSchema');
+const FoodModel = require('../models/FoodSchema');
+const ExerciseModel = require('../models/ExerciseSchema');
 
-module.exports = checkPermissions = async (activeUser, req, res) => {
+const checkPermissionsUser = async (activeUser, req) => {
 	const id = req.params.id;
 	const checkedUser = await UserModel.findById(id);
 	if(!checkedUser) {
@@ -13,7 +15,7 @@ module.exports = checkPermissions = async (activeUser, req, res) => {
 		};
 	}
 	else {
-		if(checkedUser._id.equals(activeUser._id)) {
+		if(checkedUser._id.equals(activeUser._id)) { // Modificar esto para que la _id sea siempre objectId
 			return {
 				error: null,
 				user: checkedUser,
@@ -48,3 +50,72 @@ module.exports = checkPermissions = async (activeUser, req, res) => {
 		}
 	}
 };
+
+const checkPermissionsFood = async (activeUser, req) => {
+	const id = req.params.id;
+	const checkedFood = await FoodModel.findById(id);
+	if(!checkedFood) {
+		return {
+			error: {
+				code: 404, message: "Alimento no encontrado"
+			},
+			food: false,
+			permission: []
+		};
+	}
+	else {
+		if(checkedFood.creadoPor.equals(activeUser._id) || activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+			return {
+				error: null,
+				food: checkedFood,
+				permission: ["read", "write", "delete"]
+			};
+		}
+		else {
+			return {
+				error: null,
+				food: checkedFood,
+				permission: ["read"]
+			};
+		}
+	}
+};
+
+const checkPermissionsExercise = async (activeUser, req) => {
+	const id = req.params.id;
+	const checkedExercise = await ExerciseModel.findById(id);
+	if(!checkedExercise) {
+		return {
+			error: {
+				code: 404, message: "Ejercicio no encontrado"
+			},
+			exercise: false,
+			permission: []
+		};
+	}
+	else {
+		if(checkedExercise.creadoPor.equals(activeUser._id) || activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+			return {
+				error: null,
+				exercise: checkedExercise,
+				permission: ["read", "write", "delete"]
+			};
+		}
+		else {
+			return {
+				error: null,
+				exercise: checkedExercise,
+				permission: ["read"]
+			};
+		}
+	}
+};
+
+//module.exports.checkPermissionsUser = checkPermissionsUser
+
+
+module.exports = {
+	checkPermissionsUser,
+	checkPermissionsFood,
+	checkPermissionsExercise
+}

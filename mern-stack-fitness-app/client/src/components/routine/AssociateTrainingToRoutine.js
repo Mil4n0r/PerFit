@@ -4,6 +4,20 @@ import { Link } from 'react-router-dom';
 //import { associateRoutine } from '../../api';
 import { getExercises, deleteTraining, getRoutine, getTrainings } from '../../api';
 
+const formatDate = (date) => {
+	
+	const [year, month, day] = date.substr(0,10).split("-");
+	return `${day}/${month}/${year}`;
+}
+
+const trainingFormat = (t) => {
+	const trainingname = t.nombreEntrenamiento;
+	const trainingday = formatDate(t.diaEntrenamiento);
+	return (
+		`Entrenamiento: ${trainingname} - Día ${trainingday}`
+	)
+}
+
 export const AssociateTrainingToRoutine = () => {
 	const match = useRouteMatch();
 
@@ -33,6 +47,7 @@ export const AssociateTrainingToRoutine = () => {
 	
 	const deleteTrainingFromRoutine = async (trainingid) => {
 		await deleteTraining(match.params.id, trainingid); // Debemos borrar tanto el entrenamiento como su referencia en la rutina...
+		setDeleted(trainingid);
 	}
 
 	return (
@@ -52,13 +67,12 @@ export const AssociateTrainingToRoutine = () => {
 								{trainings && trainings.map((training) => (
 										<tr key={training._id}>
 											<td>
-												{JSON.stringify(training.trabajoEntrenamiento)}
+												{trainingFormat(training)}
 											</td>
 											<td>
-												<Link to={`/edit/training/${training._id}`}>Editar entrenamiento</Link>
+												<Link to={`/edit/training/${routine._id}/${training._id}`}>Editar entrenamiento</Link>
 												<button onClick={() => {
 													deleteTrainingFromRoutine(training._id)
-													setDeleted(training._id);
 												}
 												}>Eliminar de la rutina</button>
 											</td>

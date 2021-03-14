@@ -2,9 +2,9 @@ import React, { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Home } from './components/common/layout/Home';
 
-import ExerciseRoutes from './routes/admin/ExerciseRoutes';
+import ExerciseRoutes from './routes/user/ExerciseRoutes';
 import RoutineRoutes from './routes/admin/RoutineRoutes';
-import FoodRoutes from './routes/member/FoodRoutes';
+import FoodRoutes from './routes/user/FoodRoutes';
 import UserRoutes from './routes/admin/UserRoutes';
 import AuthenticationRoutes from './routes/unprotected/AuthenticationRoutes';
 

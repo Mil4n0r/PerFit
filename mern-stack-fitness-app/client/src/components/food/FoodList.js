@@ -51,8 +51,7 @@ export const FoodList = () => {
 										{food.nutrientesRacion.grasas}
 									</td>
 									<td>
-										<Link to={`/edit/food/${food._id}`}>Editar</Link>
-										<Link to={`/delete/food/${food._id}`}>Eliminar</Link>
+										<Link to={`/food/info/${food._id}`}>Ver</Link>
 									</td>
 								</tr>
 							))
