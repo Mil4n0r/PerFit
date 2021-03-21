@@ -18,21 +18,10 @@ const createArrayWithNumbers = (length) => {
 export const WorkoutForm = ({ workout, exercise, onSubmit }) => {
 	const [size, setSize] = useState(workout ? workout.numSeries : 0);
 
-	/*
-	useEffect(() => {
-		const fetchSize = async () => {
-			const exercise = await getExercise(match.params.exerciseid);
-			setExercise(exercise);
-		}
-		fetchExercise();	// Llamamos aparte a fetchUser para no hacer el useEffect completo asíncrono (práctica no recomendada)
-		// (Evita que salte warning por usar cadena vacía)
-		// eslint-disable-next-line 
-	}, []);*/
-
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-			exercisepreview: workout ? workout.ejercicioEntrenamiento.nombreEjercicio : exercise ? exercise.nombreEjercicio : "",
-			trainingexercise: workout ? workout.ejercicioEntrenamiento._id : exercise ? exercise._id : "",
+			exercisepreview: workout ? workout.ejercicioEntrenamiento.nombreEjercicio : exercise ? exercise.exerciseInfo.nombreEjercicio : "",
+			trainingexercise: workout ? workout.ejercicioEntrenamiento._id : exercise ? exercise.exerciseInfo._id : "",
 			numberofseries: workout ? workout.numSeries : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		//resolver: yupResolver(WorkoutSchema),
@@ -69,14 +58,12 @@ export const WorkoutForm = ({ workout, exercise, onSubmit }) => {
 								return (
 									<li key={`serie ${index}`}>
 										<input
-											//name={`serie[${index}].numberofreps`}
 											name={`numberofreps[${index}]`}
 											ref={register()}
 											defaultValue={workout ? workout.numRepeticiones[index] : ""}
 											placeholder="Repeticiones"
 										/>
 										<input
-											//name={`serie[${index}].weightsused`}
 											name={`weightsused[${index}]`}
 											ref={register()}
 											defaultValue={workout ? workout.pesosUtilizados[index] : ""}

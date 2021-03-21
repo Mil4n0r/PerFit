@@ -1,9 +1,10 @@
 import axios from 'axios';
 
+
 export const createRoutine = (routine) => axios.post("http://localhost:4000/admin/create/routine", routine, {
 	data: routine
 })
-	.then(res => console.log(res.data));
+	.then(res => res.data);
 
 export const getRoutines = () => axios.get("http://localhost:4000/admin/routine/list")
 	.then(res => res.data)

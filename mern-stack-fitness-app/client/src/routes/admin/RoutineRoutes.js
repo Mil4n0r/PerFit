@@ -13,11 +13,14 @@ import { CreateWorkout } from '../../components/training/CreateWorkout';
 import { EditWorkout } from '../../components/training/EditWorkout';
 import { EditTraining } from '../../components/training/EditTraining';
 
-//<Route path="/delete/routine/exercise/:id" component={ DeleteExerciseFromRoutine } />
+/*
+	<Route path="/create/routine" component={ CreateRoutine } />
+
+*/
+
 function RoutineRoutes() {
 	return (
 		<>
-			<Route path="/create/routine" component={ CreateRoutine } />
 			<Route exact path="/routine/list" component={ RoutineList } />
 			<Route exact path="/routine/list/:id" component={ UserRoutineList } />
 			<Route path="/edit/routine/:id" component={ EditRoutine } />

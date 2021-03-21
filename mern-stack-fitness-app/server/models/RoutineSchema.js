@@ -11,14 +11,9 @@ const options = {
 
 const RoutineSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
-	nombreRutina: { type: String, required: true },
 	tiempoRutina: { type: Number, required: true },
 	entrenamientosRutina: [{ type: mongoose.Schema.Types.ObjectId, ref: "Entrenamiento" }]
 }, options);
-
-RoutineSchema.post('save', async function() {
-	console.log("PRUEBA");
-});
 
 RoutineSchema.post('remove', async function() {
 	const trainings = await TrainingModel.find({_id: {$in: this.entrenamientosRutina} })

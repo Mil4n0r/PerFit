@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { getExercises, getTraining, getWorkouts, deleteWorkout } from '../../api';
+import { getExercises, getWorkouts, deleteWorkout } from '../../api';
 
 const workoutFormat = (w) => {
 	const reps = w.numRepeticiones;

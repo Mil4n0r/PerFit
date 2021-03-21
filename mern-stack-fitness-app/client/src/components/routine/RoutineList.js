@@ -20,9 +20,10 @@ export const RoutineList = () => {
 				<table className="table table-stripped mt-3">
 					<thead>
 						<tr>
-							<th>Nombre heredado</th>
+							<th>Nombre de la rutina</th>
 							<th>Tiempo de la rutina</th>
 							<th>Usuario asociado a la rutina</th>
+							<th>Acción</th>
 						</tr>
 					</thead>
 					<tbody>

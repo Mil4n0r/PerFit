@@ -4,6 +4,7 @@ import { Home } from './components/common/layout/Home';
 
 import ExerciseRoutes from './routes/user/ExerciseRoutes';
 import RoutineRoutes from './routes/admin/RoutineRoutes';
+import DietRoutes from './routes/admin/DietRoutes';
 import FoodRoutes from './routes/user/FoodRoutes';
 import UserRoutes from './routes/admin/UserRoutes';
 import AuthenticationRoutes from './routes/unprotected/AuthenticationRoutes';
@@ -23,6 +24,7 @@ function Router() {
 						<>
 							{ExerciseRoutes()}
 							{RoutineRoutes()}
+							{DietRoutes()}
 							{FoodRoutes()}
 							{UserRoutes()}
 						</>

@@ -6,7 +6,6 @@ import { EditExercise } from '../../components/exercise/EditExercise';
 import { DeleteExercise } from '../../components/exercise/DeleteExercise';
 import { ExerciseInfo } from '../../components/exercise/ExerciseInfo';
 
-
 function ExerciseRoutes() {
 	return (
 		<>

@@ -8,8 +8,7 @@ import FormContext from '../../../../../context/FormContext';
 
 export const StepConfirm = ({ onSubmit }) => {
 	const { data } = useContext(FormContext);
-	console.log(JSON.stringify(data))
-
+	
 	const submitHandler = (data) => {	// Pasamos los datos del formulario
 		onSubmit(data);
 	};

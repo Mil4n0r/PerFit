@@ -19,4 +19,3 @@ function FoodRoutes() {
 }
 
 export default FoodRoutes;
-

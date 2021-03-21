@@ -16,17 +16,27 @@ export * from './api/user_api';
 
 export * from './api/food_api';
 
+// COMIDA
+
+export * from './api/meal_api';
+
+// DIETA
+
+export * from './api/diet_api';
+
 // EJERCICIO
 
 export * from './api/exercise_api';
+
+// ENTRENAMIENTO
+
+export * from './api/training_api';
 
 // RUTINA
 
 export * from './api/routine_api';
 
-// ENTRENAMIENTO
 
-export * from './api/training_api';
 
 //////////////////////////////////////////////
 

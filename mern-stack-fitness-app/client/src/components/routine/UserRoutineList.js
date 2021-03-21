@@ -25,6 +25,7 @@ export const UserRoutineList = () => {
 							<th>Nombre heredado</th>
 							<th>Tiempo de la rutina</th>
 							<th>Usuario asociado a la rutina</th>
+							<th>Acción</th>
 						</tr>
 					</thead>
 					<tbody>

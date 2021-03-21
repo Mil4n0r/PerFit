@@ -4,6 +4,14 @@ import AuthContext from '../../../context/AuthContext';
 
 import { LogOut } from '../../user/Logout';
 
+/*
+	<li className="navbar-item">
+		<Link to="/create/routine" className="nav-link">Crear Rutina</Link>
+	</li>
+	<li className="navbar-item">
+		<Link to="/create/diet" className="nav-link">Crear Dieta</Link>
+	</li>
+*/
 function NavBar() {
 
 	const { loggedIn } = useContext(AuthContext);
@@ -20,13 +28,13 @@ function NavBar() {
 						loggedIn && (//loggedIn.rol === "socio" && (
 							<>
 								<li className="navbar-item">
+									<Link to="/diet/list" className="nav-link">Lista de Dietas</Link>
+								</li>
+								<li className="navbar-item">
 									<Link to="/create/food" className="nav-link">Crear Alimento</Link>
 								</li>
 								<li className="navbar-item">
 									<Link to="/food/list" className="nav-link">Lista de Alimentos</Link>
-								</li>
-								<li className="navbar-item">
-									<Link to="/create/routine" className="nav-link">Crear Rutina</Link>
 								</li>
 								<li className="navbar-item">
 									<Link to="/routine/list" className="nav-link">Lista de Rutinas</Link>

@@ -3,7 +3,7 @@ import axios from 'axios';
 export const createExercise = (exercise) => axios.post("http://localhost:4000/user/create/exercise", exercise, {
 	data: exercise
 })
-	.then(res => console.log(res.data));
+	.then(res => res.data);
 
 export const getExercises = () => axios.get("http://localhost:4000/user/exercise/list")
 	.then(res => res.data)

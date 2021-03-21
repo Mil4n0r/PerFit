@@ -3,7 +3,7 @@ import axios from 'axios';
 export const registerUser = (user) => axios.post("http://localhost:4000/register", user, {	// Por defecto se le aplica JSON.stringify al segundo argumento
 	data: user
 })
-	.then(res => console.log(res.data))
+	.then(res => res.data)
 
 export const getUsers = () => axios.get("http://localhost:4000/admin/list")
 	.then(res => res.data)

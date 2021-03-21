@@ -3,7 +3,7 @@ import axios from 'axios';
 export const createFood = (food) => axios.post("http://localhost:4000/user/create/food", food, {
 	data: food
 })
-	.then(res => console.log(res.data));
+	.then(res => res.data);
 	/*.catch((err) => {
 		console.log("ERROR HANDLING: ", err.response.data)
 	})*/

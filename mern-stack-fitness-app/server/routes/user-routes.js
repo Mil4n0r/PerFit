@@ -107,9 +107,7 @@ router.get("/food/:id", async (req, res, next) => {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
 		}
 		else {
-			console.log("PROBANDO")
 			const permissionsRes = await checkPermissionsFood(user, req);	// Se busca el usuario cuya id coincida
-			console.log(permissionsRes)
 			const resError = permissionsRes.error;
 			const resFood = permissionsRes.food;
 			const resPermission = permissionsRes.permission;
@@ -280,9 +278,7 @@ router.get("/exercise/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			console.log("PROBANDO")
 			const permissionsRes = await checkPermissionsExercise(user, req);	// Se busca el usuario cuya id coincida
-			console.log(permissionsRes)
 			const resError = permissionsRes.error;
 			const resExercise = permissionsRes.exercise;
 			const resPermission = permissionsRes.permission;
