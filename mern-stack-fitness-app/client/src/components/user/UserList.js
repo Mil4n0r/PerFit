@@ -40,6 +40,8 @@ export const UserList = () => {
 										<Link to={`/associate/routine/${user._id}`}>Asociar rutina</Link>
 										<Link to={`/diet/list/${user._id}`}>Obtener dietas</Link>
 										<Link to={`/associate/diet/${user._id}`}>Asociar dieta</Link>
+										<Link to={`/tracking/list/${user._id}`}>Obtener seguimientos</Link>
+										<Link to={`/associate/tracking/${user._id}`}>Asociar Seguimiento</Link>
 										<Link to={`/user/profile/${user._id}`}>Perfil</Link>
 										<Link to={`/delete/user/${user._id}`}>Eliminar</Link>
 									</td>

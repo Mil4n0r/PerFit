@@ -37,6 +37,18 @@ function NavBar() {
 									<Link to="/food/list" className="nav-link">Lista de Alimentos</Link>
 								</li>
 								<li className="navbar-item">
+									<Link to="/create/room" className="nav-link">Crear Sala</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/room/list" className="nav-link">Lista de Salas</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/create/activity" className="nav-link">Crear Actividad</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/activity/list" className="nav-link">Lista de Actividades</Link>
+								</li>
+								<li className="navbar-item">
 									<Link to="/routine/list" className="nav-link">Lista de Rutinas</Link>
 								</li>
 								<li className="navbar-item">

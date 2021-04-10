@@ -28,8 +28,6 @@ const rationFormat = (r) => {
 	const carbs = r.alimentoComida.nutrientesRacion.carbohidratos * rations;
 	const proteins = r.alimentoComida.nutrientesRacion.proteinas * rations;
 	const fats = r.alimentoComida.nutrientesRacion.grasas * rations;
-	console.log(r)
-
 	
 	return (
 		<>

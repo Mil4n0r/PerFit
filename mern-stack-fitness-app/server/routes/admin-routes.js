@@ -9,8 +9,11 @@ const TrainingModel = require('../models/TrainingSchema');
 const DietModel = require('../models/DietSchema');
 const RationModel = require('../models/RationSchema');
 const MealModel = require('../models/MealSchema');
+const ActivityModel = require('../models/ActivitySchema');
+const TrackingModel = require('../models/TrackingSchema');
+const RoomModel = require('../models/RoomSchema');
 
-const { checkPermissionsUser } = require('../auth/checkPermissions');
+const { checkPermissionsUser, checkPermissionsActivity, checkPermissionsRoom } = require('../auth/checkPermissions');
 
 const mongoose = require('mongoose');
 
@@ -78,7 +81,7 @@ router.post("/user/:id", async (req, res, next) => {
 			const resUser = permissionsResData.user;
 			const resPermission = permissionsResData.permission;
 			if(resError) {
-				resError.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 			}
 			else if(permissionsResData && resPermission.includes("write")) {	// Se reasignan los campos del usuario
 				resUser.aliasUsuario = req.body.alias;
@@ -431,31 +434,6 @@ router.delete("/training/:routineid/:id", async (req, res, next) => {
 			} catch(err_routine) {
 				next(err_routine);
 			}
-		}
-	})(req,res,next);
-});
-router.get("/routine/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			await RoutineModel.findById(id, (err, routine) => {	// Se busca la rutina cuya id coincida
-				if(err) {
-					next(err);
-				}
-				else if(!routine) {
-					res.status(404).send("Rutina no encontrado");	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-				}
-				else {
-					res.json(routine);		// Se manda como respuesta la rutina encontrada
-				}
-			});
 		}
 	})(req,res,next);
 });
@@ -1026,31 +1004,6 @@ router.delete("/meal/:dietid/:id", async (req, res, next) => {
 		}
 	})(req,res,next);
 });
-router.get("/diet/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			await DietModel.findById(id, (err, diet) => {
-				if(err) {
-					next(err);
-				}
-				else if(!diet) {
-					res.status(404).send("Dieta no encontrado");
-				}
-				else {
-					res.json(diet);
-				}
-			});
-		}
-	})(req,res,next);
-});
 
 router.get("/meal/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
@@ -1269,6 +1222,516 @@ router.post("/meal/:id", async (req, res, next) => {
 						.save()
 						.then(meal => {
 							res.json(meal)
+						})
+						.catch((err) => {
+							next(err);
+						});
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+router.post("/create/activity", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const Activity = new ActivityModel({
+				nombreActividad: req.body.activityname,
+				equipamientoActividad: req.body.activityequipment,
+				descripcionActividad: req.body.activitydescription
+			});
+			Activity
+				.save()
+				.then((Activity) => {
+					res.json(Activity);
+				})
+				.catch((err) => {
+					next(err);
+				});
+		}
+	})(req,res,next);
+});
+
+// Lista de actividades
+router.get("/activity/list", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			ActivityModel.find((err, activities) => {
+				if(err) {
+					next(err);	
+				} 
+				else {
+					res.json(activities);	
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/activity/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const permissionsRes = await checkPermissionsActivity(user, req);
+			const resError = permissionsRes.error;
+			const resActivity = permissionsRes.activity;
+			const resPermission = permissionsRes.permission;
+			if(resError || !resActivity) {
+				res.status(resError.code).send(resError.message);
+			}
+			else if(resActivity) {
+				res.json({
+					activityInfo: resActivity,
+					permission: resPermission
+				});
+			}
+		}
+	})(req,res,next);
+});
+
+// Modificación del ejercicio con la id correspondiente
+router.post("/activity/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const permissionsResData = await checkPermissionsActivity(user, req);
+			const resError = permissionsResData.error;
+			const resActivity = permissionsResData.activity;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("write")) {
+				resActivity.nombreActividad = req.body.activityname;
+				resActivity.equipamientoActividad = req.body.activityequipment;
+				resActivity.descripcionActividad = req.body.activitydescription;
+				// resActivity.creadoPor se queda igual
+
+				resActivity
+					.save()		// Se almacena el alimento
+					.then(activityData => {
+						res.json(activityData)	// Se manda como respuesta el alimento modificado
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+		}
+	})(req,res,next);
+});
+
+// Eliminación del ejercicio con la id correspondiente
+router.delete("/activity/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const permissionsResData = await checkPermissionsActivity(user, req);
+			const resError = permissionsResData.error;
+			const resActivity = permissionsResData.activity;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("delete")) {
+				resActivity
+					.remove()	// Se elimina el alimento
+					.then(activityData => {
+						res.json(activityData);	// Se manda como respuesta el alimento eliminado
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+		}
+	})(req,res,next);
+});
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+router.post("/create/room", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const Room = new RoomModel({
+				nombreSala: req.body.roomname,
+				equipamientoSala: req.body.roomequipment,
+				aforoSala: req.body.roomcapacity
+			});
+			Room
+				.save()
+				.then((Room) => {
+					res.json(Room);
+				})
+				.catch((err) => {
+					next(err);
+				});
+		}
+	})(req,res,next);
+});
+
+// Lista de actividades
+router.get("/room/list", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			RoomModel.find((err, activities) => {
+				if(err) {
+					next(err);	
+				} 
+				else {
+					res.json(activities);	
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/room/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const permissionsRes = await checkPermissionsRoom(user, req);
+			const resError = permissionsRes.error;
+			const resRoom = permissionsRes.room;
+			const resPermission = permissionsRes.permission;
+			if(resError || !resRoom) {
+				res.status(resError.code).send(resError.message);
+			}
+			else if(resRoom) {
+				res.json({
+					roomInfo: resRoom,
+					permission: resPermission
+				});
+			}
+		}
+	})(req,res,next);
+});
+
+// Modificación del ejercicio con la id correspondiente
+router.post("/room/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const permissionsResData = await checkPermissionsRoom(user, req);
+			const resError = permissionsResData.error;
+			const resRoom = permissionsResData.room;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("write")) {
+				resRoom.nombreSala = req.body.roomname;
+				resRoom.equipamientoSala = req.body.roomequipment;
+				resRoom.aforoSala = req.body.roomcapacity;
+				// resRoom.creadoPor se queda igual
+
+				resRoom
+					.save()		// Se almacena la sala
+					.then(roomData => {
+						res.json(roomData)	// Se manda como respuesta la sala modificada
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+		}
+	})(req,res,next);
+});
+
+// Eliminación del ejercicio con la id correspondiente
+router.delete("/room/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const permissionsResData = await checkPermissionsRoom(user, req);
+			const resError = permissionsResData.error;
+			const resRoom = permissionsResData.room;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("delete")) {
+				resRoom
+					.remove()	// Se elimina la sala
+					.then(roomData => {
+						res.json(roomData);	// Se manda como respuesta la sala eliminada
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+		}
+	})(req,res,next);
+});
+
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////
+
+// Creación de seguimiento
+/*
+router.post("/create/tracking", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			// Creación del seguimiento
+			const Tracking = new TrackingModel({
+				nombrePlan: req.body.trackingname,
+				valorObjetivo: req.body.targetvalue,
+				medidasSeguidas: req.body.trackedmeasures
+			});
+			Tracking
+				.save()		// Se almacena el seguimiento
+				.then((Tracking) => {
+					res.json(Tracking);		// Se manda como respuesta el seguimiento
+				})
+				.catch((err) => {
+					next(err);
+				});
+		}
+	})(req,res,next);
+});
+*/
+
+router.post("/associate/tracking/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			// Creación de la rutina
+			const Tracking = new TrackingModel({
+				nombrePlan: req.body.trackingname,
+				usuarioPlan: req.params.id,
+				valorObjetivo: req.body.targetvalue,
+				medidasSeguidas: req.body.trackedmeasures
+			});
+			Tracking
+				.save()		// Se almacena el seguimiento
+				.then((Tracking) => {
+					res.json(Tracking);		// Se manda como respuesta el seguimiento
+				})
+				.catch((err) => {
+					next(err);
+				});
+		}
+	})(req,res,next);
+});
+
+router.get("/tracking/list", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			await TrackingModel.find((err, trackings) => {
+				if(err) {
+					next(err);	
+				} 
+				else {
+					res.json(trackings);	
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/tracking/list/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const userid = req.params.id;
+			await TrackingModel.find({usuarioPlan: userid},(err, trackings) => {
+				if(err) {
+					next(err);	
+				} 
+				else {	
+					res.json(trackings);	
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+// Consulta del ejercicio con la id correspondiente
+router.get("/tracking/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await TrackingModel.findById(id, (err, tracking) => {
+				if(err) {
+					next(err);
+				}
+				else if(!tracking) {
+					res.status(404).send("Seguimiento no encontrado");
+				}
+				else {
+					res.json(tracking);		// Se manda como respuesta el seguimiento encontrado
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+// Modificación del ejercicio con la id correspondiente
+router.post("/tracking/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await TrackingModel.findById(id, (err, tracking) => {
+				if(err || !tracking) {
+					res.status(404).send("Seguimiento no encontrado");
+				} 
+				else {
+					tracking.nombrePlan = req.body.trackingname,
+					tracking.valorObjetivo = req.body.targetvalue,
+					tracking.medidasSeguidas = req.body.trackedmeasures
+					tracking
+						.save()
+						.then(tracking => {
+							res.json(tracking)
+						})
+						.catch((err) => {
+							next(err);
+						});
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+// Eliminación de la rutina con la id correspondiente
+router.delete("/tracking/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await TrackingModel.findById(id, (err, tracking) => {	// Se busca el seguimiento cuya id coincida
+				if(err || !tracking) {
+					res.status(404).send("Seguimiento no encontrada");
+				}
+				else {
+					tracking
+						.remove()	// Se elimina el seguimiento
+						.then(tracking => {
+							res.json(tracking);	// Se manda como respuesta el seguimiento eliminado
 						})
 						.catch((err) => {
 							next(err);

@@ -36,7 +36,25 @@ export * from './api/training_api';
 
 export * from './api/routine_api';
 
+// ACTIVIDAD
 
+export * from './api/activity_api';
+
+// CLASE
+
+export * from './api/class_api';
+
+// SEGUIMIENTO
+
+export * from './api/tracking_api';
+
+// MEDIDA
+
+export * from './api/measure_api';
+
+// SALA
+
+export * from './api/room_api'
 
 //////////////////////////////////////////////
 

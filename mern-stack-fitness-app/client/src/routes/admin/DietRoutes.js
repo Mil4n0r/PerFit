@@ -12,9 +12,11 @@ import { CreateMeal } from '../../components/meal/CreateMeal';
 import { CreateRation } from '../../components/meal/CreateRation';
 import { EditRation } from '../../components/meal/EditRation';
 import { EditMeal } from '../../components/meal/EditMeal';
+
 /* 
 	<Route path="/create/diet" component={ CreateDiet } />
 */
+
 function DietRoutes() {
 	return (
 		<>

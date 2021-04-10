@@ -8,8 +8,12 @@ import DietRoutes from './routes/admin/DietRoutes';
 import FoodRoutes from './routes/user/FoodRoutes';
 import UserRoutes from './routes/admin/UserRoutes';
 import AuthenticationRoutes from './routes/unprotected/AuthenticationRoutes';
+import ActivityRoutes from './routes/admin/ActivityRoutes';
 
-import AuthContext from "./context/AuthContext";
+import AuthContext from './context/AuthContext';
+import TrackingRoutes from './routes/admin/TrackingRoutes';
+import MeasureRoutes from './routes/user/MeasureRoutes';
+import RoomRoutes from './routes/admin/RoomRoutes';
 
 function Router() {
 
@@ -22,11 +26,15 @@ function Router() {
 				{
 					loggedIn && (//loggedIn.rol === "socio" && (
 						<>
+							{ActivityRoutes()}
 							{ExerciseRoutes()}
 							{RoutineRoutes()}
 							{DietRoutes()}
 							{FoodRoutes()}
 							{UserRoutes()}
+							{TrackingRoutes()}
+							{MeasureRoutes()}
+							{RoomRoutes()}
 						</>
 					)
 				}

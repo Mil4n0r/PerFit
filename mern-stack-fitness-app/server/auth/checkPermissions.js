@@ -1,6 +1,10 @@
 const UserModel = require('../models/UserSchema');
 const FoodModel = require('../models/FoodSchema');
 const ExerciseModel = require('../models/ExerciseSchema');
+const ActivityModel = require('../models/ActivitySchema');
+const MeasureModel = require('../models/MeasureSchema');
+const TrackingModel = require('../models/TrackingSchema');
+const RoomModel = require('../models/RoomSchema');
 
 const checkPermissionsUser = async (activeUser, req) => {
 	const id = req.params.id;
@@ -111,11 +115,114 @@ const checkPermissionsExercise = async (activeUser, req) => {
 	}
 };
 
+const checkPermissionsActivity = async (activeUser, req) => {
+	const id = req.params.id;
+	const checkedActivity = await ActivityModel.findById(id);
+	if(!checkedActivity) {
+		return {
+			error: {
+				code: 404, message: "Actividad no encontrada"
+			},
+			activity: false,
+			permission: []
+		};
+	}
+	else {
+		if(activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+			return {
+				error: null,
+				activity: checkedActivity,
+				permission: ["read", "write", "delete"]
+			};
+		}
+		else {
+			return {
+				error: null,
+				activity: checkedActivity,
+				permission: ["read"]
+			};
+		}
+	}
+};
+
+const checkPermissionsRoom = async (activeUser, req) => {
+	const id = req.params.id;
+	const checkedRoom = await RoomModel.findById(id);
+	if(!checkedRoom) {
+		return {
+			error: {
+				code: 404, message: "Sala no encontrada"
+			},
+			room: false,
+			permission: []
+		};
+	}
+	else {
+		if(activeUser.rolUsuario === "admin") {
+			return {
+				error: null,
+				room: checkedRoom,
+				permission: ["read", "write", "delete"]
+			};
+		}
+		else {
+			return {
+				error: null,
+				room: checkedRoom,
+				permission: ["read"]
+			};
+		}
+	}
+};
+
+const checkPermissionsMeasure = async (activeUser, req) => {
+	const id = req.params.id;
+	const checkedMeasure = await MeasureModel.findById(id);
+	if(!checkedMeasure) {
+		return {
+			error: {
+				code: 404, message: "Medida no encontrada"
+			},
+			user: false,
+			permission: []
+		};
+	}
+	else {
+		const userTrackings = await TrackingModel.find({usuarioPlan: activeUser._id}).exec();
+		var included = false;
+		userTrackings.map((tracking) => {
+			if(tracking.medidasSeguidas.includes(id)) {
+				included = true;
+			}
+		})
+		if(included) {
+			return {
+				error: null,
+				measure: checkedMeasure,
+				permission: ["read", "write", "delete"]
+			}
+		}
+		else {
+			return {
+				error: {
+					code: 401,
+					message: "Usuario no autorizado"
+				},
+				measure: false,
+				permission: []
+			}
+		}
+	}
+};
+
 //module.exports.checkPermissionsUser = checkPermissionsUser
 
 
 module.exports = {
 	checkPermissionsUser,
 	checkPermissionsFood,
-	checkPermissionsExercise
+	checkPermissionsExercise,
+	checkPermissionsActivity,
+	checkPermissionsMeasure,
+	checkPermissionsRoom
 }

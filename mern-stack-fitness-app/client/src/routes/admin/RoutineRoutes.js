@@ -15,7 +15,6 @@ import { EditTraining } from '../../components/training/EditTraining';
 
 /*
 	<Route path="/create/routine" component={ CreateRoutine } />
-
 */
 
 function RoutineRoutes() {
