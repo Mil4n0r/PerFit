@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
+const PlanModel = require('./PlanSchema');
+
 const RoutineModel = require('./RoutineSchema');
 const DietModel = require('./DietSchema');
 
@@ -37,7 +39,9 @@ const UserSchema = mongoose.Schema({
 	
 	aliasUsuario: { type: String, required: true, unique: true, trim: true },
 
-	//planUsuario: {  }
+	//suscripcionUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "Suscripción" }
+	//planesUsuario: [ { type: mongoose.Schema.Types.ObjectId, ref: "Plan" } ]
+	
 	/*
 	// Componentes de seguridad
 	loginAttempts: { type: Number, required: true, default: 0 },
@@ -46,8 +50,8 @@ const UserSchema = mongoose.Schema({
 	// https://www.mongodb.com/blog/post/password-authentication-with-mongoose-part-2
 }, 
 {
-	timestamps: true}
-);
+	timestamps: true
+});
 
 // https://www.mongodb.com/blog/post/password-authentication-with-mongoose-part-1
 
@@ -71,7 +75,8 @@ UserSchema.pre('save', async function(next) {
 
 UserSchema.post('remove', async function() {
 	await RoutineModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
-	//await DietModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
+	await DietModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
+	await TrackingModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
 });
 
 UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB = Callback para recoger los errores
