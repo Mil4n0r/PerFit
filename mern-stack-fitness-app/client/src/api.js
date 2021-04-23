@@ -56,6 +56,10 @@ export * from './api/measure_api';
 
 export * from './api/room_api'
 
+// CLASE
+
+export * from './api/class_api';
+
 //////////////////////////////////////////////
 
 // CONTEXTO

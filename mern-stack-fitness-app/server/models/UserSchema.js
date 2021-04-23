@@ -2,11 +2,12 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
-const PlanModel = require('./PlanSchema');
 
+const PlanModel = require('./PlanSchema');
+/*
 const RoutineModel = require('./RoutineSchema');
 const DietModel = require('./DietSchema');
-
+*/
 const UserSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
 	emailUsuario: {
@@ -40,7 +41,6 @@ const UserSchema = mongoose.Schema({
 	aliasUsuario: { type: String, required: true, unique: true, trim: true },
 
 	//suscripcionUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "Suscripción" }
-	//planesUsuario: [ { type: mongoose.Schema.Types.ObjectId, ref: "Plan" } ]
 	
 	/*
 	// Componentes de seguridad
@@ -74,9 +74,10 @@ UserSchema.pre('save', async function(next) {
 });
 
 UserSchema.post('remove', async function() {
-	await RoutineModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
-	await DietModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
-	await TrackingModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
+	await PlanModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
+	//await RoutineModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
+	//await DietModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
+	//await TrackingModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
 });
 
 UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB = Callback para recoger los errores

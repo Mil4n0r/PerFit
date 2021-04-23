@@ -3,7 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 
 const RoutineModel = require('../../models/RoutineSchema');
-
+const TrainingModel = require('../../models/TrainingSchema');
 const mongoose = require('mongoose');
 
 // Creación de rutina

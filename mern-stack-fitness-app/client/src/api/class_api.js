@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-export const addClass = (sclass, id) => axios.post(`http://localhost:4000/admin/associate/training/class/${id}`, sclass, { // id = id training
+export const createClass = (sclass, id) => axios.post("http://localhost:4000/admin/create/class", sclass, {
 	data: sclass
 })
 	.then(res => res.data)
@@ -15,4 +15,4 @@ export const updateClass = (sclass,id) => axios.post(`http://localhost:4000/admi
 	data: sclass
 });
 
-export const deleteClass = (trainingid, id) => axios.delete(`http://localhost:4000/admin/class/${id}`);
+export const deleteClass = (id) => axios.delete(`http://localhost:4000/admin/class/${id}`);

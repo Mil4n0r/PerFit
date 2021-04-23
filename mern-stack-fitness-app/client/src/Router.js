@@ -9,6 +9,7 @@ import FoodRoutes from './routes/user/FoodRoutes';
 import UserRoutes from './routes/admin/UserRoutes';
 import AuthenticationRoutes from './routes/unprotected/AuthenticationRoutes';
 import ActivityRoutes from './routes/admin/ActivityRoutes';
+import ClassRoutes from './routes/admin/ClassRoutes';
 
 import AuthContext from './context/AuthContext';
 import TrackingRoutes from './routes/admin/TrackingRoutes';
@@ -35,6 +36,7 @@ function Router() {
 							{TrackingRoutes()}
 							{MeasureRoutes()}
 							{RoomRoutes()}
+							{ClassRoutes()}
 						</>
 					)
 				}

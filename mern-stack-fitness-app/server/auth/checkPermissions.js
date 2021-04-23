@@ -5,6 +5,7 @@ const ActivityModel = require('../models/ActivitySchema');
 const MeasureModel = require('../models/MeasureSchema');
 const TrackingModel = require('../models/TrackingSchema');
 const RoomModel = require('../models/RoomSchema');
+const ClassModel = require('../models/ClassSchema');
 
 const checkPermissionsUser = async (activeUser, req) => {
 	const id = req.params.id;
@@ -215,8 +216,55 @@ const checkPermissionsMeasure = async (activeUser, req) => {
 	}
 };
 
-//module.exports.checkPermissionsUser = checkPermissionsUser
-
+const checkPermissionsClass = async (activeUser, req) => {
+	const id = req.params.id;
+	const checkedClass = await ClassModel.findById(id);
+	if(!checkedClass) {
+		return {
+			error: {
+				code: 404, message: "Clase no encontrada"
+			},
+			class: false,
+			permission: []
+		};
+	}
+	else {
+		if(activeUser.rolUsuario === "admin") {
+			return {
+				error: null,
+				class: checkedClass,
+				permission: ["read", "write", "delete"]
+			};
+		}
+		else if(activeUser)//.suscripcionUsuario.permisosSuscripcion.includes("Clases Dirigidas")) { // AÑADIR SUSCRIPCIONES
+		{
+			if(checkedClass.asistentesClase.includes(activeUser._id)) {
+				return {
+					error: null,
+					class: checkedClass,
+					permission: ["read", "leave"]
+				}
+			}
+			else {
+				return {
+					error: null,
+					class: checkedClass,
+					permission: ["read", "join"]
+				}
+			}
+		}
+		else {
+			return {
+				error: {
+					code: 401,
+					message: "Usuario no autorizado"
+				},
+				class: false,
+				permission: []
+			}
+		}
+	}
+};
 
 module.exports = {
 	checkPermissionsUser,
@@ -224,5 +272,6 @@ module.exports = {
 	checkPermissionsExercise,
 	checkPermissionsActivity,
 	checkPermissionsMeasure,
-	checkPermissionsRoom
+	checkPermissionsRoom,
+	checkPermissionsClass
 }

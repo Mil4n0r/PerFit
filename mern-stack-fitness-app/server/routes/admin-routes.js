@@ -11,5 +11,6 @@ router.use('', require('./meal/meal-routes'));
 router.use('', require('./activity/activity-routes'));
 router.use('', require('./room/room-routes'));
 router.use('', require('./tracking/tracking-routes'));
+router.use('', require('./class/class-routes'));
 
 module.exports = router

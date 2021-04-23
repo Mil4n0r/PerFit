@@ -8,7 +8,8 @@ const options = {
 
 const MemberSchema = mongoose.Schema({
     // _id se incluye por defecto (Clave primaria)
-    suscripcionMiembro: { type: mongoose.Schema.Types.ObjectId, ref: "Suscripcion"}
+    suscripcionMiembro: { type: mongoose.Schema.Types.ObjectId, ref: "Suscripcion"},
+    balanceMonedas: { type: Number }
 }, options);
 
 module.exports = UserModel.discriminator("Miembro", MemberSchema);

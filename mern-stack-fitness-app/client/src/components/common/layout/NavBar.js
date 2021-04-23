@@ -49,6 +49,12 @@ function NavBar() {
 									<Link to="/activity/list" className="nav-link">Lista de Actividades</Link>
 								</li>
 								<li className="navbar-item">
+									<Link to="/create/class" className="nav-link">Crear Clase</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/class/list" className="nav-link">Lista de Clases</Link>
+								</li>
+								<li className="navbar-item">
 									<Link to="/routine/list" className="nav-link">Lista de Rutinas</Link>
 								</li>
 								<li className="navbar-item">
