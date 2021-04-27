@@ -218,7 +218,11 @@ const checkPermissionsMeasure = async (activeUser, req) => {
 
 const checkPermissionsClass = async (activeUser, req) => {
 	const id = req.params.id;
-	const checkedClass = await ClassModel.findById(id);
+	const checkedClass = 
+		await ClassModel.findById(id).populate("monitorClase")
+			.populate("asistentesClase")
+			.populate("actividadClase")
+			.populate("salaClase");
 	if(!checkedClass) {
 		return {
 			error: {
@@ -233,7 +237,7 @@ const checkPermissionsClass = async (activeUser, req) => {
 			return {
 				error: null,
 				class: checkedClass,
-				permission: ["read", "write", "delete"]
+				permission: ["read", "write", "delete", "join", "leave"] // QUITAR JOIN Y LEAVE
 			};
 		}
 		else if(activeUser)//.suscripcionUsuario.permisosSuscripcion.includes("Clases Dirigidas")) { // AÑADIR SUSCRIPCIONES

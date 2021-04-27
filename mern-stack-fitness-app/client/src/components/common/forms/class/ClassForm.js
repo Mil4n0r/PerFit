@@ -22,6 +22,8 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 	const [users, setUsers] = useState([])
 	const [rooms, setRooms] = useState([])
 
+	sclass ? console.log(sclass) : console.log("NO");
+
 	useEffect(() => {
 		const fetchActivities = async () => {
 			const activities = await getActivities();	// Llamamos a la API para obtener la información de las actividades
@@ -42,10 +44,10 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-			classday: sclass ? sclass.diaClase : "",
-			classmonitor: sclass ? sclass.classMonitor : "",
-			classactivity: sclass ? sclass.actividadClase : "",
-			classroom: sclass ? sclass.salaClase : "",
+			classday: sclass ? sclass.classInfo.diaClase.substr(0,10) : "",
+			classmonitor: sclass ? sclass.classInfo.classMonitor : "",
+			classactivity: sclass ? sclass.classInfo.actividadClase : "",
+			classroom: sclass ? sclass.classInfo.salaClase : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		//resolver: yupResolver(ClassSchema),
 		mode: "onTouched"
@@ -113,11 +115,6 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 						}
 						</select>
 						<ErrorMessage errors={errors} name="classroom" as="p" />
-						{
-							sclass && (
-								<Link to={`/associate/class/user/???`}>Apuntarse a la clase</Link>
-							)
-						}
 					</div>
 					<div className="form-group">
 						<button type="submit" className="btn btn-primary">

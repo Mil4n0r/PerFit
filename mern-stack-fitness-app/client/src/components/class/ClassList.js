@@ -2,6 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getClasses } from '../../api';
 
+const formatCapacity = (usersJoined, roomCapacity) => {
+	return `${usersJoined} / ${roomCapacity}`;
+}
+
+const formatDate = (date) => {
+	const [year, month, day] = date.substr(0,10).split("-");
+	return `${day}/${month}/${year}`;
+}
+
 export const ClassList = () => {
 	const [classes, setClasses] = useState([])	// Creamos una variable de estado para almacenar la información de las clases y una función para actualizarla
 
@@ -33,23 +42,22 @@ export const ClassList = () => {
 							classes.map(sclass => (
 								<tr key={sclass._id}>
 									<td>
-										{sclass.actividadClase}
+										{sclass.actividadClase.nombreActividad}
 									</td>
 									<td>
-										{sclass.diaClase}
+										{formatDate(sclass.diaClase)}
 									</td>
 									<td>
-										{sclass.monitorClase}
+										{sclass.monitorClase.aliasUsuario}
 									</td>
 									<td>
-										{sclass.salaClase}
+										{sclass.salaClase.nombreSala}
 									</td>
 									<td>
-										{sclass.asistentesClase}
+										{formatCapacity(sclass.asistentesClase.length, sclass.salaClase.aforoSala)}
 									</td>
 									<td>
-										<Link to={`/edit/class/${sclass._id}`}>Editar</Link>
-										<Link to={`/delete/class/${sclass._id}`}>Eliminar</Link>
+										<Link to={`/class/info/${sclass._id}`}>Ver</Link>
 									</td>
 								</tr>
 							))

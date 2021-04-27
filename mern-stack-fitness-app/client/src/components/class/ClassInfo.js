@@ -3,6 +3,11 @@ import { getClass } from '../../api';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+const formatDate = (date) => {
+	const [year, month, day] = date.substr(0,10).split("-");
+	return `${day}/${month}/${year}`;
+}
+
 export const ClassInfo = () => {
 
 	const match = useRouteMatch();
@@ -25,19 +30,34 @@ export const ClassInfo = () => {
 		{
 			sclass && (
 				<>
-                    <p>Actividad: {sclass.actividadClase}</p>
-					<p>Fecha: {sclass.diaClase}</p>
-                    <p>Monitor: {sclass.monitorClase}</p>
-					<p>Sala: {sclass.salaClase}</p>
-                    <p>Asistentes: {sclass.asistentesClase}</p>
+                    <p>Actividad: {sclass.classInfo.actividadClase.nombreActividad}</p>
+					<p>Fecha: {formatDate(sclass.classInfo.diaClase)}</p>
+                    <p>Monitor: {sclass.classInfo.monitorClase.aliasUsuario}</p>
+					<p>Sala: {sclass.classInfo.salaClase.nombreSala}</p>
+                    <p>Asistentes: {sclass.classInfo.asistentesClase.aliasUsuario}</p>
+					{
+						sclass.classInfo.asistentesClase.map(user => (
+							<li>{user.aliasUsuario}</li>
+						))
+					}
+					{
+						sclass.permission.includes('join') && (
+							<Link to={`/join/class/${sclass.classInfo._id}`}>Unirse</Link>
+						)
+					}
+					{
+						sclass.permission.includes('leave') && (
+							<Link to={`/leave/class/${sclass.classInfo._id}`}>Abandonar</Link>
+						)
+					}
 					{
 						sclass.permission.includes('write') && (
-							<Link to={`/edit/sclass/${sclass.classInfo._id}`}>Editar</Link>
+							<Link to={`/edit/class/${sclass.classInfo._id}`}>Editar</Link>
 						)
 					}
 					{
 						sclass.permission.includes('delete') && (
-							<Link to={`/delete/sclass/${sclass.classInfo._id}`}>Eliminar</Link>
+							<Link to={`/delete/class/${sclass.classInfo._id}`}>Eliminar</Link>
 						)
 					}
 				</>
