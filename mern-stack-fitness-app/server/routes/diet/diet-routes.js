@@ -47,7 +47,10 @@ router.get("/diet/list", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			await DietModel.find((err, diets) => {
+			await DietModel
+			.find({})
+			.populate("usuarioPlan")
+			.exec((err,diets) => {
 				if(err) {
 					next(err);	
 				} 

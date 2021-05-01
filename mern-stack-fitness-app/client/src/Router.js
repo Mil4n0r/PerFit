@@ -15,17 +15,19 @@ import AuthContext from './context/AuthContext';
 import TrackingRoutes from './routes/admin/TrackingRoutes';
 import MeasureRoutes from './routes/user/MeasureRoutes';
 import RoomRoutes from './routes/admin/RoomRoutes';
+import SubscriptionRoutes from './routes/admin/SubscriptionRoutes';
+import SubscriptionUnprotectedRoutes from './routes/unprotected/SubscriptionUnprotectedRoutes';
 
 function Router() {
 
 	const { loggedIn } = useContext(AuthContext);
-	// DIFERENCIAR ENTRE 'socio', 'entrenador_personal', 'monitor', 'moderador', 'admin'
+	// DIFERENCIAR ENTRE 'Miembro', 'Entrenador', 'Monitor', 'Administrador'
     return(
         <div>
 			<Switch>
 				<Route exact path="/" component={ Home } />
 				{
-					loggedIn && (//loggedIn.rol === "socio" && (
+					loggedIn && (//loggedIn.rol === "Miembro" && (
 						<>
 							{ActivityRoutes()}
 							{ExerciseRoutes()}
@@ -37,6 +39,8 @@ function Router() {
 							{MeasureRoutes()}
 							{RoomRoutes()}
 							{ClassRoutes()}
+							{SubscriptionRoutes()}
+							{SubscriptionUnprotectedRoutes()}
 						</>
 					)
 				}
@@ -44,6 +48,7 @@ function Router() {
 					!loggedIn && (
 						<>
 							{AuthenticationRoutes()}
+							{SubscriptionUnprotectedRoutes()}
 						</>
 					)
 				}

@@ -33,7 +33,7 @@ router.post("/create/room", async (req, res, next) => {
 	})(req,res,next);
 });
 
-// Lista de actividades
+// Lista de salas
 router.get("/room/list", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, (err, user, info) => {
 		if(err) {
@@ -44,12 +44,12 @@ router.get("/room/list", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			RoomModel.find((err, activities) => {
+			RoomModel.find((err, rooms) => {
 				if(err) {
 					next(err);	
 				} 
 				else {
-					res.json(activities);	
+					res.json(rooms);	
 				}
 			});
 		}
@@ -83,7 +83,7 @@ router.get("/room/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-// Modificación del ejercicio con la id correspondiente
+// Modificación de la sala con la id correspondiente
 router.post("/room/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
@@ -99,7 +99,7 @@ router.post("/room/:id", async (req, res, next) => {
 			const resRoom = permissionsResData.room;
 			const resPermission = permissionsResData.permission;
 			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
 			}
 			else if(permissionsResData && resPermission.includes("write")) {
 				resRoom.nombreSala = req.body.roomname;
@@ -120,7 +120,7 @@ router.post("/room/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-// Eliminación del ejercicio con la id correspondiente
+// Eliminación de la sala con la id correspondiente
 router.delete("/room/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
@@ -136,7 +136,7 @@ router.delete("/room/:id", async (req, res, next) => {
 			const resRoom = permissionsResData.room;
 			const resPermission = permissionsResData.permission;
 			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
 			}
 			else if(permissionsResData && resPermission.includes("delete")) {
 				resRoom
@@ -151,43 +151,5 @@ router.delete("/room/:id", async (req, res, next) => {
 		}
 	})(req,res,next);
 });
-
-///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////
-
-// Creación de seguimiento
-/*
-router.post("/create/tracking", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			// Creación del seguimiento
-			const Tracking = new TrackingModel({
-				nombrePlan: req.body.trackingname,
-				valorObjetivo: req.body.targetvalue,
-				medidasSeguidas: req.body.trackedmeasures
-			});
-			Tracking
-				.save()		// Se almacena el seguimiento
-				.then((Tracking) => {
-					res.json(Tracking);		// Se manda como respuesta el seguimiento
-				})
-				.catch((err) => {
-					next(err);
-				});
-		}
-	})(req,res,next);
-});
-*/
 
 module.exports = router;

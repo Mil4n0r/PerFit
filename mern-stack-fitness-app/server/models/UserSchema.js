@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
+const options = {
+	discriminatorKey: "role", // El nombre de nuestra clave de discriminación
+	timestamps: true
+};
 
 const PlanModel = require('./PlanSchema');
 /*
@@ -26,12 +30,6 @@ const UserSchema = mongoose.Schema({
 		telefonoUsuario: { type: String, trim: true },
 		fechaNacUsuario: { type: Date, required: true }		
 	},
-	
-	rolUsuario: { 
-		type: String,
-		default: 'socio',
-		enum: ['socio', 'entrenador personal', 'monitor', 'moderador', 'admin']
-	},
 	privacidadUsuario: { 
 		type: String,
 		default: 'publico',
@@ -40,18 +38,24 @@ const UserSchema = mongoose.Schema({
 	
 	aliasUsuario: { type: String, required: true, unique: true, trim: true },
 
-	//suscripcionUsuario: { type: mongoose.Schema.Types.ObjectId, ref: "Suscripción" }
-	
+	amigosUsuario: [ { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"} ],
+
+	peticionesPendientes: [ 
+		{
+			usuarioSolicitante: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
+			tipoPeticion: { 
+				type: String,
+				enum: ['Amistad', 'Entrenamiento']
+			},
+		}
+	]
 	/*
 	// Componentes de seguridad
 	loginAttempts: { type: Number, required: true, default: 0 },
 	lockUntil: { type: Number }
 	*/
 	// https://www.mongodb.com/blog/post/password-authentication-with-mongoose-part-2
-}, 
-{
-	timestamps: true
-});
+}, options);
 
 // https://www.mongodb.com/blog/post/password-authentication-with-mongoose-part-1
 

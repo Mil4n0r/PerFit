@@ -1,6 +1,10 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const UserModel = require('../models/UserSchema.js');
+const TrainerModel = require('../models/TrainerSchema.js');
+const MemberModel = require('../models/MemberSchema.js');
+const AdminModel = require('../models/AdminSchema.js');
+const MonitorModel = require('../models/MonitorSchema.js');
 
 const JWTstrategy = require('passport-jwt').Strategy;
 
@@ -17,7 +21,77 @@ passport.use("register",
 			try {
 				const userExists = await UserModel.findOne({ emailUsuario: email });
 				if(!userExists) {
-					const user = await UserModel.create({
+					var user;
+					if(req.body.role === "Miembro") {
+						user = await MemberModel.create({
+							emailUsuario: email,
+							passwordUsuario: password,
+							datosPersonales: {
+								nombreUsuario: req.body.name,
+								apellidosUsuario: req.body.surname,
+								dniUsuario: req.body.dni,
+								direccionUsuario: req.body.address,
+								telefonoUsuario: req.body.telephone,
+								fechaNacUsuario: req.body.birthdate
+							},
+							//rolUsuario: req.body.role,
+							privacidadUsuario: req.body.privacy,
+							aliasUsuario: req.body.alias,
+							balanceMonedas: 0
+						});
+					}
+					else if(req.body.role === "Entrenador") {
+						user = await TrainerModel.create({
+							emailUsuario: email,
+							passwordUsuario: password,
+							datosPersonales: {
+								nombreUsuario: req.body.name,
+								apellidosUsuario: req.body.surname,
+								dniUsuario: req.body.dni,
+								direccionUsuario: req.body.address,
+								telefonoUsuario: req.body.telephone,
+								fechaNacUsuario: req.body.birthdate
+							},
+							//rolUsuario: req.body.role,
+							privacidadUsuario: req.body.privacy,
+							aliasUsuario: req.body.alias
+						});
+					}
+					else if(req.body.role === "Monitor") {
+						user = await MonitorModel.create({
+							emailUsuario: email,
+							passwordUsuario: password,
+							datosPersonales: {
+								nombreUsuario: req.body.name,
+								apellidosUsuario: req.body.surname,
+								dniUsuario: req.body.dni,
+								direccionUsuario: req.body.address,
+								telefonoUsuario: req.body.telephone,
+								fechaNacUsuario: req.body.birthdate
+							},
+							//rolUsuario: req.body.role,
+							privacidadUsuario: req.body.privacy,
+							aliasUsuario: req.body.alias
+						});
+					}
+					else if(req.body.role === "Administrador") {
+						user = await AdminModel.create({
+							emailUsuario: email,
+							passwordUsuario: password,
+							datosPersonales: {
+								nombreUsuario: req.body.name,
+								apellidosUsuario: req.body.surname,
+								dniUsuario: req.body.dni,
+								direccionUsuario: req.body.address,
+								telefonoUsuario: req.body.telephone,
+								fechaNacUsuario: req.body.birthdate
+							},
+							//rolUsuario: req.body.role,
+							privacidadUsuario: req.body.privacy,
+							aliasUsuario: req.body.alias
+						});
+					}
+					/*const user = await RoleModel.create({
 						emailUsuario: email,
 						passwordUsuario: password,
 						datosPersonales: {
@@ -31,7 +105,7 @@ passport.use("register",
 						rolUsuario: req.body.role,
 						privacidadUsuario: req.body.privacy,
 						aliasUsuario: req.body.alias
-					});
+					});*/
 					return done(null, user, { message: "Se ha registrado satisfactoriamente" });
 				}
 				else {

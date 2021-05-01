@@ -24,4 +24,6 @@ export const updateUser = (user,id) => axios.post(`http://localhost:4000/admin/u
 	data: user
 });
 
-export const deleteUser = (id) => axios.delete(`http://localhost:4000/admin/user/${id}`)
+export const deleteUser = (id) => axios.delete(`http://localhost:4000/admin/user/${id}`);
+
+export const sendFriendRequest = (id) => axios.post(`http://localhost:4000/admin/friend/request/${id}`);

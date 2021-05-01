@@ -43,7 +43,10 @@ router.get("/tracking/list", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			await TrackingModel.find((err, trackings) => {
+			await TrackingModel
+			.find({})
+			.populate("usuarioPlan")
+			.exec((err,trackings) => {
 				if(err) {
 					next(err);	
 				} 
@@ -169,5 +172,36 @@ router.delete("/tracking/:id", async (req, res, next) => {
 		}
 	})(req,res,next);
 });
+
+// Creación de seguimiento
+/*
+router.post("/create/tracking", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			// Creación del seguimiento
+			const Tracking = new TrackingModel({
+				nombrePlan: req.body.trackingname,
+				valorObjetivo: req.body.targetvalue,
+				medidasSeguidas: req.body.trackedmeasures
+			});
+			Tracking
+				.save()		// Se almacena el seguimiento
+				.then((Tracking) => {
+					res.json(Tracking);		// Se manda como respuesta el seguimiento
+				})
+				.catch((err) => {
+					next(err);
+				});
+		}
+	})(req,res,next);
+});
+*/
 
 module.exports = router;

@@ -15,7 +15,7 @@ import { LogOut } from '../../user/Logout';
 function NavBar() {
 
 	const { loggedIn } = useContext(AuthContext);
-	// DIFERENCIAR ENTRE 'socio', 'entrenador_personal', 'monitor', 'moderador', 'admin'
+	// DIFERENCIAR ENTRE 'Miembro', 'Entrenador', 'Monitor', 'Administrador'
 
 	return (
 		<div>
@@ -25,11 +25,11 @@ function NavBar() {
 						<Link to="/" className="nav-link">Home</Link>
 					</li>
 					{
-						loggedIn && (//loggedIn.rol === "socio" && (
+						loggedIn && (//loggedIn.rol === "Miembro" && (
 							<>
-								<li className="navbar-item">
-									<Link to="/diet/list" className="nav-link">Lista de Dietas</Link>
-								</li>
+								{/*<li className="navbar-item">
+									<Link to="/diet/list" className="nav-link">Lista de Dietas (QUITAR)</Link>
+								</li>*/}
 								<li className="navbar-item">
 									<Link to="/create/food" className="nav-link">Crear Alimento</Link>
 								</li>
@@ -43,20 +43,26 @@ function NavBar() {
 									<Link to="/room/list" className="nav-link">Lista de Salas</Link>
 								</li>
 								<li className="navbar-item">
-									<Link to="/create/activity" className="nav-link">Crear Actividad</Link>
+									<Link to="/create/subscription" className="nav-link">Crear Suscripción</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/subscription/list" className="nav-link">Lista de Suscripciones</Link>
+								</li>
+								<li className="navbar-item">
+									<Link to="/create/activity" className="nav-link">Crear Actividad (ADMIN)</Link>
 								</li>
 								<li className="navbar-item">
 									<Link to="/activity/list" className="nav-link">Lista de Actividades</Link>
 								</li>
 								<li className="navbar-item">
-									<Link to="/create/class" className="nav-link">Crear Clase</Link>
+									<Link to="/create/class" className="nav-link">Crear Clase (ADMIN)</Link>
 								</li>
 								<li className="navbar-item">
 									<Link to="/class/list" className="nav-link">Lista de Clases</Link>
 								</li>
-								<li className="navbar-item">
-									<Link to="/routine/list" className="nav-link">Lista de Rutinas</Link>
-								</li>
+								{/*<li className="navbar-item">
+									<Link to="/routine/list" className="nav-link">Lista de Rutinas (QUITAR)</Link>
+								</li>*/}
 								<li className="navbar-item">
 									<Link to="/create/exercise" className="nav-link">Crear Ejercicio</Link>
 								</li>
@@ -64,7 +70,7 @@ function NavBar() {
 									<Link to="/exercise/list" className="nav-link">Lista de Ejercicios</Link>
 								</li>
 								<li className="navbar-item">
-									<Link to="/user/list" className="nav-link">Lista de Usuarios</Link>
+									<Link to="/user/list" className="nav-link">Lista de Usuarios (ADMIN)</Link>
 								</li>
 								<li className="navbar-item">
 									<Link to={`/user/profile/${loggedIn._id}`} className="nav-link">Perfil</Link>

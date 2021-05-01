@@ -12,5 +12,6 @@ router.use('', require('./activity/activity-routes'));
 router.use('', require('./room/room-routes'));
 router.use('', require('./tracking/tracking-routes'));
 router.use('', require('./class/class-routes'));
+router.use('', require('./subscription/subscription-routes'));
 
 module.exports = router

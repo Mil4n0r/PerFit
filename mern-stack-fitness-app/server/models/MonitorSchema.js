@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const UserModel = require('./UserSchema');
 
 const options = {
-	discriminatorKey: "rol", // El nombre de nuestra clave de discriminación
+	discriminatorKey: "role", // El nombre de nuestra clave de discriminación
 };
 
 const MonitorSchema = mongoose.Schema({
@@ -11,7 +11,7 @@ const MonitorSchema = mongoose.Schema({
     especialidadesMonitor: [{ 
 		type: String,
 		enum: ['bicicletas', 'peso libre', 'piscina', 'esterillas', 'cintas de correr']
-	}],
+	}]
 }, options);
 
 module.exports = UserModel.discriminator("Monitor", MonitorSchema);

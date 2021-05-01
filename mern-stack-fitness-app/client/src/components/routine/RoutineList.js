@@ -37,7 +37,7 @@ export const RoutineList = () => {
 										{routine.tiempoRutina}
 									</td>
 									<td>
-										{routine.usuarioPlan}
+										<a href={`http://localhost:3000/user/profile/${routine.usuarioPlan._id}`}>{routine.usuarioPlan.aliasUsuario}</a>
 									</td>
 									<td>
 										<Link to={`/edit/routine/${routine._id}`}>Editar</Link>

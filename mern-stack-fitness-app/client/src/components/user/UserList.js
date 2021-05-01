@@ -20,8 +20,8 @@ export const UserList = () => {
 				<table className="table table-stripped mt-3">
 					<thead>
 						<tr>
+							<th>Alias</th>
 							<th>Email</th>
-							<th>Password</th>
 							<th>Acción</th>
 						</tr>
 					</thead>
@@ -30,20 +30,13 @@ export const UserList = () => {
 							users.map(user => (
 								<tr key={user._id}>
 									<td>
+										{user.aliasUsuario}
+									</td>
+									<td>
 										{user.emailUsuario}
 									</td>
 									<td>
-										{user.passwordUsuario}
-									</td>
-									<td>
-										<Link to={`/routine/list/${user._id}`}>Obtener rutinas</Link>
-										<Link to={`/associate/routine/${user._id}`}>Asociar rutina</Link>
-										<Link to={`/diet/list/${user._id}`}>Obtener dietas</Link>
-										<Link to={`/associate/diet/${user._id}`}>Asociar dieta</Link>
-										<Link to={`/tracking/list/${user._id}`}>Obtener seguimientos</Link>
-										<Link to={`/associate/tracking/${user._id}`}>Asociar Seguimiento</Link>
 										<Link to={`/user/profile/${user._id}`}>Perfil</Link>
-										<Link to={`/delete/user/${user._id}`}>Eliminar</Link>
 									</td>
 								</tr>
 							))

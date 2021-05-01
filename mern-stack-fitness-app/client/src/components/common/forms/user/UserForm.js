@@ -18,7 +18,8 @@ export const UserForm = ({ user, onSubmit }) => {
 			address: user ? user.userInfo.datosPersonales.direccionUsuario : "",
 			telephone: user ? user.userInfo.datosPersonales.telefonoUsuario : "",
 			birthdate: user.userInfo.datosPersonales.fechaNacUsuario ? user.userInfo.datosPersonales.fechaNacUsuario.substr(0,10) : "", // Ajustamos la fecha al formato del formulario
-			role: user.userInfo.rolUsuario ? user.userInfo.rolUsuario : "",
+			//role: user.userInfo.rolUsuario ? user.userInfo.rolUsuario : "",
+			role: user.userInfo.role ? user.userInfo.role : "",
 			privacy: user.userInfo.privacidadUsuario ? user.userInfo.privacidadUsuario : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(UserSchema),
@@ -142,11 +143,11 @@ export const UserForm = ({ user, onSubmit }) => {
 					ref={
 						register({})
 					}>
-					<option value="socio">Socio</option>
-					<option value="entrenador personal">Entrenador personal</option>
-					<option value="monitor">Monitor</option>
-					<option value="moderador">Moderador</option>
-					<option value="admin">Administrador</option>
+					<option value="Miembro">Miembro</option>
+					<option value="Entrenador">Entrenador personal</option>
+					<option value="Monitor">Monitor</option>
+					{/*<option value="Moderador">Moderador</option>*/}
+					<option value="Administrador">Administrador</option>
 				</select>
 				<ErrorMessage errors={errors} name="role" as="p" />
 				<label htmlFor="text">

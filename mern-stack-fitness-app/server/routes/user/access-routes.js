@@ -45,7 +45,8 @@ router.post("/login", (req, res, next) => {
 					}
 					else
 					{
-						const body = { _id: user._id, email: user.emailUsuario, rol: user.rolUsuario };
+						//const body = { _id: user._id, email: user.emailUsuario, rol: user.rolUsuario };
+						const body = { _id: user._id, email: user.emailUsuario, rol: user.role };
 						const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
 						res.cookie("token", token, {
 							httpOnly: true

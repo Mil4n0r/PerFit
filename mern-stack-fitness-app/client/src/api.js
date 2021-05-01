@@ -60,6 +60,10 @@ export * from './api/room_api'
 
 export * from './api/class_api';
 
+// SUSCRIPCIÓN
+
+export * from './api/subscription_api';
+
 //////////////////////////////////////////////
 
 // CONTEXTO

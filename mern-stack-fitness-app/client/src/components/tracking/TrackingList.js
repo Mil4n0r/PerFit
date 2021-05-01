@@ -37,7 +37,7 @@ export const TrackingList = () => {
 										{tracking.valorObjetivo}
 									</td>
 									<td>
-										{tracking.usuarioPlan}
+										<a href={`http://localhost:3000/user/profile/${tracking.usuarioPlan._id}`}>{tracking.usuarioPlan.aliasUsuario}</a>
 									</td>
 									<td>
 										<Link to={`/edit/tracking/${tracking._id}`}>Editar</Link>

@@ -6,10 +6,13 @@ const MeasureModel = require('../models/MeasureSchema');
 const TrackingModel = require('../models/TrackingSchema');
 const RoomModel = require('../models/RoomSchema');
 const ClassModel = require('../models/ClassSchema');
+const SubscriptionModel = require('../models/SubscriptionSchema');
 
 const checkPermissionsUser = async (activeUser, req) => {
 	const id = req.params.id;
 	const checkedUser = await UserModel.findById(id);
+	console.log("CHECK",checkedUser)
+	console.log(checkedUser.role)
 	if(!checkedUser) {
 		return {
 			error: {
@@ -24,25 +27,42 @@ const checkPermissionsUser = async (activeUser, req) => {
 			return {
 				error: null,
 				user: checkedUser,
-				permission: ["read", "write"]
+				permission: ["read", "write", "checkplans"]
 			};
 		}
-		else if(activeUser.rolUsuario === "admin") {
+		//else if(activeUser.rolUsuario === "admin") {
+		else if(activeUser.role === "Administrador") {
 			return {
 				error: null,
 				user: checkedUser,
-				permission: ["read", "write", "delete"]
+				permission: ["read", "write", "delete", "checkplans", "allowfriends"]
 			};
 		}
-		else if(activeUser.rolUsuario === "entrenador personal"  // Añadir en el futuro la condición de que, además de ser entrenador, entrene al usuario en cuestión
-				||  checkedUser.privacidadUsuario === "publico"
-				|| (checkedUser.privacidadUsuario === "solo amigos")) {// && areFriends(activeUser, userFound)))
+		//else if(activeUser.rolUsuario === "entrenador personal") { // Añadir en el futuro la condición de que, además de ser entrenador, entrene al usuario en cuestión
+		else if(activeUser.role === "Entrenador") { // Añadir en el futuro la condición de que, además de ser entrenador, entrene al usuario en cuestión
+			return {
+				error: null,
+				user: checkedUser,
+				permission: ["read", "checkplans", "allowfriends"]
+			};
+		}
+		else if(checkedUser.privacidadUsuario === "publico"
+				|| checkedUser.privacidadUsuario === "solo amigos") {// && areFriends(activeUser, checkedUser)) {}
 			return {
 				error: null,
 				user: checkedUser,
 				permission: ["read"]
 			};
 		}
+		/*
+		else if(checkedUser.privacidadUsuario === "solo amigos" && areFriends(activeUser, checkedUser)) {
+			return {
+				error: null,
+				user: false,
+				permission: ["allowfriends"]
+			};
+		}
+		*/
 		else {
 			return {
 				error: {
@@ -69,7 +89,8 @@ const checkPermissionsFood = async (activeUser, req) => {
 		};
 	}
 	else {
-		if(checkedFood.creadoPor.equals(activeUser._id) || activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+		//if(checkedFood.creadoPor.equals(activeUser._id) || activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+		if(checkedFood.creadoPor.equals(activeUser._id) || activeUser.role === "Administrador") { // Modificar esto para que la _id sea siempre objectId
 			return {
 				error: null,
 				food: checkedFood,
@@ -99,7 +120,8 @@ const checkPermissionsExercise = async (activeUser, req) => {
 		};
 	}
 	else {
-		if(checkedExercise.creadoPor.equals(activeUser._id) || activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+		//if(checkedExercise.creadoPor.equals(activeUser._id) || activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+		if(checkedExercise.creadoPor.equals(activeUser._id) || activeUser.role === "Administrador") { // Modificar esto para que la _id sea siempre objectId
 			return {
 				error: null,
 				exercise: checkedExercise,
@@ -129,7 +151,8 @@ const checkPermissionsActivity = async (activeUser, req) => {
 		};
 	}
 	else {
-		if(activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+		//if(activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
+		if(activeUser.role === "Administrador") { // Modificar esto para que la _id sea siempre objectId
 			return {
 				error: null,
 				activity: checkedActivity,
@@ -159,7 +182,8 @@ const checkPermissionsRoom = async (activeUser, req) => {
 		};
 	}
 	else {
-		if(activeUser.rolUsuario === "admin") {
+		//if(activeUser.rolUsuario === "admin") {
+		if(activeUser.role === "Administrador") {
 			return {
 				error: null,
 				room: checkedRoom,
@@ -233,7 +257,8 @@ const checkPermissionsClass = async (activeUser, req) => {
 		};
 	}
 	else {
-		if(activeUser.rolUsuario === "admin") {
+		//if(activeUser.rolUsuario === "admin") {
+		if(activeUser.role === "Administrador") {
 			return {
 				error: null,
 				class: checkedClass,
@@ -270,6 +295,37 @@ const checkPermissionsClass = async (activeUser, req) => {
 	}
 };
 
+const checkPermissionsSubscription = async (activeUser, req) => {
+	const id = req.params.id;
+	const checkedSubscription = await SubscriptionModel.findById(id);
+	if(!checkedSubscription) {
+		return {
+			error: {
+				code: 404, message: "Sala no encontrada"
+			},
+			subscription: false,
+			permission: []
+		};
+	}
+	else {
+		//if(activeUser.rolUsuario === "admin") {
+		if(activeUser.role === "Administrador") {
+			return {
+				error: null,
+				subscription: checkedSubscription,
+				permission: ["read", "write", "delete"]
+			};
+		}
+		else {
+			return {
+				error: null,
+				subscription: checkedSubscription,
+				permission: ["read"]
+			};
+		}
+	}
+};
+
 module.exports = {
 	checkPermissionsUser,
 	checkPermissionsFood,
@@ -277,5 +333,6 @@ module.exports = {
 	checkPermissionsActivity,
 	checkPermissionsMeasure,
 	checkPermissionsRoom,
-	checkPermissionsClass
+	checkPermissionsClass,
+	checkPermissionsSubscription
 }

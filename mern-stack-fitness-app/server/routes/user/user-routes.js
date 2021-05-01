@@ -6,6 +6,8 @@ const UserModel = require('../../models/UserSchema');
 
 const { checkPermissionsUser } = require('../../auth/checkPermissions');
 
+const mongoose = require('mongoose');
+
 // Consulta de usuarios
 router.get("/list", async (req,res,next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
@@ -79,7 +81,7 @@ router.post("/user/:id", async (req, res, next) => {
 				resUser.datosPersonales.direccionUsuario = req.body.address;
 				resUser.datosPersonales.telefonoUsuario = req.body.telephone;
 				resUser.datosPersonales.fechaNacUsuario = req.body.birthdate;
-				resUser.rolUsuario = req.body.role;
+				//resUser.rolUsuario = req.body.role;
 				resUser.privacidadUsuario = req.body.privacy;
 				resUser
 					.save()		// Se almacena el usuario
@@ -131,4 +133,105 @@ router.delete("/user/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
+router.post("/friend/request/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(!user) {
+			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
+		}
+		else {
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resUser = permissionsResData.user;
+			const resPermission = permissionsResData.permission;
+
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("allowfriends")) {
+				resUser
+					.update({$push: 
+						{
+							peticionesPendientes: {
+								usuarioSolicitante: mongoose.Types.ObjectId(user._id),
+								tipoPeticion: "Amistad"
+							}
+						}
+					})
+					.then(userData => {
+						res.json(userData);	// Se manda como respuesta el usuario editado
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+			else
+			{
+				res.status(401).send("Usuario no autorizado");
+			}
+		}
+	})(req,res,next);
+});
+/*
+router.post("/accept/friend/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const permissionsResData = await checkPermissionsClass(user, req);
+			const resError = permissionsResData.error;
+			const resClass = permissionsResData.class;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("join")) {
+				resClass
+					.update({$push: {asistentesClase: mongoose.Types.ObjectId(user._id)} })
+					.then(classData => {
+						res.json(classData);	// Se manda como respuesta la clase eliminada
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+		}
+	})(req,res,next);
+});
+
+router.post("/reject/friend/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const permissionsResData = await checkPermissionsClass(user, req);
+			const resError = permissionsResData.error;
+			const resClass = permissionsResData.class;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("leave")) {
+				resClass
+					.update({$pull: {asistentesClase: mongoose.Types.ObjectId(user._id)} })
+					.then(classData => {
+						res.json(classData);	// Se manda como respuesta la clase eliminada
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+		}
+	})(req,res,next);
+});
+*/
 module.exports = router;

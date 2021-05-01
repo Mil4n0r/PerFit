@@ -45,7 +45,10 @@ router.get("/routine/list", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			await RoutineModel.find((err, routines) => {	// Buscamos en el modelo todas las rutinas registradas
+			await RoutineModel
+			.find({})
+			.populate("usuarioPlan")
+			.exec((err,routines) => {	// Buscamos en el modelo todas las rutinas registradas
 				if(err) {
 					next(err);	
 				} 

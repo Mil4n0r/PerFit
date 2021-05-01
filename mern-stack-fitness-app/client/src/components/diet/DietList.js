@@ -53,7 +53,7 @@ export const DietList = () => {
 										{objectivesFormat(diet.objetivoDiario)}
 									</td>
 									<td>
-										{diet.usuarioPlan}
+										<a href={`http://localhost:3000/user/profile/${diet.usuarioPlan._id}`}>{diet.usuarioPlan.aliasUsuario}</a>
 									</td>
 									<td>
 										<Link to={`/edit/diet/${diet._id}`}>Editar</Link>

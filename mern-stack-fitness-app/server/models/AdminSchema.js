@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const UserModel = require('./UserSchema');
 
 const options = {
-	discriminatorKey: "rol", // El nombre de nuestra clave de discriminación
+	discriminatorKey: "role", // El nombre de nuestra clave de discriminación
 };
 
 const AdminSchema = mongoose.Schema({
