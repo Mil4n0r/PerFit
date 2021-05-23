@@ -34,10 +34,10 @@ passport.use("register",
 								telefonoUsuario: req.body.telephone,
 								fechaNacUsuario: req.body.birthdate
 							},
-							//rolUsuario: req.body.role,
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias,
-							balanceMonedas: 0
+							balanceMonedas: 0,
+							suscripcionMiembro: req.body.subscription
 						});
 					}
 					else if(req.body.role === "Entrenador") {
@@ -52,7 +52,6 @@ passport.use("register",
 								telefonoUsuario: req.body.telephone,
 								fechaNacUsuario: req.body.birthdate
 							},
-							//rolUsuario: req.body.role,
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias
 						});
@@ -69,9 +68,9 @@ passport.use("register",
 								telefonoUsuario: req.body.telephone,
 								fechaNacUsuario: req.body.birthdate
 							},
-							//rolUsuario: req.body.role,
 							privacidadUsuario: req.body.privacy,
-							aliasUsuario: req.body.alias
+							aliasUsuario: req.body.alias,
+							especialidadesMonitor: req.body.specialty
 						});
 					}
 					else if(req.body.role === "Administrador") {
@@ -86,26 +85,11 @@ passport.use("register",
 								telefonoUsuario: req.body.telephone,
 								fechaNacUsuario: req.body.birthdate
 							},
-							//rolUsuario: req.body.role,
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias
+
 						});
 					}
-					/*const user = await RoleModel.create({
-						emailUsuario: email,
-						passwordUsuario: password,
-						datosPersonales: {
-							nombreUsuario: req.body.name,
-							apellidosUsuario: req.body.surname,
-							dniUsuario: req.body.dni,
-							direccionUsuario: req.body.address,
-							telefonoUsuario: req.body.telephone,
-							fechaNacUsuario: req.body.birthdate
-						},
-						rolUsuario: req.body.role,
-						privacidadUsuario: req.body.privacy,
-						aliasUsuario: req.body.alias
-					});*/
 					return done(null, user, { message: "Se ha registrado satisfactoriamente" });
 				}
 				else {

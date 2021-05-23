@@ -5,7 +5,7 @@ const RoomSchema = mongoose.Schema({
 	nombreSala: { type: String, required: true, trim: true },
 	equipamientoSala: [{ 
 		type: String,
-		enum: ['bicicletas', 'peso libre', 'piscina', 'esterillas', 'cintas de correr']
+		enum: ['Bicicletas', 'Peso libre', 'Piscina', 'Esterillas', 'Cintas de correr']
 	}],
 	aforoSala: { type: Number, required: true }
 });

@@ -64,6 +64,10 @@ export * from './api/class_api';
 
 export * from './api/subscription_api';
 
+// SOLICITUD
+
+export * from './api/request_api';
+
 //////////////////////////////////////////////
 
 // CONTEXTO

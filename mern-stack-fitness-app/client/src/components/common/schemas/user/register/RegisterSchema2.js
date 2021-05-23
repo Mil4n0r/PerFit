@@ -33,7 +33,7 @@ export const RegisterSchema2 = yup.object().shape({
 			"future-birthdate",
 			"Pero Doc, ¿has construido una máquina del tiempo con un De Lorean?",
 			(val) => {
-				const today = new Date()
+				const today = new Date();
 				return (val.getTime() < today.getTime())
 			}
 		),

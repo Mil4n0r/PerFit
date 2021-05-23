@@ -1,25 +1,31 @@
 import React, { useContext } from 'react';
 import { logOut } from '../../api'; 
-import { useRouteMatch, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import AuthContext from '../../context/AuthContext';
 
-export const LogOut = () => {
-	const match = useRouteMatch();
+import { Container } from '@material-ui/core'
+
+import {LogOutButton} from '../../style/style';
+
+export const Logout = () => {
 	const history = useHistory();
-	
+
 	const { getLoggedIn } = useContext(AuthContext);
 
-	const onClick = async () => {
+	const onAccept = async () => {
 		await logOut();	// Llamamos a la API para cerrar sesión
 		await getLoggedIn();
 		history.push("/");	// Redireccionamos al listado de usuarios
 	}
+	const onReject = async () => {
+		history.push("/");	// Redireccionamos al listado de usuarios
+	}
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<button onClick={onClick}>Cerrar sesión</button>
-			</div>
-		</div>
+		<Container>
+			<h3>¿Está seguro de que desea cerrar sesión?</h3>
+			<LogOutButton variant="contained" color="primary" onClick={onAccept}>SÍ</LogOutButton>
+			<LogOutButton variant="contained" color="secondary" onClick={onReject}>NO</LogOutButton>
+		</Container>
 	);
 };

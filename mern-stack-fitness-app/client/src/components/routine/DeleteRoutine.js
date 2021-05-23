@@ -7,8 +7,8 @@ export const DeleteRoutine = () => {
 	const history = useHistory();
 
 	const onClick = async () => {
-		await deleteRoutine(match.params.id);	// Llamamos a la API para crear el ejercicio
-		history.push("/routine/list");	// Redireccionamos al listado de ejercicios
+		await deleteRoutine(match.params.id);	// Llamamos a la API para borrrar la rutina
+		history.push(`/routine/list/${match.params.userid}`);	// Redireccionamos al listado de rutinas del usuario
 	}
 
 	return (

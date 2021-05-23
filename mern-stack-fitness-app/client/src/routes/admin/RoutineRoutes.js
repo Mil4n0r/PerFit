@@ -22,8 +22,8 @@ function RoutineRoutes() {
 		<>
 			<Route exact path="/routine/list" component={ RoutineList } />
 			<Route exact path="/routine/list/:id" component={ UserRoutineList } />
-			<Route path="/edit/routine/:id" component={ EditRoutine } />
-			<Route path="/delete/routine/:id" component={ DeleteRoutine } />
+			<Route path="/edit/routine/:userid/:id" component={ EditRoutine } />
+			<Route path="/delete/routine/:userid/:id" component={ DeleteRoutine } />
 			<Route exact path="/associate/routine/:id" component={ AssociateRoutineToUser } />
 			<Route exact path="/associate/training/exercise/:id" component={ AssociateExercisesToTraining } />
 			<Route exact path="/associate/routine/training/:id" component={ AssociateTrainingToRoutine } />

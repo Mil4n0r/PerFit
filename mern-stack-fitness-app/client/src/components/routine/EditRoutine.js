@@ -20,7 +20,7 @@ export const EditRoutine = () => {
 
 	const onSubmit = async (data) => {
 		await updateRoutine(data, match.params.id);
-		history.push("/routine/list");
+		history.push(`/routine/list/${match.params.userid}`);
 	}
 
 	return routine ? (

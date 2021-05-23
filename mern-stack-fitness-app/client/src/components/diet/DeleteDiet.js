@@ -8,7 +8,7 @@ export const DeleteDiet = () => {
 
 	const onClick = async () => {
 		await deleteDiet(match.params.id);	// Llamamos a la API para crear el ejercicio
-		history.push("/diet/list");	// Redireccionamos al listado de ejercicios
+		history.push(`/diet/list/${match.params.userid}`);	// Redireccionamos al listado de ejercicios
 	}
 
 	return (

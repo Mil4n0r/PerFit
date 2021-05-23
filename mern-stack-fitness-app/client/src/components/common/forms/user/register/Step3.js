@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,25 +9,35 @@ import { RegisterSchema3 } from '../../../schemas/user/register/RegisterSchema3'
 
 import { getSubscriptions } from '../../../../../api';
 
+import { Stepper, Step, StepLabel, Button, Grid, Typography, MenuItem, Chip } from '@material-ui/core';
+import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel } from '../../../../../style/style';
+
 export const Step3 = () => {
 	const { data, getData } = useContext(FormContext);
 	const [subscriptions, setSubscriptions] = useState([])	// Creamos una variable de estado para almacenar la información de las suscripciones y una función para actualizarla
-	const { register, errors, handleSubmit, watch } = useForm({	// Creamos el formulario de creación de usuario
+	const { register, errors, handleSubmit, watch, control } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: { 
-			role: data ? data.role : "",
-			privacy: data ? data.privacy : "",
+			role: data.role ? data.role : "",
+			privacy: data.privacy ? data.privacy : "",
+			specialty: data.specialty ? data.specialty : [],
+			subscription: data.subscription ? data.subscription : "",
 		},
 		resolver: yupResolver(RegisterSchema3),
 		mode: "onTouched"
 	});
+
 	const role = watch("role");
 
 	const history = useHistory();
 	
 	const onSubmit = (data) => {	// Pasamos los datos del formulario
-		history.push("./confirm");
 		getData(data);
+		history.push("./confirm");
 	};
+
+	const onBack = () => {
+		history.push("./2");
+	}
 
 	useEffect(() => {
 		const fetchSubscriptions = async () => {
@@ -38,84 +48,148 @@ export const Step3 = () => {
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	return (
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className="form-group">
-						<h1>Datos adicionales</h1>
-						<label htmlFor="text">
-							Rol:
-						</label>
-						<select className="form-control" type="text" name="role" id="role" defaultValue={"Miembro"}
-							ref={
-								register({})
-							}>
-							<option value="Miembro">Miembro</option>
-							<option value="Entrenador">Entrenador personal</option>
-							<option value="Monitor">Monitor</option>
-							{/*<option value="moderador">Moderador</option>*/}
-							<option value="Administrador">Administrador</option>
-						</select>
-						<ErrorMessage errors={errors} name="role" as="p" />
-						<label htmlFor="text">
-							Configuración de privacidad:
-						</label>
-						<select className="form-control" type="text" name="privacy" id="privacy" defaultValue={"publico"}
-							ref={
-								register({})
-							}>
-							<option value="publico">Público: Perfil visible para todo el mundo</option>
-							<option value="solo amigos">Sólo amigos: Perfil visible para mi y para mis amigos</option>
-							<option value="privado">Privado: Perfil visible sólo para mi</option>
-						</select>
-						<ErrorMessage errors={errors} name="privacy" as="p" />
-					</div>
-					{
-						role === "Monitor" && (
-							<>
-								<label htmlFor="text">
-									Especialidad:
-								</label>
-								<select className="form-control" type="text" name="specialty" id="specialty"
-								ref={
-									register({})
-								}>
-									<option value="bicicletas">Bicicletas</option>
-									<option value="peso libre">Peso libre</option>
-									<option value="piscina">Piscina</option>
-									<option value="esterillas">Esterillas</option>
-									<option value="cintas de correr">Cintas de correr</option>
-								</select>
-								<ErrorMessage errors={errors} name="specialty" as="p" />
-							</>
-						)
+		<FormContainer onSubmit={handleSubmit(onSubmit)}>
+			<FullWidthForm onSubmit={handleSubmit(onSubmit)}>
+				<Stepper alternativeLabel activeStep={2}>
+					<Step key={"label1"}>
+						<StepLabel>{"Datos de inicio de sesión"}</StepLabel>
+					</Step>
+					<Step key={"label2"}>
+						<StepLabel>{"Datos personales"}</StepLabel>
+					</Step>
+					<Step key={"label3"}>
+						<StepLabel>{"Datos adicionales"}</StepLabel>
+					</Step>
+				</Stepper>
+				<InputLabel htmlFor="text">
+					Rol
+				</InputLabel>
+				<Controller
+					control={control}
+					name="role"
+					as={
+						<Select
+							variant="outlined"
+							fullWidth
+							type="text"
+							id="role"
+						>
+							<MenuItem value="Miembro">Miembro</MenuItem>
+							<MenuItem value="Entrenador">Entrenador personal</MenuItem>
+							<MenuItem value="Monitor">Monitor</MenuItem>
+							{
+								//<MenuItem value="moderador">Moderador</MenuItem>
+							}
+							<MenuItem value="Administrador">Administrador</MenuItem>
+						</Select>
 					}
-					{
-						role === "Miembro" && (
-							<>
-								<label htmlFor="text">
-									Suscripción:
-								</label>
-								<select className="form-control" type="text" name="subscription" id="subscription"
-								ref={
-									register({})
-								}>
-								{
-									subscriptions && ( 
-										subscriptions.map(subscription => (
-											<option key={subscription._id} value={subscription._id}>{subscription.nombreSuscripcion}</option>
-										))
-									)
+					defaultValue={"Miembro"}
+				/>
+				<ErrorMessage errors={errors} name="role" as={Typography} />
+				<InputLabel htmlFor="text">
+					Configuración de seguridad
+				</InputLabel>
+				<Controller
+					control={control}
+					name="privacy"
+					as={
+						<Select
+							variant="outlined"
+							fullWidth
+							type="text"
+							id="privacy"
+						>
+							<MenuItem value="Público">Público: Perfil visible para todo el mundo</MenuItem>
+							<MenuItem value="Sólo amigos">Sólo amigos: Perfil visible para mi y para mis amigos</MenuItem>
+							<MenuItem value="Privado">Privado: Perfil visible sólo para mi</MenuItem>
+						</Select>
+					}
+					defaultValue={"Público"}
+				/>
+				<ErrorMessage errors={errors} name="privacy" as={Typography} />
+				{
+					role === "Monitor" && (
+						<>
+							<InputLabel htmlFor="text">
+								Especialidad
+							</InputLabel>
+							<Controller
+								control={control}
+								name="specialty"
+								as={
+									<Select
+										multiple
+										variant="outlined"
+										fullWidth
+										type="text"
+										id="specialty"
+										renderValue={(selected) => (
+											<>
+											  {selected.map((value) => (
+												<Chip key={value} label={value} />
+											  ))}
+											</>
+										)}
+									>
+										<MenuItem value="Bicicletas">Bicicletas</MenuItem>
+										<MenuItem value="Peso libre">Peso libre</MenuItem>
+										<MenuItem value="Piscina">Piscina</MenuItem>
+										<MenuItem value="Esterillas">Esterillas</MenuItem>
+										<MenuItem value="Cintas de correr">Cintas de correr</MenuItem>
+									</Select>
 								}
-								{/* QUEREMOS MOSTRAR INFORMACIÓN DE LA SUSCRIPCIÓN AL HACER HOVER SOBRE ELLA */}
-								</select>
-								<ErrorMessage errors={errors} name="specialty" as="p" />
-							</>
-						)
-					}
-					<div className="form-group">
-						<button type="submit" className="btn btn-primary">
-							Siguiente
-						</button>
-					</div>
-				</form>
+								defaultValue={[]}
+							/>
+							<ErrorMessage errors={errors} name="specialty" as={Typography} />
+						</>
+					)
+				}
+				{
+					role === "Miembro" && (
+						<>
+							<InputLabel htmlFor="text">
+								Suscripción
+							</InputLabel>
+							<Controller
+								control={control}
+								name="subscription"
+								as={
+									<Select
+										variant="outlined"
+										fullWidth
+										type="text"
+										id="subscription"
+									>
+									{
+										subscriptions && ( 
+											subscriptions.map(subscription => (
+												<MenuItem key={subscription._id} value={subscription.nombreSuscripcion}>{subscription.nombreSuscripcion}</MenuItem>
+											))
+										)
+									}
+									</Select>
+								}
+								defaultValue=""
+							/>
+							<ErrorMessage errors={errors} name="subscription" as={Typography} />
+						</>
+					)
+				}
+				<ButtonsContainer>
+					<Grid container spacing={1}>
+						<Grid item>
+							<Button variant="contained" onClick={onBack}>
+								Atrás
+							</Button>
+						</Grid>
+						<Grid item>
+							<Button type="submit" variant="contained" color='primary'>
+								Siguiente
+							</Button>
+						</Grid>
+					</Grid>
+				</ButtonsContainer>
+			</FullWidthForm>
+		</FormContainer>
 	);
 }

@@ -1,6 +1,6 @@
 import React from 'react';
 import { sendFriendRequest } from '../../api'; 
-import { useRouteMatch, useHistory } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 
 export const SendFriendRequest = () => {
 	const match = useRouteMatch();

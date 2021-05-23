@@ -32,14 +32,14 @@ const UserSchema = mongoose.Schema({
 	},
 	privacidadUsuario: { 
 		type: String,
-		default: 'publico',
-		enum: ['publico', 'solo amigos', 'privado']
+		default: 'Público',
+		enum: ['Público', 'Sólo amigos', 'Privado']
 	},
 	
 	aliasUsuario: { type: String, required: true, unique: true, trim: true },
 
 	amigosUsuario: [ { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"} ],
-
+	/*
 	peticionesPendientes: [ 
 		{
 			usuarioSolicitante: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
@@ -49,6 +49,8 @@ const UserSchema = mongoose.Schema({
 			},
 		}
 	]
+	*/
+	peticionesPendientes: [ { type: mongoose.Schema.Types.ObjectId, ref: "Solicitud"} ],
 	/*
 	// Componentes de seguridad
 	loginAttempts: { type: Number, required: true, default: 0 },

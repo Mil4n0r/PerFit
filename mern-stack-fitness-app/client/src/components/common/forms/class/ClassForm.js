@@ -22,8 +22,6 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 	const [users, setUsers] = useState([])
 	const [rooms, setRooms] = useState([])
 
-	sclass ? console.log(sclass) : console.log("NO");
-
 	useEffect(() => {
 		const fetchActivities = async () => {
 			const activities = await getActivities();	// Llamamos a la API para obtener la información de las actividades

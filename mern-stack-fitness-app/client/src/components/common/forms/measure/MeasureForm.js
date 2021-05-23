@@ -20,7 +20,6 @@ export const MeasureForm = ({ measure, onSubmit }) => {
 		//resolver: yupResolver(MeasureSchema),
 		mode: "onTouched"
 	});
-
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
 		onSubmit(data);
 	});

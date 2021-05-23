@@ -2,6 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getFoods } from '../../api';
 
+import { Table, TableBody, TableCell, TableContainer, Paper } from '@material-ui/core';
+import VisibilityIcon from '@material-ui/icons/Visibility';
+import AddCircleIcon from '@material-ui/icons/AddCircle';
+
+import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell } from '../../style/style';
+
+
+
 export const FoodList = () => {
 	const [foods, setFoods] = useState([])	// Creamos una variable de estado para almacenar la información del alimentos y una función para actualizarla
 
@@ -14,51 +22,37 @@ export const FoodList = () => {
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Lista de Alimentos</h3>	
-				<table className="table table-stripped mt-3">
-					<thead>
-						<tr>
-							<th>Nombre del alimento</th>
-							<th>Tamaño de la ración</th>
-							<th>Calorías</th>
-							<th>Carbohidratos</th>
-							<th>Proteinas</th>
-							<th>Grasas</th>
-						</tr>
-					</thead>
-					<tbody>
-						{
-							foods.map(food => (
-								<tr key={food._id}>
-									<td>
-										{food.nombreAlimento}
-									</td>
-									<td>
-										{food.tamRacion} {food.unidadesRacion}
-									</td>
-									<td>
-										{food.nutrientesRacion.calorias}
-									</td>
-									<td>
-										{food.nutrientesRacion.carbohidratos}
-									</td>
-									<td>
-										{food.nutrientesRacion.proteinas}
-									</td>
-									<td>
-										{food.nutrientesRacion.grasas}
-									</td>
-									<td>
-										<Link to={`/food/info/${food._id}`}>Ver</Link>
-									</td>
-								</tr>
-							))
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
+		<BodyContainer>
+			<TableContainer component={Paper}>
+				<Table size="medium">
+					<TableHead>
+						<TableRow>
+							<TableHeaderCell>Nombre del alimento</TableHeaderCell>
+							<TableHeaderCell align="right">Tamaño de la ración</TableHeaderCell>
+							<TableHeaderCell align="right">Valor energético (Kcal)</TableHeaderCell>
+							<TableHeaderCell align="right">Carbohidratos (g)</TableHeaderCell>
+							<TableHeaderCell align="right">Proteinas (g)</TableHeaderCell>
+							<TableHeaderCell align="right">Grasas (g)</TableHeaderCell>
+							<TableHeaderCell align="right"><Link to={'/create/food'}><AddCircleIcon color='secondary'/></Link></TableHeaderCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{foods.map(food => (
+							<TableRow key={food._id}>
+								<TableCell component="th" scope="row">
+									{food.nombreAlimento}
+								</TableCell>
+								<TableCell align="right">{food.tamRacion} {food.unidadesRacion}</TableCell>
+								<TableCell align="right">{food.nutrientesRacion.calorias}</TableCell>
+								<TableCell align="right">{food.nutrientesRacion.carbohidratos}</TableCell>
+								<TableCell align="right">{food.nutrientesRacion.proteinas}</TableCell>
+								<TableCell align="right">{food.nutrientesRacion.grasas}</TableCell>
+								<TableCell align="right"><Link to={`/food/info/${food._id}`}><VisibilityIcon/></Link></TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</BodyContainer>
 	);
 }

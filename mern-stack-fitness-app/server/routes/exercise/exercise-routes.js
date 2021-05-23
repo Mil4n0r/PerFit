@@ -39,49 +39,6 @@ router.post("/create/exercise", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.post("/associate/tracking/measure/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const Measure = new MeasureModel({
-				valorMedida: req.body.measurevalue,
-				fechaMedida: req.body.measuredate
-			});
-			
-			Measure
-				.save()
-				.then((Measure) => {
-					return TrackingModel.findByIdAndUpdate(
-						req.params.id,
-						{
-							$push: {
-								medidasSeguidas: mongoose.Types.ObjectId(Measure._id)
-							}
-						},
-						{useFindAndModify: false}
-					)
-				})
-				.then((Tracking) => {
-					if(!Tracking) {
-						res.status(404).send("Seguimiento no encontrado");
-					}
-					else {
-						res.json(Tracking)
-					}
-				})
-				.catch((err) => {
-					next(err);
-				})
-		}
-	})(req,res,next);
-});
-
 // Lista de ejercicios
 router.get("/exercise/list", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, (err, user, info) => {

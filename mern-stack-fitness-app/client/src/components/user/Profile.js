@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { getUser } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { SendFriendRequest } from './SendFriendRequest'
+import { SendFriendRequest } from '../request/SendFriendRequest'
 
 export const Profile = () => {
 
@@ -28,7 +28,7 @@ export const Profile = () => {
 				<>
 					<p>Email: {user.userInfo.emailUsuario}</p>
 					{
-						//<p>Rol: {user.userInfo.rolUsuario}</p>
+						<li><Link to={`/friend/list/${user.userInfo._id}`}>Lista de amigos</Link></li>
 					}
 					<p>Rol: {user.userInfo.role}</p>
 					{
@@ -39,6 +39,11 @@ export const Profile = () => {
 					{
 						user.permission.includes('write') && (
 							<Link to={`/edit/user/${user.userInfo._id}`}>Editar</Link>
+						)
+					}
+					{
+						user.permission.includes('delete') && (
+							<Link to={`/delete/user/${user.userInfo._id}`}>Eliminar</Link>
 						)
 					}
 					{

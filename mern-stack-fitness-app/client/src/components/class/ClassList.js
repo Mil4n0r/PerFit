@@ -48,7 +48,11 @@ export const ClassList = () => {
 										{formatDate(sclass.diaClase)}
 									</td>
 									<td>
-										{sclass.monitorClase.aliasUsuario}
+										{
+											sclass.monitorClase && (
+												sclass.monitorClase.aliasUsuario
+											)
+										}
 									</td>
 									<td>
 										{sclass.salaClase.nombreSala}

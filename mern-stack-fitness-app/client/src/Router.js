@@ -8,6 +8,7 @@ import DietRoutes from './routes/admin/DietRoutes';
 import FoodRoutes from './routes/user/FoodRoutes';
 import UserRoutes from './routes/admin/UserRoutes';
 import AuthenticationRoutes from './routes/unprotected/AuthenticationRoutes';
+import AuthenticationProtectedRoutes from './routes/unprotected/AuthenticationProtectedRoutes';
 import ActivityRoutes from './routes/admin/ActivityRoutes';
 import ClassRoutes from './routes/admin/ClassRoutes';
 
@@ -17,6 +18,7 @@ import MeasureRoutes from './routes/user/MeasureRoutes';
 import RoomRoutes from './routes/admin/RoomRoutes';
 import SubscriptionRoutes from './routes/admin/SubscriptionRoutes';
 import SubscriptionUnprotectedRoutes from './routes/unprotected/SubscriptionUnprotectedRoutes';
+import RequestRoutes from './routes/admin/RequestRoutes';
 
 function Router() {
 
@@ -41,6 +43,8 @@ function Router() {
 							{ClassRoutes()}
 							{SubscriptionRoutes()}
 							{SubscriptionUnprotectedRoutes()}
+							{RequestRoutes()}
+							{AuthenticationProtectedRoutes()}
 						</>
 					)
 				}

@@ -5,7 +5,7 @@ const ActivitySchema = mongoose.Schema({
     nombreActividad: { type: String, required: true, trim: true },
     equipamientoActividad: [{ 
 		type: String,
-		enum: ['bicicletas', 'peso libre', 'piscina', 'esterillas', 'cintas de correr']
+		enum: ['Bicicletas', 'Peso libre', 'Piscina', 'Esterillas', 'Cintas de correr']
 	}],
     descripcionActividad: { type: String, required: true, trim: true }
 });

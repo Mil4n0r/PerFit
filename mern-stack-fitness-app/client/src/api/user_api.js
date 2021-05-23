@@ -5,7 +5,7 @@ export const registerUser = (user) => axios.post("http://localhost:4000/register
 })
 	.then(res => res.data)
 
-export const getUsers = () => axios.get("http://localhost:4000/admin/list")
+export const getUsers = () => axios.get("http://localhost:4000/admin/user/list")
 	.then(res => res.data)
 	
 export const getUser = (id) => axios.get(`http://localhost:4000/admin/user/${id}`)
@@ -26,4 +26,10 @@ export const updateUser = (user,id) => axios.post(`http://localhost:4000/admin/u
 
 export const deleteUser = (id) => axios.delete(`http://localhost:4000/admin/user/${id}`);
 
-export const sendFriendRequest = (id) => axios.post(`http://localhost:4000/admin/friend/request/${id}`);
+export const getRequestsForUser = (id) => axios.get(`http://localhost:4000/admin/request/list/${id}`)
+	.then(res => res.data)
+
+export const getFriendsForUser = (id) => axios.get(`http://localhost:4000/admin/friend/list/${id}`)
+	.then(res => res.data)
+
+export const deleteFriend = (id, id2) => axios.delete(`http://localhost:4000/admin/friend/${id}/${id2}`);

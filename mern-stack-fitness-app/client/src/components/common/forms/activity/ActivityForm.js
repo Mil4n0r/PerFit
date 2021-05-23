@@ -38,11 +38,11 @@ export const ActivityForm = ({ activity, onSubmit }) => {
 								register({})
 							}
 						>
-							<option value="bicicletas">Bicicletas</option>
-							<option value="peso libre">Peso libre</option>
-							<option value="piscina">Piscina</option>
-							<option value="esterillas">Esterillas</option>
-							<option value="cintas de correr">Cintas de correr</option>
+							<option value="Bicicletas">Bicicletas</option>
+							<option value="Peso libre">Peso libre</option>
+							<option value="Piscina">Piscina</option>
+							<option value="Esterillas">Esterillas</option>
+							<option value="Cintas de correr">Cintas de correr</option>
 						</select>
 						<ErrorMessage errors={errors} name="activityequipment" as="p" />
 						<label htmlFor="text">

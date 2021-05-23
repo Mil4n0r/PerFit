@@ -6,6 +6,10 @@ import { Step2 } from '../common/forms/user/register/Step2';
 import { Step3 } from '../common/forms/user/register/Step3';
 import { StepConfirm } from '../common/forms/user/register/StepConfirm';
 
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+
+import {BodyContainer, RegisterAvatar, CustomTypography as Typography} from '../../style/style'
+
 export const Register = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
@@ -31,15 +35,18 @@ export const Register = () => {
 	}
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Registrarse como nuevo usuario</h3>
-				{
-					<>
-					{selectStep(match.params.step)}
-					</>
-				}
-			</div>
-		</div>
+		<BodyContainer>
+			<RegisterAvatar>
+				<LockOutlinedIcon />
+			</RegisterAvatar>
+			<Typography component="h2" variant="h5">
+				Registrarse como nuevo usuario
+			</Typography>
+			{
+				<>
+				{selectStep(match.params.step)}
+				</>
+			}
+		</BodyContainer>
 	);
 }

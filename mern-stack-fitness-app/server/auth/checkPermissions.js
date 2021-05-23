@@ -11,8 +11,6 @@ const SubscriptionModel = require('../models/SubscriptionSchema');
 const checkPermissionsUser = async (activeUser, req) => {
 	const id = req.params.id;
 	const checkedUser = await UserModel.findById(id);
-	console.log("CHECK",checkedUser)
-	console.log(checkedUser.role)
 	if(!checkedUser) {
 		return {
 			error: {
@@ -27,7 +25,7 @@ const checkPermissionsUser = async (activeUser, req) => {
 			return {
 				error: null,
 				user: checkedUser,
-				permission: ["read", "write", "checkplans"]
+				permission: ["read", "write", "checkplans", "managefriends"]
 			};
 		}
 		//else if(activeUser.rolUsuario === "admin") {
@@ -46,8 +44,8 @@ const checkPermissionsUser = async (activeUser, req) => {
 				permission: ["read", "checkplans", "allowfriends"]
 			};
 		}
-		else if(checkedUser.privacidadUsuario === "publico"
-				|| checkedUser.privacidadUsuario === "solo amigos") {// && areFriends(activeUser, checkedUser)) {}
+		else if(checkedUser.privacidadUsuario === "Público"
+				|| checkedUser.privacidadUsuario === "Sólo amigos") {// && areFriends(activeUser, checkedUser)) {}
 			return {
 				error: null,
 				user: checkedUser,
@@ -55,7 +53,7 @@ const checkPermissionsUser = async (activeUser, req) => {
 			};
 		}
 		/*
-		else if(checkedUser.privacidadUsuario === "solo amigos" && areFriends(activeUser, checkedUser)) {
+		else if(checkedUser.privacidadUsuario === "Sólo amigos" && areFriends(activeUser, checkedUser)) {
 			return {
 				error: null,
 				user: false,

@@ -20,7 +20,7 @@ export const EditTracking = () => {
 
 	const onSubmit = async (data) => {
 		await updateTracking(data, match.params.id);
-		history.push("/tracking/list");
+		history.push(`/tracking/list/${match.params.userid}`);
 	}
 
 	return tracking ? (

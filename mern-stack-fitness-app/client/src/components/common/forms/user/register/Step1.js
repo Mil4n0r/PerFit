@@ -7,6 +7,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import FormContext from '../../../../../context/FormContext';
 import { RegisterSchema1 } from '../../../schemas/user/register/RegisterSchema1';
 
+import { Stepper, Step, StepLabel, Button, Grid, Typography, Container } from '@material-ui/core';
+import { FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField } from '../../../../../style/style';
+
 export const Step1 = () => {
 	const { data, getData } = useContext(FormContext);
 
@@ -25,81 +28,103 @@ export const Step1 = () => {
 	const history = useHistory();
 
 	const onSubmit = (data) => {	// Pasamos los datos del formulario
-		history.push("./2");
 		getData(data);
+		history.push("./2");
 	};
 
 	return (
-				<form onSubmit={handleSubmit(onSubmit)}>
-					<div className="form-group">
-						<h1>Datos de inicio de sesión</h1>
-						<label htmlFor="text">
-							Nombre de usuario:
-						</label>
-						<input className="form-control" type="text" name="alias" id="alias"
-						ref={
-							register({})
-						} 
-						/>
-						<ErrorMessage
-							errors={errors} name="alias" render={
-								({ messages }) =>
-									messages &&
-										Object.entries(messages).map(([typeArray, messageArray]) => (
-											<div key={"alias " + typeArray}>
-												{Array.isArray(messageArray) ? (
-													messageArray.map((message, id) => <p key={"alias" + id}>{message}</p>)
-												) : <p>{messageArray}</p>}
-											</div>
-										))
-							}
-						/>
-						<label htmlFor="text">
-							Email de usuario:
-						</label>
-						<input className="form-control" type="text" name="email" id="email"
-						ref={
-							register({})
-						} 
-						/>
-						<ErrorMessage errors={errors} name="email" as="p" />
-						<label htmlFor="text">
-							Contraseña:
-						</label>
-						<input className="form-control" type="password" name="password" id="password"
-						ref={
-							register({})
-						}
-						/>
-						<ErrorMessage
-							errors={errors} name="password" render={
-								({ messages }) =>
-									messages &&
-										Object.entries(messages).map(([typeArray, messageArray]) => (
-											<div key={"password " + typeArray}>
-												{Array.isArray(messageArray) ? (
-													messageArray.map((message,id) => <p key={"password" + id}>{message}</p>)
-												) : <p>{messageArray}</p>}
-											</div>
-										))
-							}
-						/>
-						
-						<label htmlFor="text">
-							Confirmar contraseña:
-						</label>
-						<input className="form-control" type="password" name="passwordConfirm" id="passwordConfirm" 
-						ref={
-							register({})
-						}
-						/>
-						<ErrorMessage errors={errors} name="passwordConfirm" as="p" />
-					</div>
-					<div className="form-group">
-						<button type="submit" className="btn btn-primary">
-							Siguiente
-						</button>
-					</div>
-				</form>
+		<FormContainer>
+			<FullWidthForm onSubmit={handleSubmit(onSubmit)}>
+				<Stepper alternativeLabel activeStep={0}>
+					<Step key={"label1"}>
+						<StepLabel>{"Datos de inicio de sesión"}</StepLabel>
+					</Step>
+					<Step key={"label2"}>
+						<StepLabel>{"Datos personales"}</StepLabel>
+					</Step>
+					<Step key={"label3"}>
+						<StepLabel>{"Datos adicionales"}</StepLabel>
+					</Step>
+				</Stepper>
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Nombre de usuario"
+					type="text"
+					name="alias"
+					id="alias"
+				/>
+				<ErrorMessage
+					errors={errors} name="alias" render={
+						({ messages }) =>
+							messages &&
+								Object.entries(messages).map(([typeArray, messageArray]) => (
+									<Container key={"alias " + typeArray}>
+										{Array.isArray(messageArray) ? (
+											messageArray.map((message, id) => <Typography key={"alias" + id}>{message}</Typography>)
+										) : <Typography>{messageArray}</Typography>}
+									</Container>
+								))
+					}
+				/>
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Email"
+					type="text"
+					name="email"
+					id="email"
+				/>
+				<ErrorMessage errors={errors} name="email" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Contraseña"
+					type="password"
+					name="password"
+					id="password"
+				/>
+				<ErrorMessage
+					errors={errors} name="password" render={
+						({ messages }) =>
+							messages &&
+								Object.entries(messages).map(([typeArray, messageArray]) => (
+									<Container key={"password " + typeArray}>
+										{Array.isArray(messageArray) ? (
+											messageArray.map((message,id) => <Typography key={"password" + id}>{message}</Typography>)
+										) : <Typography>{messageArray}</Typography>}
+									</Container>
+								))
+					}
+				/>
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Confirmar contraseña"
+					type="password"
+					name="passwordConfirm"
+					id="passwordConfirm"
+				/>
+				<ErrorMessage errors={errors} name="passwordConfirm" as={Typography} />
+				<ButtonsContainer>
+					<Grid container spacing={1}>
+						<Grid item>
+							<Button disabled variant="contained">
+								Atrás
+							</Button>
+						</Grid>
+						<Grid item>
+							<Button type="submit" variant="contained" color='primary'>
+								Siguiente
+							</Button>
+						</Grid>
+					</Grid>
+				</ButtonsContainer>
+			</FullWidthForm>
+		</FormContainer>
 	);
 }

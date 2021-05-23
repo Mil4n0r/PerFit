@@ -16,8 +16,8 @@ function TrackingRoutes() {
 		<>
 			<Route exact path="/tracking/list" component={ TrackingList } />
 			<Route exact path="/tracking/list/:id" component={ UserTrackingList } />
-			<Route path="/edit/tracking/:id" component={ EditTracking } />
-			<Route path="/delete/tracking/:id" component={ DeleteTracking } />
+			<Route path="/edit/tracking/:userid/:id" component={ EditTracking } />
+			<Route path="/delete/tracking/:userid/:id" component={ DeleteTracking } />
 			<Route exact path="/associate/tracking/:id" component={ AssociateTrackingToUser } />
 		</>
 	)

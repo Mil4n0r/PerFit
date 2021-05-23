@@ -5,6 +5,10 @@ import AuthContext from '../../context/AuthContext';
 
 import { LoginForm } from '../common/forms/user/login/LoginForm';
 
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+
+import {BodyContainer, LoginAvatar, CustomTypography as Typography} from '../../style/style'
+
 export const Login = () => {
 	const history = useHistory();
 
@@ -17,11 +21,14 @@ export const Login = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Iniciar sesión</h3>
-				<LoginForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<LoginAvatar>
+				<LockOutlinedIcon />
+			</LoginAvatar>
+			<Typography component="h2" variant="h5">
+				Inicio de sesión
+			</Typography>
+			<LoginForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 };

@@ -20,7 +20,7 @@ export const EditUser = () => {
 
 	const onSubmit = async (data) => {
 		await updateUser(data, match.params.id);	// Llamamos a la API para modificar los datos del usuario
-		history.push("/admin/list");	// Redireccionamos al listado de usuarios
+		history.push(`/user/profile/${match.params.id}`);	// Redireccionamos al listado de usuarios
 	}
 
 	return user ? (

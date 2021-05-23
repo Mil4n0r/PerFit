@@ -8,7 +8,7 @@ export const DeleteTracking = () => {
 
 	const onClick = async () => {
 		await deleteTracking(match.params.id);	// Llamamos a la API para eliminar el seguimiento
-		history.push("/tracking/list");	// Redireccionamos al listado de seguimientos
+		history.push(`/tracking/list/${match.params.userid}`);	// Redireccionamos al listado de seguimientos
 	}
 
 	return (

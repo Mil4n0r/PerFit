@@ -30,7 +30,7 @@ export const UserRoutineList = () => {
 					</thead>
 					<tbody>
 						{
-							routines.map(routine => (
+							routines && routines.map(routine => (
 								<tr key={routine._id}>
 									<td>
 										{routine.nombrePlan}
@@ -42,8 +42,8 @@ export const UserRoutineList = () => {
 										{routine.usuarioPlan}
 									</td>
 									<td>
-										<Link to={`/edit/routine/${routine._id}`}>Editar</Link>
-										<Link to={`/delete/routine/${routine._id}`}>Eliminar</Link>
+										<Link to={`/edit/routine/${match.params.id}/${routine._id}`}>Editar</Link>
+										<Link to={`/delete/routine/${match.params.id}/${routine._id}`}>Eliminar</Link>
 									</td>
 								</tr>
 							))

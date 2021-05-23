@@ -42,8 +42,8 @@ export const UserTrackingList = () => {
 										{tracking.usuarioPlan}
 									</td>
 									<td>
-										<Link to={`/edit/tracking/${tracking._id}`}>Editar</Link>
-										<Link to={`/delete/tracking/${tracking._id}`}>Eliminar</Link>
+										<Link to={`/edit/tracking/${match.params.id}/${tracking._id}`}>Editar</Link>
+										<Link to={`/delete/tracking/${match.params.id}/${tracking._id}`}>Eliminar</Link>
 									</td>
 								</tr>
 							))

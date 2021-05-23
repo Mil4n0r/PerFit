@@ -20,7 +20,7 @@ export const EditDiet = () => {
 
 	const onSubmit = async (data) => {
 		await updateDiet(data, match.params.id);
-		history.push("/diet/list");
+		history.push(`/diet/list/${match.params.userid}`);
 	}
 
 	return diet ? (

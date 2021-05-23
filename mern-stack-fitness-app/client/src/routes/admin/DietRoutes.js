@@ -22,8 +22,8 @@ function DietRoutes() {
 		<>
 			<Route exact path="/diet/list" component={ DietList } />
 			<Route exact path="/diet/list/:id" component={ UserDietList } />
-			<Route path="/edit/diet/:id" component={ EditDiet } />
-			<Route path="/delete/diet/:id" component={ DeleteDiet } />
+			<Route path="/edit/diet/:userid/:id" component={ EditDiet } />
+			<Route path="/delete/diet/:userid/:id" component={ DeleteDiet } />
 			<Route exact path="/associate/diet/:id" component={ AssociateDietToUser } />
 			<Route exact path="/associate/meal/food/:id" component={ AssociateFoodsToMeal } />
 			<Route exact path="/associate/diet/meal/:id" component={ AssociateMealToDiet } />

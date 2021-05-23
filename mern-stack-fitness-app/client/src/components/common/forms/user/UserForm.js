@@ -6,6 +6,14 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { UserSchema } from '../../schemas/user/UserSchema';
 
+const dateToISO = (date) => {
+	const realDate = new Date(date);
+	const day = realDate.getDate().toString().padStart(2,0);
+	const month = (realDate.getMonth()+1).toString().padStart(2,0);
+	const year = realDate.getFullYear().toString().padStart(4,0);
+	return `${year}-${month}-${day}`;
+}
+
 export const UserForm = ({ user, onSubmit }) => {
 	
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
@@ -17,7 +25,7 @@ export const UserForm = ({ user, onSubmit }) => {
 			dni: user ? user.userInfo.datosPersonales.dniUsuario : "",
 			address: user ? user.userInfo.datosPersonales.direccionUsuario : "",
 			telephone: user ? user.userInfo.datosPersonales.telefonoUsuario : "",
-			birthdate: user.userInfo.datosPersonales.fechaNacUsuario ? user.userInfo.datosPersonales.fechaNacUsuario.substr(0,10) : "", // Ajustamos la fecha al formato del formulario
+			birthdate: user.userInfo.datosPersonales.fechaNacUsuario ? dateToISO(user.userInfo.datosPersonales.fechaNacUsuario) : "", // Ajustamos la fecha al formato del formulario
 			//role: user.userInfo.rolUsuario ? user.userInfo.rolUsuario : "",
 			role: user.userInfo.role ? user.userInfo.role : "",
 			privacy: user.userInfo.privacidadUsuario ? user.userInfo.privacidadUsuario : "",
@@ -30,7 +38,6 @@ export const UserForm = ({ user, onSubmit }) => {
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
 		onSubmit(data);
 	});
-	
 	return (
 		<form onSubmit={submitHandler}>
 			<div className="form-group">
@@ -157,9 +164,9 @@ export const UserForm = ({ user, onSubmit }) => {
 					ref={
 						register({})
 					}>
-					<option value="publico">Público: Perfil visible para todo el mundo</option>
-					<option value="solo amigos">Sólo amigos: Perfil visible para mi y para mis amigos</option>
-					<option value="privado">Privado: Perfil visible sólo para mi</option>
+					<option value="Público">Público: Perfil visible para todo el mundo</option>
+					<option value="Sólo amigos">Sólo amigos: Perfil visible para mi y para mis amigos</option>
+					<option value="Privado">Privado: Perfil visible sólo para mi</option>
 				</select>
 				<ErrorMessage errors={errors} name="privacy" as="p" />
 			</div>

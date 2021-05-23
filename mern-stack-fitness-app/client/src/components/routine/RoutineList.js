@@ -28,7 +28,7 @@ export const RoutineList = () => {
 					</thead>
 					<tbody>
 						{
-							routines.map(routine => (
+							routines && routines.map(routine => (
 								<tr key={routine._id}>
 									<td>
 										{routine.nombrePlan}

@@ -13,7 +13,7 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 			subscriptionname: subscription ? subscription.subscriptionInfo.nombreSuscripcion : "",
 			subscriptiondescription: subscription ? subscription.subscriptionInfo.descripcionSuscripcion : "",
 			subscriptioncost: subscription ? subscription.subscriptionInfo.costeSuscripcion : "",
-			subscriptionend: subscription ? subscription.subscriptionInfo.vencimientoSuscripcion : "",
+			subscriptionend: subscription ? subscription.subscriptionInfo.vencimientoSuscripcion.substr(0,10) : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		//resolver: yupResolver(SubscriptionSchema),
 		mode: "onTouched"

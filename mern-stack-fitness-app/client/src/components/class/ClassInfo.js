@@ -32,7 +32,11 @@ export const ClassInfo = () => {
 				<>
                     <p>Actividad: {sclass.classInfo.actividadClase.nombreActividad}</p>
 					<p>Fecha: {formatDate(sclass.classInfo.diaClase)}</p>
-                    <p>Monitor: {sclass.classInfo.monitorClase.aliasUsuario}</p>
+                    <p>Monitor: {
+									sclass.classInfo.monitorClase && (
+										sclass.classInfo.monitorClase.aliasUsuario
+									)
+								}</p>
 					<p>Sala: {sclass.classInfo.salaClase.nombreSala}</p>
                     <p>Asistentes: {sclass.classInfo.asistentesClase.aliasUsuario}</p>
 					{

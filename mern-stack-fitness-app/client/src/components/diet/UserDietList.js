@@ -59,8 +59,8 @@ export const UserDietList = () => {
 										{diet.usuarioPlan}
 									</td>
 									<td>
-										<Link to={`/edit/diet/${diet._id}`}>Editar</Link>
-										<Link to={`/delete/diet/${diet._id}`}>Eliminar</Link>
+										<Link to={`/edit/diet/${match.params.id}/${diet._id}`}>Editar</Link>
+										<Link to={`/delete/diet/${match.params.id}/${diet._id}`}>Eliminar</Link>
 									</td>
 								</tr>
 							))

@@ -7,6 +7,8 @@ const TrackingModel = require('../../models/TrackingSchema');
 
 const { checkPermissionsMeasure } = require('../../auth/checkPermissions');
 
+const mongoose = require('mongoose');
+
 // MEDIDAS
 
 // Creación de medida
@@ -161,6 +163,49 @@ router.delete("/measure/:trackingid/:id", async (req, res, next) => {
 						next(err);
 					});
 			}
+		}
+	})(req,res,next);
+});
+
+router.post("/associate/tracking/measure/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const Measure = new MeasureModel({
+				valorMedida: req.body.measurevalue,
+				fechaMedida: req.body.measuredate
+			});
+			
+			Measure
+				.save()
+				.then((Measure) => {
+					return TrackingModel.findByIdAndUpdate(
+						req.params.id,
+						{
+							$push: {
+								medidasSeguidas: mongoose.Types.ObjectId(Measure._id)
+							}
+						},
+						{useFindAndModify: false}
+					)
+				})
+				.then((Tracking) => {
+					if(!Tracking) {
+						res.status(404).send("Seguimiento no encontrado");
+					}
+					else {
+						res.json(Tracking)
+					}
+				})
+				.catch((err) => {
+					next(err);
+				})
 		}
 	})(req,res,next);
 });

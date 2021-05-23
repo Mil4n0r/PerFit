@@ -9,7 +9,7 @@ const { checkPermissionsUser } = require('../../auth/checkPermissions');
 const mongoose = require('mongoose');
 
 // Consulta de usuarios
-router.get("/list", async (req,res,next) => {
+router.get("/user/list", async (req,res,next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -115,7 +115,6 @@ router.delete("/user/:id", async (req, res, next) => {
 				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 			}
 			else if(permissionsResData && resPermission.includes("delete")) {
-				resUser.emailUsuario = req.body.email		// Se reasignan los campos del usuario
 				resUser
 					.remove()	// Se elimina el usuario
 					.then(userData => {
@@ -133,7 +132,30 @@ router.delete("/user/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.post("/friend/request/:id", async (req, res, next) => {
+router.get("/friend/list/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const userid = req.params.id;
+			await UserModel.findById(userid).populate("amigosUsuario").exec((err, user) => {
+				if(err) {
+					next(err);	
+				} 
+				else {	// Se manda como respuesta el contenido de la lista de amigos (en JSON)
+					res.json(user.amigosUsuario);
+				}
+			});
+		}
+	})(req,res,next);
+});
+
+router.delete("/friend/:id/:id2", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(!user) {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
@@ -147,18 +169,21 @@ router.post("/friend/request/:id", async (req, res, next) => {
 			if(resError) {
 				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 			}
-			else if(permissionsResData && resPermission.includes("allowfriends")) {
+			else if(permissionsResData && resPermission.includes("managefriends")) {				
 				resUser
-					.update({$push: 
-						{
-							peticionesPendientes: {
-								usuarioSolicitante: mongoose.Types.ObjectId(user._id),
-								tipoPeticion: "Amistad"
-							}
-						}
-					})
-					.then(userData => {
-						res.json(userData);	// Se manda como respuesta el usuario editado
+					.update({$pull: {amigosUsuario: mongoose.Types.ObjectId(req.params.id2)} })
+					.then(async (userData) => {
+						// Quitamos también la relación mutua
+						await UserModel.findByIdAndUpdate(
+							req.params.id2,
+							{
+								$pull: {
+									amigosUsuario: mongoose.Types.ObjectId(req.params.id)
+								}
+							},
+							{useFindAndModify: false}
+						)
+						res.json(userData);
 					})
 					.catch((err) => {
 						next(err);
@@ -171,67 +196,5 @@ router.post("/friend/request/:id", async (req, res, next) => {
 		}
 	})(req,res,next);
 });
-/*
-router.post("/accept/friend/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const permissionsResData = await checkPermissionsClass(user, req);
-			const resError = permissionsResData.error;
-			const resClass = permissionsResData.class;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("join")) {
-				resClass
-					.update({$push: {asistentesClase: mongoose.Types.ObjectId(user._id)} })
-					.then(classData => {
-						res.json(classData);	// Se manda como respuesta la clase eliminada
-					})
-					.catch((err) => {
-						next(err);
-					});
-			}
-		}
-	})(req,res,next);
-});
 
-router.post("/reject/friend/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const permissionsResData = await checkPermissionsClass(user, req);
-			const resError = permissionsResData.error;
-			const resClass = permissionsResData.class;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("leave")) {
-				resClass
-					.update({$pull: {asistentesClase: mongoose.Types.ObjectId(user._id)} })
-					.then(classData => {
-						res.json(classData);	// Se manda como respuesta la clase eliminada
-					})
-					.catch((err) => {
-						next(err);
-					});
-			}
-		}
-	})(req,res,next);
-});
-*/
 module.exports = router;
