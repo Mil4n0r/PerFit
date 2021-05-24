@@ -1,14 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getFoods } from '../../api';
 
-import { Table, TableBody, TableCell, TableContainer, Paper } from '@material-ui/core';
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import AddCircleIcon from '@material-ui/icons/AddCircle';
-
-import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell } from '../../style/style';
-
-
+import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
+import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
 
 export const FoodList = () => {
 	const [foods, setFoods] = useState([])	// Creamos una variable de estado para almacenar la información del alimentos y una función para actualizarla
@@ -23,6 +20,9 @@ export const FoodList = () => {
 
 	return (
 		<BodyContainer>
+			<CustomTypography component="h2" variant="h5">
+				Listado de comidas
+			</CustomTypography>
 			<TableContainer component={Paper}>
 				<Table size="medium">
 					<TableHead>
@@ -33,7 +33,7 @@ export const FoodList = () => {
 							<TableHeaderCell align="right">Carbohidratos (g)</TableHeaderCell>
 							<TableHeaderCell align="right">Proteinas (g)</TableHeaderCell>
 							<TableHeaderCell align="right">Grasas (g)</TableHeaderCell>
-							<TableHeaderCell align="right"><Link to={'/create/food'}><AddCircleIcon color='secondary'/></Link></TableHeaderCell>
+							<TableHeaderCell align="right"><Link to={'/create/food'}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
@@ -47,7 +47,7 @@ export const FoodList = () => {
 								<TableCell align="right">{food.nutrientesRacion.carbohidratos}</TableCell>
 								<TableCell align="right">{food.nutrientesRacion.proteinas}</TableCell>
 								<TableCell align="right">{food.nutrientesRacion.grasas}</TableCell>
-								<TableCell align="right"><Link to={`/food/info/${food._id}`}><VisibilityIcon/></Link></TableCell>
+								<TableCell align="right"><Link to={`/food/info/${food._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
 							</TableRow>
 						))}
 					</TableBody>

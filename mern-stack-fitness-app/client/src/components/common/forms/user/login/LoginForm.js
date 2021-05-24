@@ -6,9 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { LoginSchema } from '../../../schemas/user/login/LoginSchema';
 
-import {Grid, TextField, Typography, Link} from '@material-ui/core';
+import {Grid, Typography, Link} from '@material-ui/core';
 
-import {FormContainer, LoginButton, FullWidthForm} from '../../../../../style/style'
+import {FormContainer, LoginButton, FullWidthForm, TextFieldWithMargin as TextField} from '../../../../../style/style'
 
 export const LoginForm = ({ onSubmit }) => {
 	
@@ -30,7 +30,6 @@ export const LoginForm = ({ onSubmit }) => {
 			>
 				<TextField
 					variant="outlined"
-					margin="normal"
 					inputRef={register}
 					fullWidth
 					label="Email"
@@ -41,7 +40,6 @@ export const LoginForm = ({ onSubmit }) => {
 				<ErrorMessage errors={errors} name="email" as={Typography} />
 				<TextField
 					variant="outlined"
-					margin="normal"
 					inputRef={register}
 					fullWidth
 					label="Contraseña"

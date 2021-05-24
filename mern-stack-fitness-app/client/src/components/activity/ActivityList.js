@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getActivities } from '../../api';
+import AuthContext from '../../context/AuthContext';
+
+import { Table, TableBody, TableCell, Paper, Modal, Button } from '@material-ui/core';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
+import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
 
 export const ActivityList = () => {
 	const [activities, setActivities] = useState([])	// Creamos una variable de estado para almacenar la información del alimentos y una función para actualizarla
+
+	const { loggedIn } = useContext(AuthContext);
 
 	useEffect(() => {
 		const fetchActivities = async () => {
@@ -14,39 +22,38 @@ export const ActivityList = () => {
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Lista de Actividades</h3>	
-				<table className="table table-stripped mt-3">
-					<thead>
-						<tr>
-							<th>Nombre de la actividad</th>
-							<th>Equipamiento de la actividad</th>
-							<th>Descripción</th>
-						</tr>
-					</thead>
-					<tbody>
-						{
-							activities.map(activity => (
-								<tr key={activity._id}>
-									<td>
-										{activity.nombreActividad}
-									</td>
-									<td>
-										{activity.equipamientoActividad}
-									</td>
-									<td>
-										{activity.descripcionActividad}
-									</td>
-									<td>
-										<Link to={`/activity/info/${activity._id}`}>Ver</Link>
-									</td>
-								</tr>
-							))
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h2" variant="h5">
+				Listado de actividades
+			</CustomTypography>
+			<TableContainer component={Paper}>
+				<Table size="medium">
+					<TableHead>
+						<TableRow>
+							<TableHeaderCell>Nombre de la actividad</TableHeaderCell>
+							<TableHeaderCell>Equipamiento de la actividad</TableHeaderCell>
+							<TableHeaderCell>Descripción</TableHeaderCell>
+							{
+								loggedIn.role === "Administrador" ? (
+									<TableHeaderCell align='center'><Link to={'/create/activity'}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
+								) :
+								<TableHeaderCell align='center'>Acción</TableHeaderCell>
+							}
+							
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{activities.map(activity => (
+							<TableRow key={activity._id}>
+								<TableCell component="td" scope="row">{activity.nombreActividad}</TableCell>
+								<TableCell>{activity.equipamientoActividad}</TableCell>
+								<TableCell>{activity.descripcionActividad}</TableCell>
+								<TableCell align='center'><Link to={`/activity/info/${activity._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</BodyContainer>
 	);
 }

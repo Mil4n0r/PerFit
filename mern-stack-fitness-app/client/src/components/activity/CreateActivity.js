@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { createActivity } from '../../api';
 import { ActivityForm } from '../common/forms/activity/ActivityForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const CreateActivity = () => {
 	const history = useHistory();
 	const onSubmit = async (data) => {
@@ -11,11 +13,11 @@ export const CreateActivity = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Crear actividad</h3>
-				<ActivityForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear actividad
+			</CustomTypography>
+			<ActivityForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 }

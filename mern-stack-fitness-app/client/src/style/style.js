@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import {Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, Container, Avatar, Typography, Grid, TextField, Select, InputLabel } from '@material-ui/core';
+import {Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import {indigo, purple, green, red} from '@material-ui/core/colors'
 import { ErrorMessage } from '@hookform/error-message';
@@ -9,12 +9,20 @@ const HeaderContainer = styled.div`
 	display: flex;
 	justify-content:center; // centers in the flex direction and the default flex-direction is row
 	align-items:center; // centers perpendicular to the flex direction
-	padding: 1em;
+	padding: ${props => props.theme.spacing(2)};
 `;
 
 const NavLink = styled(Link)`
-	color: Red;
+	color: ${props => props.theme.palette.secondary.main};
 	text-decoration: none;
+`
+
+const NavProgress = styled(CircularProgress)`
+	&& {
+		padding: ${props => props.theme.spacing(1)};
+		width: 50px;
+		height: 50px;
+	}
 `
 
 const NavBar = styled(AppBar)`
@@ -22,6 +30,9 @@ const NavBar = styled(AppBar)`
 		width: 100%;
 		padding: 0;
 		margin: 0;
+		background: ${props => props.theme.palette.primary.dark};
+		align-items: center;
+		justify-content: center;
 	}
 `
 
@@ -37,8 +48,10 @@ const NavTab = styled(Tab)`
 
 const NavTabs = styled(Tabs)`
 	&& {
-		background: ${props => props.theme.palette.primary.dark};
 		width: 100%;
+	}
+	a {
+		padding: ${props => props.theme.spacing(1.5)}
 	}
 `
 
@@ -58,7 +71,7 @@ const CustomTableRow = styled(TableRow)`
 const BodyContainer = styled(Container)`
 	&& {
 		display: flex;
-		padding: 1em;
+		padding: ${props => props.theme.spacing(2)};
 		text-align: center;
 		justify-content:center;
 		align-items:center;
@@ -69,7 +82,7 @@ const BodyContainer = styled(Container)`
 const FormContainer = styled(Container)`
 	&& {
 		display: flex;
-		padding: 1em;
+		padding: ${props => props.theme.spacing(2)};
 		text-align: left;
 		justify-content:center;
 		align-items:center;
@@ -99,6 +112,13 @@ const LoginAvatar = styled(Avatar)`
 `
 
 const RegisterAvatar = styled(Avatar)`
+	&& {
+		background-color: ${props => props.theme.palette.primary.main};
+		margin: ${props => props.theme.spacing(2)};
+	}
+`
+
+const ButtonAvatar = styled(Avatar)`
 	&& {
 		background-color: ${props => props.theme.palette.primary.main};
 		margin: ${props => props.theme.spacing(2)};
@@ -141,4 +161,52 @@ const InputLabelWithMargin = styled(InputLabel)`
 	}
 `
 
-export {HeaderContainer, NavTab, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin}
+const VerticalGrid = styled(Grid)`
+	&& {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		padding: ${props => props.theme.spacing(2)}
+	}
+`
+
+const InputLabelWithoutMargin = styled(InputLabel)`
+	&& {
+		margin: 0;
+	}
+`
+
+const HorizontalGrid = styled(Grid)`
+	&& {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		${props => props.theme.spacing(2)}
+	}
+`
+
+const PrimaryLink = styled(Link)`
+	&& {
+		color: ${props => props.theme.palette.primary.main};
+		text-decoration: none;
+	}
+`
+
+const TableContainerWithMargin = styled(TableContainer)`
+	&& {
+		margin: ${props => props.theme.spacing(2)}
+	}
+`
+
+const CenterPaper = styled(Paper)`
+	&& {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
+`
+
+export {HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper}

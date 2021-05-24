@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { createFood } from '../../api';
 import { FoodForm } from '../common/forms/food/FoodForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const CreateFood = () => {
 	const history = useHistory();
 	
@@ -12,11 +14,11 @@ export const CreateFood = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Crear alimento</h3>
-				<FoodForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear alimento
+			</CustomTypography>
+			<FoodForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 }

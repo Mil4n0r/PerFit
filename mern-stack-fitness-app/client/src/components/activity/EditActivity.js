@@ -3,6 +3,8 @@ import { getActivity, updateActivity } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { ActivityForm } from '../common/forms/activity/ActivityForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditActivity = () => {
 	const match = useRouteMatch();
 	const [activity, setActivity] = useState();
@@ -24,12 +26,12 @@ export const EditActivity = () => {
 	}
 
 	return activity ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar actividad</h3>
-				<ActivityForm activity={activity} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar actividad
+			</CustomTypography>
+			<ActivityForm activity={activity} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>
