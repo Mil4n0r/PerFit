@@ -3,6 +3,8 @@ import { getTracking, updateTracking } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { TrackingForm } from '../common/forms/tracking/TrackingForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditTracking = () => {
 	const match = useRouteMatch();
 	const [tracking, setTracking] = useState();
@@ -24,12 +26,12 @@ export const EditTracking = () => {
 	}
 
 	return tracking ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar seguimiento</h3>
-				<TrackingForm tracking={tracking} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar seguimiento
+			</CustomTypography>
+			<TrackingForm tracking={tracking} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

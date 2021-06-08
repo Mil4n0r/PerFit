@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getRooms } from '../../api';
+import AuthContext from '../../context/AuthContext';
+
+import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
+import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
 
 export const RoomList = () => {
 	const [rooms, setRooms] = useState([])	// Creamos una variable de estado para almacenar la información de la sala y una función para actualizarla
+
+	const { loggedIn } = useContext(AuthContext);
 
 	useEffect(() => {
 		const fetchRooms = async () => {
@@ -14,39 +22,38 @@ export const RoomList = () => {
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Lista de Salas</h3>	
-				<table className="table table-stripped mt-3">
-					<thead>
-						<tr>
-							<th>Nombre de la sala</th>
-							<th>Equipamiento de la sala</th>
-							<th>Aforo</th>
-						</tr>
-					</thead>
-					<tbody>
-						{
-							rooms.map(room => (
-								<tr key={room._id}>
-									<td>
-										{room.nombreSala}
-									</td>
-									<td>
-										{room.equipamientoSala}
-									</td>
-									<td>
-										{room.aforoSala}
-									</td>
-									<td>
-										<Link to={`/room/info/${room._id}`}>Ver</Link>
-									</td>
-								</tr>
-							))
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h2" variant="h5">
+				Listado de salas
+			</CustomTypography>
+			<TableContainer component={Paper}>
+				<Table size="medium">
+					<TableHead>
+						<TableRow>
+							<TableHeaderCell>Nombre de la sala</TableHeaderCell>
+							<TableHeaderCell>Equipamiento de la sala</TableHeaderCell>
+							<TableHeaderCell>Aforo</TableHeaderCell>
+							{
+								loggedIn && loggedIn.role === "Administrador" ? (
+									<TableHeaderCell align='center'><Link to={'/create/room'}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
+								) :
+									<TableHeaderCell align='center'>Acción</TableHeaderCell>
+							}
+							
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{rooms.map(room => (
+							<TableRow key={room._id}>
+								<TableCell component="th" scope="row">{room.nombreSala}</TableCell>
+								<TableCell>{room.equipamientoSala}</TableCell>
+								<TableCell>{room.aforoSala}</TableCell>
+								<TableCell align='center'><Link to={`/room/info/${room._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</BodyContainer>
 	);
 }

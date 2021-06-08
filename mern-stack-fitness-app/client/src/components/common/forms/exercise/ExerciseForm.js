@@ -6,6 +6,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { ExerciseSchema } from '../../schemas/exercise/ExerciseSchema';
 
+import { Button, Typography } from '@material-ui/core';
+import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel, TextFieldWithMargin as TextField } from '../../../../style/style';
+
 export const ExerciseForm = ({ exercise, onSubmit }) => {
 	
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
@@ -22,24 +25,34 @@ export const ExerciseForm = ({ exercise, onSubmit }) => {
 	});
 
 	return (
-				<form onSubmit={submitHandler}>
-					<div className="form-group">
-						<label htmlFor="text">
-							Nombre del ejercicio:
-						</label>
-						<input className="form-control" ref={register} type="text" name="exercisename" id="exercisename" />
-						<ErrorMessage errors={errors} name="exercisename" as="p" />
-						<label htmlFor="text">
-							Tipo de ejercicio:
-						</label>
-						<input className="form-control" ref={register} type="text" name="exercisetype" id="exercisetype" />
-						<ErrorMessage errors={errors} name="exercisetype" as="p" />
-					</div>
-					<div className="form-group">
-						<button type="submit" className="btn btn-primary">
-							Guardar ejercicio
-						</button>
-					</div>
-				</form>
+		<FormContainer>
+			<FullWidthForm onSubmit={submitHandler}>
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Nombre del ejercicio"
+					type="text"
+					name="exercisename"
+					id="exercisename"
+				/>
+				<ErrorMessage errors={errors} name="exercisename" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Tipo del ejercicio"
+					type="text"
+					name="exercisetype"
+					id="exercisetype"
+				/>
+				<ErrorMessage errors={errors} name="exercisetype" as={Typography} />
+				<ButtonsContainer>
+					<Button type="submit" variant="contained" color='primary'>
+						Guardar ejercicio
+					</Button>
+				</ButtonsContainer>
+			</FullWidthForm>
+		</FormContainer>
 	);
 }

@@ -6,7 +6,6 @@ const MealSchema = mongoose.Schema({
     // _id se incluye por defecto (Clave primaria)
     nombreComida: { type: String, required: true, trim: true },
     diaComida: { type: Date, required: true, trim: true },
-
     racionesComida: [{ type: mongoose.Schema.Types.ObjectId, ref: "Ración"}]
 });
 

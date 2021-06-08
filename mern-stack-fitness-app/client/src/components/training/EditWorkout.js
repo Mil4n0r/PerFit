@@ -3,6 +3,8 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { getWorkout, updateWorkout } from '../../api';
 import { WorkoutForm } from '../common/forms/training/WorkoutForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditWorkout = () => {
 	const match = useRouteMatch();
 	const [workout, setWorkout] = useState();
@@ -20,16 +22,16 @@ export const EditWorkout = () => {
 
 	const onSubmit = async (data) => {
 		await updateWorkout(data, match.params.id);
-		history.push(`/associate/training/exercise/${match.params.trainingid}`);
+		history.push(`/associate/routine/training/${match.params.routineid}`);
 	};
 
 	return workout ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar ejercicios</h3>
-                <WorkoutForm workout={workout} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar series de ejercicios
+			</CustomTypography>
+			<WorkoutForm workout={workout} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

@@ -36,7 +36,9 @@ export const DeleteActivity = (props) => {
 							fullWidth
 							variant="contained"
 							color="secondary"
-						>Eliminar</Button>
+						>
+							Eliminar
+						</Button>
 					</Grid>
 					<Grid item xs>
 						<Button

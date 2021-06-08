@@ -1,14 +1,52 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { getRequestsForUser } from '../../api';
 import { AcceptRequest } from './AcceptRequest';
 import { RejectRequest } from './RejectRequest';
 import { useRouteMatch } from "react-router-dom";
 
+import { Grid, Table, TableBody, TableCell, Paper } from '@material-ui/core';
+
+import CheckCircleOutlinedIcon from '@material-ui/icons/CheckCircleOutlined';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
+
+import { CenterPaper, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography as Typography, TableContainerWithMargin as TableContainer, HorizontalGrid } from '../../style/style';
+
+import { acceptFriendRequest, rejectFriendRequest } from '../../api';
+
 export const RequestList = () => {
 	const match = useRouteMatch();
 	const [requests, setRequests] = useState([])	// Creamos una variable de estado para almacenar la información de las solicitudes y una función para actualizarlas
-	const [updated, setUpdated] = useState([])
+	const [updated, setUpdated] = useState()
 
+	const acceptRequest = async (req) => {
+		const requestId = req._id;
+		const requestType = req.tipoPeticion;
+
+		if(requestType === "Amistad") {
+			await acceptFriendRequest(requestId);
+		}
+		else if(requestType === "Entrenamiento") {
+			//await acceptTrainingRequest(requestId);
+			console.log("FALTA PROGRAMAR")
+		}
+		setUpdated(requestId);
+	}
+	
+	const rejectRequest = async (req) => {
+		const requestId = req._id;
+		const requestType = req.tipoPeticion;
+	
+		if(requestType === "Amistad") {
+			await rejectFriendRequest(requestId);
+		}
+		else if(requestType === "Entrenamiento") {
+			//await rejectTrainingRequest(requestId);
+			console.log("FALTA PROGRAMAR")
+		}
+		setUpdated(requestId);
+	}
 
 	useEffect(() => {
 		const fetchRequests = async () => {
@@ -19,37 +57,43 @@ export const RequestList = () => {
 	}, [updated]);
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Lista de solicitudes</h3>	
-				<table className="table table-stripped mt-3">
-					<thead>
-						<tr>
-							<th>Solicitante</th>
-							<th>Tipo de solicitud</th>
-							<th>Acción</th>
-						</tr>
-					</thead>
-					<tbody>
-						{
-							requests.map(request => (
-								<tr key={request._id}>
-									<td>
-										<a href={`http://localhost:3000/user/profile/${request.usuarioSolicitante._id}`}>{request.usuarioSolicitante.aliasUsuario}</a>
-									</td>
-									<td>
-										{request.tipoPeticion}
-									</td>
-									<td>
-										<AcceptRequest parentCallback={setUpdated} type={request.tipoPeticion} id={request._id}/>
-										<RejectRequest parentCallback={setUpdated} type={request.tipoPeticion} id={request._id}/>
-									</td>
-								</tr>
-							))
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
+		<BodyContainer>
+			<Typography component="h2" variant="h5">
+				Listado de solicitudes
+			</Typography>
+			<TableContainer component={Paper}>
+				<Table size="medium">
+					<TableHead>
+						<TableRow>
+							<TableHeaderCell>Solicitante</TableHeaderCell>
+							<TableHeaderCell>Tipo de solicitud</TableHeaderCell>
+							<TableHeaderCell align="center">Acción</TableHeaderCell>							
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{requests.map(request => (
+							<TableRow key={request._id}>
+								<TableCell component="th" scope="row">
+									<Link to={`/user/profile/${request.usuarioSolicitante._id}`}>{request.usuarioSolicitante.aliasUsuario}</Link>
+								</TableCell>
+								<TableCell>
+									{request.tipoPeticion}
+								</TableCell>
+								<TableCell>
+									<HorizontalGrid container spacing={1}>
+										<HorizontalGrid item xs>
+											<Link to={"#"} onClick={() => { acceptRequest(request) } }><CheckCircleOutlinedIcon color='primary'/></Link>
+										</HorizontalGrid>
+										<HorizontalGrid item xs>
+											<Link to={"#"} onClick={() => { rejectRequest(request) } }><CancelOutlinedIcon color='secondary'/></Link>
+										</HorizontalGrid>
+									</HorizontalGrid>
+								</TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</BodyContainer>
 	);
 }

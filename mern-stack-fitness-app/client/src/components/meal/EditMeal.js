@@ -3,6 +3,8 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { updateMeal, getMeal } from '../../api';
 import { MealForm } from '../common/forms/meal/MealForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditMeal = () => {
 	const match = useRouteMatch();
 	const [meal, setMeal] = useState();
@@ -20,16 +22,16 @@ export const EditMeal = () => {
 
 	const onSubmit = async (data) => {
 		await updateMeal(data, match.params.id); // ID rutina
-		history.push(`/associate/diet/food/${match.params.dietid}`);
+		history.push(`/associate/diet/meal/${match.params.dietid}`);
 	};
 
 	return meal ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar comida</h3>
-				<MealForm meal={meal} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar comida
+			</CustomTypography>
+			<MealForm meal={meal} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

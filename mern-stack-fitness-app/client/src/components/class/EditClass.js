@@ -3,6 +3,8 @@ import { getClass, updateClass } from '../../api';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { ClassForm } from '../common/forms/class/ClassForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditClass = () => {
 	const match = useRouteMatch();
 	const [sclass, setClass] = useState();
@@ -24,12 +26,12 @@ export const EditClass = () => {
 	}
 
 	return sclass ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar clase</h3>
-				<ClassForm sclass={sclass} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar clase
+			</CustomTypography>
+			<ClassForm sclass={sclass} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { Link } from 'react-router-dom';
 
 import { ErrorMessage } from '@hookform/error-message';
@@ -7,20 +7,27 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { getActivities, getUsers, getRooms } from '../../../../api';
 
-//import Select from 'react-select';
+import { Button, Grid, Typography, MenuItem, Chip } from '@material-ui/core';
+import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel, TextFieldWithMargin as TextField } from '../../../../style/style';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 
-//import { ClassSchema } from '../../schemas/class/ClassSchema';
-/*
-const normalizeFloat = (value) => {
-	const normalizedFloat = value.replace(",", ".")
-	return normalizedFloat;
-};
-*/
+import { ClassSchema } from '../../schemas/class/ClassSchema'
+
 export const ClassForm = ({ sclass, onSubmit }) => {
 
 	const [activities, setActivities] = useState([])	// Creamos una variable de estado para almacenar la información de las actividades y una función para actualizarlas
 	const [users, setUsers] = useState([])
 	const [rooms, setRooms] = useState([])
+	const [selectedDate, handleDateChange] = useState(new Date(localStorage.getItem('currentDate')) || new Date() );
+
+	useEffect(() => {
+		const setLocalStorageDate = async () => {
+			localStorage.setItem('currentDate', selectedDate);
+		}
+		setLocalStorageDate();
+		// (Evita que salte warning por usar cadena vacía)
+		// eslint-disable-next-line 
+	}, [selectedDate]);
 
 	useEffect(() => {
 		const fetchActivities = async () => {
@@ -40,85 +47,122 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 		fetchRooms();
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
-	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
+	const { register, errors, handleSubmit, control } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-			classday: sclass ? sclass.classInfo.diaClase.substr(0,10) : "",
+			classday: sclass ? sclass.classInfo.diaClase : selectedDate,
 			classmonitor: sclass ? sclass.classInfo.classMonitor : "",
 			classactivity: sclass ? sclass.classInfo.actividadClase : "",
 			classroom: sclass ? sclass.classInfo.salaClase : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
-		//resolver: yupResolver(ClassSchema),
+		resolver: yupResolver(ClassSchema),
 		mode: "onTouched"
 	});
 
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
+		handleDateChange(data.classday);
 		onSubmit(data);
 	});
 
 	return (
-				<form onSubmit={submitHandler}>
-					<div className="form-group">
-						<label htmlFor="text">
-							Actividad de la clase
-						</label>
-						<select className="form-control" type="text" name="classactivity" id="classactivity"
-								ref={
-									register({})
-								}
+		<FormContainer>
+			<FullWidthForm onSubmit={submitHandler}>
+				<InputLabel htmlFor="classactivity">
+					Actividad de la clase
+				</InputLabel>
+				<Controller
+					control={control}
+					name="classactivity"
+					id="classactivity"
+					as={
+						<Select
+							variant="outlined"
+							fullWidth
 						>
-						{
-							activities && ( 
-								activities.map(activity => (
-									<option value={activity._id}>{activity.nombreActividad}</option>
-								))
-							)
-						}
-						</select>
-						<label htmlFor="text">
-							Fecha de la clase
-						</label>
-						<input className="form-control" ref={register} type="date" name="classday" id="classday" />
-						<ErrorMessage errors={errors} name="classday" as="p" />
-						<label htmlFor="text">
-							Monitor de la clase
-						</label>
-						<select className="form-control" type="text" name="classmonitor" id="classmonitor"
-								ref={
-									register({})
-								}
+							{
+								activities && ( 
+									activities.map(activity => (
+										<MenuItem key={activity._id} value={activity._id}>{activity.nombreActividad}</MenuItem>
+									))
+								)
+							}
+						</Select>
+					}
+					defaultValue={[]}
+				/>
+				<ErrorMessage errors={errors} name="classactivity" as={Typography} />
+				<InputLabel htmlFor="classday">
+					Fecha de la clase
+				</InputLabel>
+				<Controller
+					control={control}
+					name="classday"
+					id="classday"
+					render={({ ref, ...rest }) => (
+						<KeyboardDatePicker
+							inputVariant="outlined"
+							format="dd/MM/yyyy"
+							autoOk
+							value={selectedDate}
+							cancelLabel="Cancelar"
+							{...rest}
+						/>
+					)}
+				/>
+				<ErrorMessage errors={errors} name="classday" as={Typography} />
+				<InputLabel htmlFor="classmonitor">
+					Monitor de la clase
+				</InputLabel>
+				<Controller
+					control={control}
+					name="classmonitor"
+					id="classmonitor"
+					as={
+						<Select
+							variant="outlined"
+							fullWidth
 						>
-						{
-							users && ( 
-								users.map(user => (
-									<option value={user._id}>{user.aliasUsuario}</option>
-								))
-							)
-						}
-						</select>
-						<ErrorMessage errors={errors} name="classmonitor" as="p" />
-						<label htmlFor="text">
-							Sala de la clase
-						</label>
-						<select className="form-control" type="text" name="classroom" id="classroom"
-								ref={
-									register({})
-								}
+							{
+								users && ( 
+									users.map(user => (
+										<MenuItem key={user._id} value={user._id}>{user.aliasUsuario}</MenuItem>
+									))
+								)
+							}
+						</Select>
+					}
+					defaultValue={[]}
+				/>
+				<ErrorMessage errors={errors} name="classmonitor" as={Typography} />
+				<InputLabel htmlFor="classroom">
+					Sala de la clase
+				</InputLabel>
+				<Controller
+					control={control}
+					name="classroom"
+					id="classroom"
+					as={
+						<Select
+							variant="outlined"
+							fullWidth
 						>
-						{
-							rooms && ( 
-								rooms.map(room => (
-									<option value={room._id}>{room.nombreSala}</option>
-								))
-							)
-						}
-						</select>
-						<ErrorMessage errors={errors} name="classroom" as="p" />
-					</div>
-					<div className="form-group">
-						<button type="submit" className="btn btn-primary">
-							Guardar clase
-						</button>
-					</div>
-				</form>
+							{
+								rooms && ( 
+									rooms.map(room => (
+										<MenuItem key={room._id} value={room._id}>{room.nombreSala}</MenuItem>
+									))
+								)
+							}
+						</Select>
+					}
+					defaultValue={[]}
+				/>
+				<ErrorMessage errors={errors} name="classroom" as={Typography} />
+				<ButtonsContainer>
+					<Button type="submit" variant="contained" color='primary'>
+						Guardar clase
+					</Button>
+				</ButtonsContainer>
+			</FullWidthForm>
+		</FormContainer>
 	);
 }

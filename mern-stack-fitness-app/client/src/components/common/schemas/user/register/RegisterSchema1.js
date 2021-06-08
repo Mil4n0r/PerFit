@@ -13,7 +13,6 @@ export const RegisterSchema1 = yup.object().shape({
         .matches(/^(?=.*?[a-z])/, "La contraseña debe contener al menos una letra minúscula")
         .matches(/^(?=.*?[0-9])/, "La contraseña debe contener al menos un dígito")
         .matches(/^.{8,}$/, "La contraseña debe contener al menos 8 caracteres"),
-
     passwordConfirm: yup.string()
         .oneOf([yup.ref('password'), null], "Las contraseñas deben coincidir")
         .required("Por favor introduzca la contraseña de nuevo")

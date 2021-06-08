@@ -3,6 +3,8 @@ import { getFood, updateFood } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { FoodForm } from '../common/forms/food/FoodForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditFood = () => {
 	const match = useRouteMatch();
 	const [food, setFood] = useState();
@@ -24,12 +26,12 @@ export const EditFood = () => {
 	}
 
 	return food ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar alimento</h3>
-				<FoodForm food={food} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar alimento
+			</CustomTypography>
+			<FoodForm food={food} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

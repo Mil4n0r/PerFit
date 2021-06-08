@@ -1,15 +1,25 @@
 import styled from 'styled-components'
-import {Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress } from '@material-ui/core';
+import {Stepper, Divider, Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress, List, ListItem, ListItemText, LinearProgress } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import {indigo, purple, green, red} from '@material-ui/core/colors'
+import {green, red, orange, lightGreen} from '@material-ui/core/colors'
 import { ErrorMessage } from '@hookform/error-message';
+
+import { KeyboardDatePicker } from "@material-ui/pickers";
+
+import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 
 const HeaderContainer = styled.div`
 	background: ${props => props.theme.palette.primary.dark};
+	background-size: 100%;
 	display: flex;
-	justify-content:center; // centers in the flex direction and the default flex-direction is row
-	align-items:center; // centers perpendicular to the flex direction
+	justify-content:center;
+	align-items:center;
 	padding: ${props => props.theme.spacing(2)};
+	width: 100%;
+	& img {
+		max-width: 100%;
+	}
 `;
 
 const NavLink = styled(Link)`
@@ -49,9 +59,6 @@ const NavTab = styled(Tab)`
 const NavTabs = styled(Tabs)`
 	&& {
 		width: 100%;
-	}
-	a {
-		padding: ${props => props.theme.spacing(1.5)}
 	}
 `
 
@@ -97,6 +104,27 @@ const TableHeaderCell = styled(TableCell)`
 	}
 `
 
+const TableBottomRow = styled(TableRow)`
+&& {
+	background: ${props => props.theme.palette.primary.dark};
+}
+`
+
+const CustomTableCell = styled(TableCell)`
+	&.center {
+		text-align: center;
+	}
+	&.colorPrimary {
+		color: ${props => props.theme.palette.primary.main};
+	}
+	&.colorSecondary {
+		color: ${props => props.theme.palette.secondary.main};
+	}
+	&.separator {
+		border-bottom: 2px solid ${props => props.theme.palette.primary.light};
+	}
+`
+
 const LoginButton = styled(Button)`
 	&& {
 		margin-top: ${props => props.theme.spacing(2)};
@@ -134,6 +162,15 @@ const CustomTypography = styled(Typography)`
 	&.MuiTypography-h5 {
 		font-weight: bold;
 	}
+	&.caps {
+		text-transform: uppercase;
+	}
+	&.bold {
+		font-weight: bold;
+	}
+	&.center {
+		text-align: center;
+	}
 `
 
 const ButtonsContainer = styled(Container)`
@@ -144,7 +181,10 @@ const ButtonsContainer = styled(Container)`
 `
 
 const TextFieldWithMargin = styled(TextField)`
-	&& {
+	&:first-child {
+		margin: ${props => props.theme.spacing(2)} 0 ${props => props.theme.spacing(2)} 0;
+	}
+	& {
 		margin: ${props => props.theme.spacing(2)} 0 ${props => props.theme.spacing(1)} 0;
 	}
 `
@@ -169,6 +209,10 @@ const VerticalGrid = styled(Grid)`
 		align-items: center;
 		padding: ${props => props.theme.spacing(2)}
 	}
+	&.zoom:hover {
+		transform: scale(1.2);
+		overflow: hidden;
+	}
 `
 
 const InputLabelWithoutMargin = styled(InputLabel)`
@@ -183,7 +227,10 @@ const HorizontalGrid = styled(Grid)`
 		flex-direction: row;
 		justify-content: center;
 		align-items: center;
-		${props => props.theme.spacing(2)}
+		padding: ${props => props.theme.spacing(0.2)};
+	}
+	&.centerText {
+		text-align:center;
 	}
 `
 
@@ -191,6 +238,10 @@ const PrimaryLink = styled(Link)`
 	&& {
 		color: ${props => props.theme.palette.primary.main};
 		text-decoration: none;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
 	}
 `
 
@@ -209,4 +260,128 @@ const CenterPaper = styled(Paper)`
 	}
 `
 
-export {HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper}
+const CapacityInputLabel = styled(InputLabel)`
+	&.AlmostFull {
+		color: ${orange["A400"]};
+	}
+	&.Full {
+		color: ${red["A400"]};
+	}
+	&.Available {
+		color: ${green["A700"]};
+	}
+`
+
+const FullWidthPaper = styled(Paper)`
+	&& {
+		width: 100%;
+		overflow: hidden;
+	}
+	&.external {
+		padding: ${props => props.theme.spacing(1)};
+	}
+`
+
+const HorizontalList = styled(List)`
+	&& {
+		display: flex;
+		flexDirection: row;
+	}
+`
+
+const CustomListItemText = styled(ListItemText)`
+	&.center {
+		text-align: center;
+	}
+	&.colorPrimary {
+		color: ${props => props.theme.palette.primary.main};
+	}
+	&.colorSecondary {
+		color: ${props => props.theme.palette.secondary.main};
+	}
+	&.bold span {
+		font-weight: bold;
+	}	
+	
+`
+const CustomListItem = styled(ListItem)`
+
+`
+
+const ContainerWithPadding = styled(Container)`
+	&& {
+		padding: ${props => props.theme.spacing(2)}
+	}
+`
+
+const VerticalDivider = styled(Divider)`
+	&& {
+		margin: -1px;
+	}
+`
+
+const NutrientBar = styled(LinearProgress)`
+	& .MuiLinearProgress-colorPrimary {
+		background-color: ${props => props.theme.palette.primary.light};
+	}
+	& .MuiLinearProgress-barColorPrimary {
+		background-color: ${props => props.theme.palette.primary.main};
+	}
+	& .MuiLinearProgress-colorSecondary {
+		background-color: ${props => props.theme.palette.secondary.light};
+	}
+	& .MuiLinearProgress-barColorSecondary {
+		background-color: ${props => props.theme.palette.secondary.main};
+	}
+`
+
+const CustomDeleteForeverOutlinedIcon = styled(DeleteForeverOutlinedIcon)`
+	&& {
+		color: ${props => props.theme.palette.secondary.light};
+	}
+`
+
+const CustomEditOutlinedIcon = styled(EditOutlinedIcon)`
+	&& {
+		color: ${props => props.theme.palette.primary.light};
+	}
+`
+
+const NoBackgroundStepper = styled(Stepper)`
+	&& {
+		background: transparent;
+	}
+`
+
+const WhiteKeyboardDatePicker = styled(KeyboardDatePicker)`
+	& .MuiInput-root, & .MuiInputAdornment-root button {
+		color: white;
+	}
+	& .MuiInput-underline {
+		border-bottom: 1px solid white;
+	}
+
+`
+
+const CircleLink = styled(Link)`
+	&& {
+		border-width: 1px;
+		border-style: solid;
+		border-radius: 5px;
+		transform: scale(1.2);
+	}
+	&.primary {
+		border-color: ${props => props.theme.palette.primary.light};
+	}
+	&.secondary {
+		border-color: ${props => props.theme.palette.secondary.light};
+	}
+`
+
+const HiddenTextField = styled(TextField)`
+	&& {
+		display: none
+	}
+`
+
+export {HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}

@@ -1,6 +1,9 @@
 import React from 'react';
 import { acceptFriendRequest } from '../../api';
 
+import { BodyContainer, ButtonsContainer } from '../../style/style';
+import { Button} from '@material-ui/core';
+
 export const AcceptRequest = (props) => {
 	const requestType = props.type;
 	const requestId = props.id;
@@ -18,10 +21,17 @@ export const AcceptRequest = (props) => {
 	}
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<button onClick={onClick}>Aceptar petición</button>
-			</div>
-		</div>
+		<BodyContainer>
+			<ButtonsContainer>
+				<Button
+					onClick={onClick}
+					fullWidth
+					variant="contained"
+					color="primary"
+				>
+					Aceptar petición
+				</Button>
+			</ButtonsContainer>	
+		</BodyContainer>
 	);
 };

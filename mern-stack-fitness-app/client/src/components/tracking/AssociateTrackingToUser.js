@@ -3,6 +3,8 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { associateTracking } from '../../api';
 import { TrackingForm } from '../common/forms/tracking/TrackingForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const AssociateTrackingToUser = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
@@ -13,11 +15,11 @@ export const AssociateTrackingToUser = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Asociar seguimiento</h3>
-				<TrackingForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear seguimiento
+			</CustomTypography>
+			<TrackingForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 }

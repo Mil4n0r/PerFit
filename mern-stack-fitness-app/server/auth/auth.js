@@ -37,7 +37,7 @@ passport.use("register",
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias,
 							balanceMonedas: 0,
-							suscripcionMiembro: req.body.subscription
+							suscripcionMiembro: req.body.subscription.id
 						});
 					}
 					else if(req.body.role === "Entrenador") {

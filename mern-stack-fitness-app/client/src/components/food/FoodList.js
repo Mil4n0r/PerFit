@@ -5,11 +5,12 @@ import { getFoods } from '../../api';
 import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
+import ArrowForwardOutlinedIcon from '@material-ui/icons/ArrowForwardOutlined';
 import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
 
-export const FoodList = () => {
+export const FoodList = (props) => {
 	const [foods, setFoods] = useState([])	// Creamos una variable de estado para almacenar la información del alimentos y una función para actualizarla
-
+	
 	useEffect(() => {
 		const fetchFoods = async () => {
 			const foods = await getFoods();	// Llamamos a la API para obtener la información de los alimentos
@@ -21,33 +22,44 @@ export const FoodList = () => {
 	return (
 		<BodyContainer>
 			<CustomTypography component="h2" variant="h5">
-				Listado de comidas
+				Listado de alimentos
 			</CustomTypography>
 			<TableContainer component={Paper}>
 				<Table size="medium">
 					<TableHead>
 						<TableRow>
 							<TableHeaderCell>Nombre del alimento</TableHeaderCell>
-							<TableHeaderCell align="right">Tamaño de la ración</TableHeaderCell>
-							<TableHeaderCell align="right">Valor energético (Kcal)</TableHeaderCell>
-							<TableHeaderCell align="right">Carbohidratos (g)</TableHeaderCell>
-							<TableHeaderCell align="right">Proteinas (g)</TableHeaderCell>
-							<TableHeaderCell align="right">Grasas (g)</TableHeaderCell>
-							<TableHeaderCell align="right"><Link to={'/create/food'}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
+							<TableHeaderCell>Tamaño de la ración</TableHeaderCell>
+							<TableHeaderCell>Valor energético (Kcal)</TableHeaderCell>
+							<TableHeaderCell>Carbohidratos (g)</TableHeaderCell>
+							<TableHeaderCell>Proteinas (g)</TableHeaderCell>
+							<TableHeaderCell>Grasas (g)</TableHeaderCell>
+							<TableHeaderCell align="center">
+								{
+									props && props.meal ? (
+										<Link to={`/create/food/${props.diet}/${props.meal}`}><AddCircleOutlinedIcon color='secondary'/></Link>
+									) : 
+										<Link to={'/create/food'}><AddCircleOutlinedIcon color='secondary'/></Link>
+								}
+							</TableHeaderCell>
 						</TableRow>
 					</TableHead>
 					<TableBody>
 						{foods.map(food => (
 							<TableRow key={food._id}>
-								<TableCell component="th" scope="row">
-									{food.nombreAlimento}
-								</TableCell>
-								<TableCell align="right">{food.tamRacion} {food.unidadesRacion}</TableCell>
-								<TableCell align="right">{food.nutrientesRacion.calorias}</TableCell>
-								<TableCell align="right">{food.nutrientesRacion.carbohidratos}</TableCell>
-								<TableCell align="right">{food.nutrientesRacion.proteinas}</TableCell>
-								<TableCell align="right">{food.nutrientesRacion.grasas}</TableCell>
-								<TableCell align="right"><Link to={`/food/info/${food._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
+								<TableCell component="th" scope="row">{food.nombreAlimento}</TableCell>
+								<TableCell>{food.tamRacion} g</TableCell>
+								<TableCell>{food.nutrientesRacion.calorias}</TableCell>
+								<TableCell>{food.nutrientesRacion.carbohidratos}</TableCell>
+								<TableCell>{food.nutrientesRacion.proteinas}</TableCell>
+								<TableCell>{food.nutrientesRacion.grasas}</TableCell>
+								{ 
+									props && props.meal ? (
+										<TableCell align="center"><Link to={`/create/ration/${props.diet}/${props.meal}/${food._id}`}><ArrowForwardOutlinedIcon/></Link></TableCell>
+									) :
+										<TableCell align="center"><Link to={`/food/info/${food._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
+								}
+								
 							</TableRow>
 						))}
 					</TableBody>

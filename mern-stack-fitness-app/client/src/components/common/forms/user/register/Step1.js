@@ -7,8 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import FormContext from '../../../../../context/FormContext';
 import { RegisterSchema1 } from '../../../schemas/user/register/RegisterSchema1';
 
-import { Stepper, Step, StepLabel, Button, Grid, Typography, Container } from '@material-ui/core';
-import { FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField } from '../../../../../style/style';
+import { Step, StepLabel, Button, Grid, Typography, Container } from '@material-ui/core';
+import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField } from '../../../../../style/style';
 
 export const Step1 = () => {
 	const { data, getData } = useContext(FormContext);
@@ -35,7 +35,7 @@ export const Step1 = () => {
 	return (
 		<FormContainer>
 			<FullWidthForm onSubmit={handleSubmit(onSubmit)}>
-				<Stepper alternativeLabel activeStep={0}>
+				<NoBackgroundStepper alternativeLabel activeStep={0}>
 					<Step key={"label1"}>
 						<StepLabel>{"Datos de inicio de sesión"}</StepLabel>
 					</Step>
@@ -45,7 +45,7 @@ export const Step1 = () => {
 					<Step key={"label3"}>
 						<StepLabel>{"Datos adicionales"}</StepLabel>
 					</Step>
-				</Stepper>
+				</NoBackgroundStepper>
 				<TextField
 					variant="outlined"
 					inputRef={register}

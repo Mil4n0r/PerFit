@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { getSubscriptions } from '../../api';
+import AuthContext from '../../context/AuthContext';
+
+import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
+import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
 
 export const SubscriptionList = () => {
 	const [subscriptions, setSubscriptions] = useState([])	// Creamos una variable de estado para almacenar la información de la sala y una función para actualizarla
+
+	const { loggedIn } = useContext(AuthContext);
 
 	useEffect(() => {
 		const fetchSubscriptions = async () => {
@@ -14,43 +22,40 @@ export const SubscriptionList = () => {
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Lista de Suscripciones</h3>	
-				<table className="table table-stripped mt-3">
-					<thead>
-						<tr>
-							<th>Nombre de la suscripción</th>
-							<th>Descripción de la suscripción</th>
-							<th>Coste de la suscripción</th>
-							<th>Fecha límite de la suscripción</th>
-						</tr>
-					</thead>
-					<tbody>
-						{
-							subscriptions.map(subscription => (
-								<tr key={subscription._id}>
-									<td>
-										{subscription.nombreSuscripcion}
-									</td>
-									<td>
-										{subscription.descripcionSuscripcion}
-									</td>
-									<td>
-										{subscription.costeSuscripcion}
-									</td>
-									<td>
-										{subscription.vencimientoSuscripcion}
-									</td>
-									<td>
-										<Link to={`/subscription/info/${subscription._id}`}>Ver</Link>
-									</td>
-								</tr>
-							))
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h2" variant="h5">
+				Listado de suscripciones
+			</CustomTypography>
+			<TableContainer component={Paper}>
+				<Table size="medium">
+					<TableHead>
+						<TableRow>
+							<TableHeaderCell>Nombre de la suscripción</TableHeaderCell>
+							<TableHeaderCell>Descripción</TableHeaderCell>
+							<TableHeaderCell>Coste de la suscripción</TableHeaderCell>
+							<TableHeaderCell>Fecha límite de la suscripción</TableHeaderCell>
+							{
+								loggedIn && loggedIn.role === "Administrador" ? (
+									<TableHeaderCell align='center'><Link to={'/create/subscription'}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
+								) :
+									<TableHeaderCell align='center'>Acción</TableHeaderCell>
+							}
+							
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{subscriptions.map(subscription => (
+							<TableRow key={subscription._id}>
+								<TableCell component="th" scope="row">{subscription.nombreSuscripcion}</TableCell>
+								<TableCell>{subscription.descripcionSuscripcion}</TableCell>
+								<TableCell>{subscription.costeSuscripcion}</TableCell>
+								<TableCell>{subscription.vencimientoSuscripcion}</TableCell>
+								<TableCell align='center'><Link to={`/subscription/info/${subscription._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</BodyContainer>
 	);
 }

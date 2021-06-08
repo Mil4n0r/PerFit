@@ -3,11 +3,26 @@ import { getUser } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { SendFriendRequest } from '../request/SendFriendRequest'
+import { DeleteUser } from './DeleteUser';
+
+import {Grid, Paper, Modal, Button, List, Avatar, ListItemAvatar, Divider} from '@material-ui/core';
+
+import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import FitnessCenterOutlinedIcon from '@material-ui/icons/FitnessCenterOutlined';
+import RestaurantMenuOutlinedIcon from '@material-ui/icons/RestaurantMenuOutlined';
+import TrendingUpOutlinedIcon from '@material-ui/icons/TrendingUpOutlined';
+import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
+
+import {CustomListItem as ListItem, ContainerWithPadding, CustomListItemText as ListItemText, HorizontalList, FullWidthPaper, BodyContainer, CustomTypography as Typography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin as InputLabel, PrimaryLink, CenterPaper, CapacityInputLabel} from '../../style/style'
+
 
 export const Profile = () => {
 
 	const match = useRouteMatch();
 	const [user, setUser] = useState();
+	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+	const [openFriendModal, setOpenFriendModal] = useState(false);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -21,49 +36,167 @@ export const Profile = () => {
 
 
 	return (
-	<>
-		<h1>Perfil</h1>
-		{
-			user && (
-				<>
-					<p>Email: {user.userInfo.emailUsuario}</p>
-					{
-						<li><Link to={`/friend/list/${user.userInfo._id}`}>Lista de amigos</Link></li>
-					}
-					<p>Rol: {user.userInfo.role}</p>
-					{
-						user.permission.includes('allowfriends') && (
-							<SendFriendRequest/>
-						)
-					}
-					{
-						user.permission.includes('write') && (
-							<Link to={`/edit/user/${user.userInfo._id}`}>Editar</Link>
-						)
-					}
-					{
-						user.permission.includes('delete') && (
-							<Link to={`/delete/user/${user.userInfo._id}`}>Eliminar</Link>
-						)
-					}
-					{
-						user.permission.includes('checkplans') && (
-							<>
-								<h2>Gestión de planes</h2>
-								<ul>
-									<li><Link to={`/routine/list/${user.userInfo._id}`}>Ver rutinas</Link></li>
-									<li><Link to={`/associate/routine/${user.userInfo._id}`}>Crear nueva rutina</Link></li>
-									<li><Link to={`/diet/list/${user.userInfo._id}`}>Ver dietas</Link></li>
-									<li><Link to={`/associate/diet/${user.userInfo._id}`}>Crear nueva dieta</Link></li>
-									<li><Link to={`/tracking/list/${user.userInfo._id}`}>Ver seguimientos</Link></li>
-									<li><Link to={`/associate/tracking/${user.userInfo._id}`}>Crear nuevo seguimiento</Link></li>
-								</ul>
-							</>
-						)
-					}
-				</>
-			)
-		}
-	</>
+		<BodyContainer>
+			<Typography component="h2" variant="h5">
+				Perfil
+			</Typography>
+			{
+				user && (
+					<>
+						<VerticalGrid container spacing={1}>
+							<HorizontalGrid container spacing={1}>
+								<Grid item xs={3}>
+									<InputLabel>Email</InputLabel>
+								</Grid>
+								<Grid item xs={9}>
+									<TextField
+										variant="outlined"
+										fullWidth
+										type="text"
+										defaultValue={user.userInfo.emailUsuario}
+										InputProps={{
+											readOnly: true,
+										}}
+									/>
+								</Grid>
+							</HorizontalGrid>
+							<HorizontalGrid container spacing={1}>
+								<Grid item xs={3}>
+									<InputLabel>Rol</InputLabel>
+								</Grid>
+								<Grid item xs={9}>
+									<TextField
+										variant="outlined"
+										fullWidth
+										type="text"
+										defaultValue={user.userInfo.role}
+										InputProps={{
+											readOnly: true,
+										}}
+									/>
+								</Grid>
+							</HorizontalGrid>
+						</VerticalGrid>
+						{
+							user.permission.includes('write') || user.permission.includes('delete') ? (
+								<Typography component="h3" variant="h6">Opciones</Typography>
+							) : 
+								<></>
+						}
+						<ContainerWithPadding>
+							<Grid container spacing={3}>
+								{
+									user.permission.includes('allowfriends') && (
+										<Grid item xs>
+											<PrimaryLink to={"#"} onClick={() => {setOpenFriendModal(true)}}>
+												<FullWidthPaper>												
+													<VerticalGrid item xs className="zoom">
+														<ButtonAvatar><FavoriteBorderOutlinedIcon/></ButtonAvatar>
+														<Typography color='primary' className="caps">
+															Agregar como amigo
+														</Typography>
+													</VerticalGrid>
+												</FullWidthPaper>
+											</PrimaryLink>
+										</Grid>
+										
+									)
+								}
+								{
+									user.permission.includes('write') && (
+										<Grid item xs>
+											<PrimaryLink to={`/edit/user/${user.userInfo._id}`}>
+												<FullWidthPaper>
+													<VerticalGrid item xs className="zoom">
+														<ButtonAvatar><EditOutlinedIcon /></ButtonAvatar>
+														<Typography color='primary' className="caps">
+															Editar
+														</Typography>
+													</VerticalGrid>
+												</FullWidthPaper>
+											</PrimaryLink>
+										</Grid>
+									)
+								}
+								{
+									user.permission.includes('delete') && (
+										<Grid item xs>
+											<PrimaryLink to={"#"} onClick={() => {setOpenDeleteModal(true)}}>
+												<FullWidthPaper>												
+													<VerticalGrid item xs className="zoom">
+														<ButtonAvatar><DeleteForeverOutlinedIcon /></ButtonAvatar>
+														<Typography color='primary' className="caps">
+															Eliminar
+														</Typography>
+													</VerticalGrid>
+												</FullWidthPaper>
+											</PrimaryLink>
+										</Grid>
+									)
+								}
+								{
+									<Modal
+										open={openFriendModal}
+										onClose={() => {setOpenFriendModal(false)}}
+									>
+										<CenterPaper><SendFriendRequest setOpen={setOpenFriendModal}/></CenterPaper>
+									</Modal>
+								}
+								<Modal
+									open={openDeleteModal}
+									onClose={() => {setOpenDeleteModal(false)}}
+								>
+									<CenterPaper><DeleteUser setOpen={setOpenDeleteModal}/></CenterPaper>
+								</Modal>
+							</Grid>
+						</ContainerWithPadding>
+						<ContainerWithPadding>
+								{
+									user.permission.includes('checkplans') && (
+										<Grid container spacing={3}>
+											<Grid item xs>
+												<PrimaryLink to={`/routine/list/${user.userInfo._id}`}>
+													<FullWidthPaper>
+														<VerticalGrid item xs className="zoom">
+															<ButtonAvatar><FitnessCenterOutlinedIcon /></ButtonAvatar>
+															<Typography color='primary' className="caps">
+																Rutinas
+															</Typography>
+														</VerticalGrid>
+													</FullWidthPaper>
+												</PrimaryLink>
+											</Grid>
+											<Grid item xs>
+												<PrimaryLink to={`/diet/list/${user.userInfo._id}`}>
+													<FullWidthPaper>
+														<VerticalGrid item xs className="zoom">
+															<ButtonAvatar><RestaurantMenuOutlinedIcon /></ButtonAvatar>
+															<Typography color='primary' className="caps">
+																Dietas
+															</Typography>
+														</VerticalGrid>
+													</FullWidthPaper>
+												</PrimaryLink>
+											</Grid>
+											<Grid item xs>
+												<PrimaryLink to={`/tracking/list/${user.userInfo._id}`}>
+													<FullWidthPaper>
+														<VerticalGrid item xs className="zoom">
+															<ButtonAvatar><TrendingUpOutlinedIcon /></ButtonAvatar>
+															<Typography color='primary' className="caps">
+																Seguimientos
+															</Typography>
+														</VerticalGrid>
+													</FullWidthPaper>
+												</PrimaryLink>
+											</Grid>
+										</Grid>
+									)
+								}
+						</ContainerWithPadding>
+					</>
+				)
+			}
+		</BodyContainer>
 	)
 };

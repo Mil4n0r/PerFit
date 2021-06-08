@@ -1,6 +1,9 @@
 import React from 'react';
 import { rejectFriendRequest } from '../../api';
 
+import { BodyContainer, ButtonsContainer } from '../../style/style';
+import { Button} from '@material-ui/core';
+
 export const RejectRequest = (props) => {
 
 	const requestType = props.type;
@@ -19,10 +22,17 @@ export const RejectRequest = (props) => {
 	}
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<button onClick={onClick}>Rechazar petición</button>
-			</div>
-		</div>
+		<BodyContainer>
+			<ButtonsContainer>
+				<Button
+					onClick={onClick}
+					fullWidth
+					variant="contained"
+					color="primary"
+				>
+					Rechazar petición
+				</Button>
+			</ButtonsContainer>	
+		</BodyContainer>
 	);
 };

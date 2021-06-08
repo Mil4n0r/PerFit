@@ -5,9 +5,6 @@ export const createDiet = (diet) => axios.post("http://localhost:4000/admin/crea
 })
 	.then(res => res.data);
 
-export const getDiets = () => axios.get("http://localhost:4000/admin/diet/list")
-	.then(res => res.data)
-
 export const getDietsForUser = (id) => axios.get(`http://localhost:4000/admin/diet/list/${id}`)
 	.then(res => res.data)
 

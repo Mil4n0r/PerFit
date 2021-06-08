@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { createRoom } from '../../api';
 import { RoomForm } from '../common/forms/room/RoomForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const CreateRoom = () => {
 	const history = useHistory();
 	const onSubmit = async (data) => {
@@ -11,11 +13,11 @@ export const CreateRoom = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Crear actividad</h3>
-				<RoomForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear sala
+			</CustomTypography>
+			<RoomForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 }

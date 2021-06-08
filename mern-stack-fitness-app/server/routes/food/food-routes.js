@@ -18,7 +18,6 @@ router.post("/create/food", async (req, res, next) => {
 			const Food = new FoodModel({
 				nombreAlimento: req.body.foodname,
 				tamRacion: req.body.foodsize,
-				unidadesRacion: req.body.unit,
 				nutrientesRacion:{
 					calorias: req.body.calories,
 					carbohidratos: req.body.carbs,
@@ -109,7 +108,6 @@ router.post("/food/:id", async (req, res, next) => {
 						resFood.emailUsuario = req.body.email		// Se reasignan los campos del alimento
 						resFood.nombreAlimento = req.body.foodname
 						resFood.tamRacion = req.body.foodsize
-						resFood.unidadesRacion = req.body.unit
 						resFood.nutrientesRacion = {
 							calorias: req.body.calories,
 							carbohidratos: req.body.carbs,

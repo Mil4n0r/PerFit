@@ -29,7 +29,7 @@ function Router() {
 			<Switch>
 				<Route exact path="/" component={ Home } />
 				{
-					loggedIn && (//loggedIn.rol === "Miembro" && (
+					loggedIn && (//loggedIn.role === "Miembro" && (
 						<>
 							{ActivityRoutes()}
 							{ExerciseRoutes()}

@@ -9,9 +9,15 @@ export const updateMeal = (meal,id) => axios.post(`http://localhost:4000/admin/m
 	data: meal
 });
 
-export const deleteMeal = (dietid, id) => axios.delete(`http://localhost:4000/admin/meal/${dietid}/${id}`)// id = id entrenamiento
+export const deleteMeal = (dietid, id) => axios.delete(`http://localhost:4000/admin/meal/${dietid}/${id}`)// id = id meal
 
 export const getMeals = (id) => axios.get(`http://localhost:4000/admin/meal/list/${id}`) // id = id diet
+	.then(res => res.data)
+
+export const getMealsForDate = (id, date) => axios.get(`http://localhost:4000/admin/meal/list/${id}/${date}`) // id = id diet
+	.then(res => res.data)
+
+export const getMealsForMonth = (id, date) => axios.get(`http://localhost:4000/admin/meal/list/month/${id}/${date}`) // id = id diet
 	.then(res => res.data)
 
 export const getMeal = (id) => axios.get(`http://localhost:4000/admin/meal/${id}`) // id = id meal

@@ -3,6 +3,8 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { associateDiet } from '../../api';
 import { DietForm } from '../common/forms/diet/DietForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const AssociateDietToUser = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
@@ -13,11 +15,11 @@ export const AssociateDietToUser = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Asociar dieta</h3>
-				<DietForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear dieta
+			</CustomTypography>
+			<DietForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 }

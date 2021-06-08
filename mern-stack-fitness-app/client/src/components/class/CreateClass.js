@@ -3,6 +3,8 @@ import { useRouteMatch, useHistory } from 'react-router-dom';
 import { createClass } from '../../api';
 import { ClassForm } from '../common/forms/class/ClassForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const CreateClass = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
@@ -13,11 +15,11 @@ export const CreateClass = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Crear clase</h3>
-				<ClassForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear clase
+			</CustomTypography>
+			<ClassForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 }

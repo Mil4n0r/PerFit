@@ -37,31 +37,6 @@ router.post("/create/diet", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.get("/diet/list", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			await DietModel
-			.find({})
-			.populate("usuarioPlan")
-			.exec((err,diets) => {
-				if(err) {
-					next(err);	
-				} 
-				else {
-					res.json(diets);	
-				}
-			});
-		}
-	})(req,res,next);
-});
-
 router.get("/diet/list/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {

@@ -39,7 +39,7 @@ export const Register = () => {
 			<RegisterAvatar>
 				<LockOutlinedIcon />
 			</RegisterAvatar>
-			<Typography component="h2" variant="h5">
+			<Typography component="h3" variant="h5">
 				Registrarse como nuevo usuario
 			</Typography>
 			{

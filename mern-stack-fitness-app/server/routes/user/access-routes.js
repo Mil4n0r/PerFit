@@ -48,7 +48,10 @@ router.post("/login", (req, res, next) => {
 						//const body = { _id: user._id, email: user.emailUsuario, rol: user.rolUsuario };
 						const body = { _id: user._id, email: user.emailUsuario, rol: user.role };
 						const token = jwt.sign({ user: body }, process.env.JWT_SECRET);
+						const today_date = new Date();
+						const expire_date = new Date(today_date.setMonth(today_date.getMonth()+1));
 						res.cookie("token", token, {
+							expires: expire_date,
 							httpOnly: true
 						});
 						return res.status(200).send(body);

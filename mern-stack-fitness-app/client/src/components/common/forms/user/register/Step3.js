@@ -9,8 +9,8 @@ import { RegisterSchema3 } from '../../../schemas/user/register/RegisterSchema3'
 
 import { getSubscriptions } from '../../../../../api';
 
-import { Stepper, Step, StepLabel, Button, Grid, Typography, MenuItem, Chip } from '@material-ui/core';
-import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel } from '../../../../../style/style';
+import { Step, StepLabel, Button, Grid, Typography, MenuItem, Chip } from '@material-ui/core';
+import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel } from '../../../../../style/style';
 
 export const Step3 = () => {
 	const { data, getData } = useContext(FormContext);
@@ -50,7 +50,7 @@ export const Step3 = () => {
 	return (
 		<FormContainer onSubmit={handleSubmit(onSubmit)}>
 			<FullWidthForm onSubmit={handleSubmit(onSubmit)}>
-				<Stepper alternativeLabel activeStep={2}>
+				<NoBackgroundStepper alternativeLabel activeStep={2}>
 					<Step key={"label1"}>
 						<StepLabel>{"Datos de inicio de sesión"}</StepLabel>
 					</Step>
@@ -60,19 +60,18 @@ export const Step3 = () => {
 					<Step key={"label3"}>
 						<StepLabel>{"Datos adicionales"}</StepLabel>
 					</Step>
-				</Stepper>
-				<InputLabel htmlFor="text">
+				</NoBackgroundStepper>
+				<InputLabel htmlFor="role">
 					Rol
 				</InputLabel>
 				<Controller
 					control={control}
 					name="role"
+					id="role"
 					as={
 						<Select
 							variant="outlined"
 							fullWidth
-							type="text"
-							id="role"
 						>
 							<MenuItem value="Miembro">Miembro</MenuItem>
 							<MenuItem value="Entrenador">Entrenador personal</MenuItem>
@@ -86,18 +85,17 @@ export const Step3 = () => {
 					defaultValue={"Miembro"}
 				/>
 				<ErrorMessage errors={errors} name="role" as={Typography} />
-				<InputLabel htmlFor="text">
+				<InputLabel htmlFor="privacy">
 					Configuración de seguridad
 				</InputLabel>
 				<Controller
 					control={control}
 					name="privacy"
+					id="privacy"
 					as={
 						<Select
 							variant="outlined"
 							fullWidth
-							type="text"
-							id="privacy"
 						>
 							<MenuItem value="Público">Público: Perfil visible para todo el mundo</MenuItem>
 							<MenuItem value="Sólo amigos">Sólo amigos: Perfil visible para mi y para mis amigos</MenuItem>
@@ -110,19 +108,18 @@ export const Step3 = () => {
 				{
 					role === "Monitor" && (
 						<>
-							<InputLabel htmlFor="text">
+							<InputLabel htmlFor="specialty">
 								Especialidad
 							</InputLabel>
 							<Controller
 								control={control}
 								name="specialty"
+								id="specialty"
 								as={
 									<Select
 										multiple
 										variant="outlined"
 										fullWidth
-										type="text"
-										id="specialty"
 										renderValue={(selected) => (
 											<>
 											  {selected.map((value) => (
@@ -147,29 +144,28 @@ export const Step3 = () => {
 				{
 					role === "Miembro" && (
 						<>
-							<InputLabel htmlFor="text">
+							<InputLabel htmlFor="subscription">
 								Suscripción
 							</InputLabel>
 							<Controller
 								control={control}
 								name="subscription"
+								id="subscription"
 								as={
 									<Select
 										variant="outlined"
 										fullWidth
-										type="text"
-										id="subscription"
 									>
 									{
 										subscriptions && ( 
 											subscriptions.map(subscription => (
-												<MenuItem key={subscription._id} value={subscription.nombreSuscripcion}>{subscription.nombreSuscripcion}</MenuItem>
+												<MenuItem key={subscription._id} value={subscription._id}>{subscription.nombreSuscripcion}</MenuItem>
 											))
 										)
 									}
 									</Select>
 								}
-								defaultValue=""
+								defaultValue={[]}
 							/>
 							<ErrorMessage errors={errors} name="subscription" as={Typography} />
 						</>

@@ -5,7 +5,10 @@ import { Link } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-//import { TrackingSchema } from '../../schemas/tracking/TrackingSchema';
+import { TrackingSchema } from '../../schemas/tracking/TrackingSchema';
+
+import { Button, Typography, InputAdornment, Grid } from '@material-ui/core';
+import { FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField } from '../../../../style/style';
 
 export const TrackingForm = ({ tracking, onSubmit }) => {
 
@@ -13,8 +16,9 @@ export const TrackingForm = ({ tracking, onSubmit }) => {
 		defaultValues: {
             trackingname: tracking ? tracking.nombrePlan : "",
 			targetvalue: tracking ? tracking.valorObjetivo : "",
+			trackingunit: tracking ? tracking.unidadObjetivo : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
-		//resolver: yupResolver(TrackingSchema),
+		resolver: yupResolver(TrackingSchema),
 		mode: "onTouched"
 	});
 
@@ -23,29 +27,51 @@ export const TrackingForm = ({ tracking, onSubmit }) => {
 	});
 
 	return (
-				<form onSubmit={submitHandler}>
-					<div className="form-group">
-						<label htmlFor="text">
-							Nombre del seguimiento:
-						</label>
-						<input className="form-control" ref={register} type="text" name="trackingname" id="trackingname" />
-						<ErrorMessage errors={errors} name="trackingname" as="p" />
-						<label htmlFor="text">
-							Valor objetivo
-						</label>
-						<input className="form-control" ref={register} type="text" name="targetvalue" id="targetvalue" />
-						<ErrorMessage errors={errors} name="targetvalue" as="p" />
-						{
-							tracking && (
-								<Link to={`/associate/tracking/measure/${tracking._id}`}>Asociar medidas al seguimiento</Link>
-							)
-						}
-					</div>
-					<div className="form-group">
-						<button type="submit" className="btn btn-primary">
-							Guardar seguimiento
-						</button>
-					</div>
-				</form>
+		<FormContainer>
+			<FullWidthForm onSubmit={submitHandler}>
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Nombre del seguimiento"
+					type="text"
+					name="trackingname"
+					id="trackingname"
+				/>
+				<ErrorMessage errors={errors} name="trackingname" as={Typography} />
+				<Grid container spacing={1}>
+					<Grid item xs={8}>
+						<TextField
+							variant="outlined"
+							inputRef={register}
+							fullWidth
+							label="Valor objetivo"
+							type="number"
+							name="targetvalue"
+							id="targetvalue"
+							inputProps={{ min: "0", step: "1"}}
+						/>
+						<ErrorMessage errors={errors} name="targetvalue" as={Typography} />
+					</Grid>
+					<Grid item xs={4}>
+						<TextField
+							variant="outlined"
+							inputRef={register}
+							fullWidth
+							label="Unidades"
+							type="text"
+							name="trackingunit"
+							id="trackingunit"
+						/>
+						<ErrorMessage errors={errors} name="trackingunit" as={Typography} />
+					</Grid>
+				</Grid>
+				<ButtonsContainer>
+					<Button type="submit" variant="contained" color='primary'>
+						Guardar seguimiento
+					</Button>
+				</ButtonsContainer>
+			</FullWidthForm>
+		</FormContainer>
 	);
 }

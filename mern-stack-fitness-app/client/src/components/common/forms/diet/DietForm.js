@@ -7,14 +7,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { DietSchema } from '../../schemas/diet/DietSchema';
 
-const normalizeFloat = (value) => {
-	const normalizedFloat = value.replace(",", ".")
-	return normalizedFloat;
-};
+import { Button, Typography, InputAdornment } from '@material-ui/core';
+import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel, TextFieldWithMargin as TextField } from '../../../../style/style';
 
 export const DietForm = ({ diet, onSubmit }) => {
 
-	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
+	const { register, trigger, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
 			dietname: diet ? diet.nombrePlan : "",
 			calories: diet ? diet.objetivoDiario.calorias : "",
@@ -22,8 +20,9 @@ export const DietForm = ({ diet, onSubmit }) => {
 			proteins: diet ? diet.objetivoDiario.proteinas : "",
 			fats: diet ? diet.objetivoDiario.grasas : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
-		//resolver: yupResolver(DietSchema),
-		mode: "onTouched"
+		resolver: yupResolver(DietSchema),
+		mode: "onTouched",
+		reValidateMode: "onChange"
 	});
 
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
@@ -31,52 +30,75 @@ export const DietForm = ({ diet, onSubmit }) => {
 	});
 
 	return (
-				<form onSubmit={submitHandler}>
-					<div className="form-group">
-						<label htmlFor="text">
-							Nombre de la dieta
-						</label>
-						<input className="form-control" ref={register} type="text" name="dietname" id="dietname" />
-						<ErrorMessage errors={errors} name="dietname" as="p" />
-						<label htmlFor="text">
-							Calorías
-						</label>
-						<input className="form-control" ref={register} type="text" name="calories" id="calories" />
-						<ErrorMessage errors={errors} name="calories" as="p" />
-						<label htmlFor="text">
-							Carbohidratos:
-						</label>
-						<input className="form-control" ref={register} type="text" name="carbs" id="carbs" onChange={(event) => {
-							event.target.value = normalizeFloat(event.target.value);
-						}}/>
-						<ErrorMessage errors={errors} name="carbs" as="p" onChange={(event) => {
-							event.target.value = normalizeFloat(event.target.value);
-						}}/>
-						<label htmlFor="text">
-							Proteinas:
-						</label>
-						<input className="form-control" ref={register} type="text" name="proteins" id="proteins" onChange={(event) => {
-							event.target.value = normalizeFloat(event.target.value);
-						}}/>
-						<ErrorMessage errors={errors} name="proteins" as="p" />
-						<label htmlFor="text">
-							Grasas:
-						</label>
-						<input className="form-control" ref={register} type="text" name="fats" id="fats" onChange={(event) => {
-							event.target.value = normalizeFloat(event.target.value);
-						}}/>
-						<ErrorMessage errors={errors} name="fats" as="p" />
-						{
-							diet && (
-								<Link to={`/associate/diet/meal/${diet._id}`}>Asociar comidas a la dieta</Link>
-							)
-						}
-					</div>
-					<div className="form-group">
-						<button type="submit" className="btn btn-primary">
-							Guardar dieta
-						</button>
-					</div>
-				</form>
+		<FormContainer>
+			<FullWidthForm onSubmit={submitHandler}>
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Nombre de la dieta"
+					type="text"
+					name="dietname"
+					id="dietname"
+				/>
+				<ErrorMessage errors={errors} name="dietname" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Calorías"
+					type="number"
+					name="calories"
+					id="calories"
+					inputProps={{ min: "0", step: "1" }}
+					InputProps={{endAdornment: <InputAdornment position="end">Kcal</InputAdornment>}}
+				/>
+				<ErrorMessage errors={errors} name="calories" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Carbohidratos"
+					type="number"
+					name="carbs"
+					id="carbs"
+					inputProps={{ min: "0", step: "0.1" }}
+					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
+					onChange={() => trigger("calories")}
+				/>
+				<ErrorMessage errors={errors} name="carbs" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Proteinas"
+					type="number"
+					name="proteins"
+					id="proteins"
+					inputProps={{ min: "0", step: "0.1" }}
+					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
+					onChange={() => trigger("calories")}
+				/>
+				<ErrorMessage errors={errors} name="proteins" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Grasas"
+					type="number"
+					name="fats"
+					id="fats"
+					inputProps={{ min: "0", step: "0.1" }}
+					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
+					onChange={() => trigger("calories")}
+				/>
+				<ErrorMessage errors={errors} name="fats" as={Typography} />
+				<ButtonsContainer>
+					<Button type="submit" variant="contained" color='primary'>
+						Guardar dieta
+					</Button>
+				</ButtonsContainer>
+			</FullWidthForm>
+		</FormContainer>
 	);
 }

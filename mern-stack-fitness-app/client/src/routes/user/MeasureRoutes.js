@@ -7,8 +7,6 @@ import { CreateMeasure } from '../../components/measure/CreateMeasure';
 
 /*
 <Route path="/measure/list" component={ MeasureList } />
-<Route path="/measure/info/:id" component={ MeasureInfo } />
-<Route path="/delete/measure/:id" component={ DeleteMeasure } />
 */
 
 function ExerciseRoutes() {

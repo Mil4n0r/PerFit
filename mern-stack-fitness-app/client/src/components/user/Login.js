@@ -7,7 +7,7 @@ import { LoginForm } from '../common/forms/user/login/LoginForm';
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
-import {BodyContainer, LoginAvatar, CustomTypography as Typography} from '../../style/style'
+import {BodyContainer, LoginAvatar, CustomTypography} from '../../style/style'
 
 export const Login = () => {
 	const history = useHistory();
@@ -25,9 +25,9 @@ export const Login = () => {
 			<LoginAvatar>
 				<LockOutlinedIcon />
 			</LoginAvatar>
-			<Typography component="h2" variant="h5">
+			<CustomTypography component="h3" variant="h5">
 				Inicio de sesión
-			</Typography>
+			</CustomTypography>
 			<LoginForm onSubmit={onSubmit} />
 		</BodyContainer>
 	);

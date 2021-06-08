@@ -3,12 +3,12 @@ import { getActivity } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 
-import {Grid, Paper, Typography, Modal, Button} from '@material-ui/core';
+import {Grid, Paper, Modal, Button} from '@material-ui/core';
 
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 
-import {BodyContainer, CustomTypography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin as InputLabel, PrimaryLink, CenterPaper} from '../../style/style'
+import {ContainerWithPadding, BodyContainer, CustomTypography as Typography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin as InputLabel, PrimaryLink, CenterPaper, FullWidthPaper} from '../../style/style'
 
 import { DeleteActivity } from './DeleteActivity';
 
@@ -39,9 +39,9 @@ export const ActivityInfo = () => {
 
 	return (
 		<BodyContainer>
-			<CustomTypography component="h2" variant="h5">
+			<Typography component="h2" variant="h5">
 				Actividad
-			</CustomTypography>
+			</Typography>
 			{
 				activity && (
 					<>
@@ -97,48 +97,52 @@ export const ActivityInfo = () => {
 						</VerticalGrid>
 						{
 							activity.permission.includes('write') || activity.permission.includes('delete') ? (
-								<CustomTypography component="h3" variant="h6">Opciones</CustomTypography>
+								<Typography component="h3" variant="h6">Opciones</Typography>
 							) : 
 								<></>
 						}
-						<Grid container>
-							{
-								activity.permission.includes('write') && (
-									<Grid item xs>
-										<Button>
-											<VerticalGrid item xs>
-												<PrimaryLink to={`/edit/activity/${activity.activityInfo._id}`}>
-													<ButtonAvatar><EditOutlinedIcon /></ButtonAvatar>
-													<Typography color='primary'>
-														Editar
-													</Typography>
-												</PrimaryLink>
-											</VerticalGrid>
-										</Button>
-									</Grid>
-								)
-							}
-							{
-								activity.permission.includes('delete') && (
-									<Grid item xs>
-									<Button onClick={handleOpen}>
-										<VerticalGrid item xs>
-										<ButtonAvatar><DeleteForeverOutlinedIcon /></ButtonAvatar>
-										<Typography color='primary'>
-											Eliminar
-										</Typography>
-										</VerticalGrid>
-									</Button>
-									</Grid>
-								)
-							}
-							<Modal
-								open={open}
-								onClose={handleClose}
-							>
-								<CenterPaper><DeleteActivity setOpen={setOpen}/></CenterPaper>
-							</Modal>
-						</Grid>
+						<ContainerWithPadding>
+							<Grid container spacing={3}>
+								{
+									activity.permission.includes('write') && (
+										<Grid item xs>
+											<PrimaryLink to={`/edit/activity/${activity.activityInfo._id}`}>
+												<FullWidthPaper>
+													<VerticalGrid item xs className="zoom">
+														<ButtonAvatar><EditOutlinedIcon /></ButtonAvatar>
+														<Typography color='primary' className="caps">
+															Editar
+														</Typography>
+													</VerticalGrid>
+												</FullWidthPaper>
+											</PrimaryLink>
+										</Grid>
+									)
+								}
+								{
+									activity.permission.includes('delete') && (
+										<Grid item xs>
+											<PrimaryLink to={"#"} onClick={handleOpen}>
+												<FullWidthPaper>												
+													<VerticalGrid item xs className="zoom">
+														<ButtonAvatar><DeleteForeverOutlinedIcon /></ButtonAvatar>
+														<Typography color='primary' className="caps">
+															Eliminar
+														</Typography>
+													</VerticalGrid>
+												</FullWidthPaper>
+											</PrimaryLink>
+										</Grid>
+									)
+								}
+								<Modal
+									open={open}
+									onClose={handleClose}
+								>
+									<CenterPaper><DeleteActivity setOpen={setOpen}/></CenterPaper>
+								</Modal>
+							</Grid>
+						</ContainerWithPadding>
 					</>
 				)
 			}

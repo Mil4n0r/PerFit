@@ -3,6 +3,8 @@ import { getRoom, updateRoom } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { RoomForm } from '../common/forms/room/RoomForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditRoom = () => {
 	const match = useRouteMatch();
 	const [room, setRoom] = useState();
@@ -24,12 +26,12 @@ export const EditRoom = () => {
 	}
 
 	return room ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar sala</h3>
-				<RoomForm room={room} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar sala
+			</CustomTypography>
+			<RoomForm room={room} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

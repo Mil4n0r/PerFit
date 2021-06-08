@@ -6,6 +6,11 @@ const RoutineModel = require('../../models/RoutineSchema');
 const WorkoutModel = require('../../models/WorkoutSchema');
 const TrainingModel = require('../../models/TrainingSchema');
 
+const startOfDay = require('date-fns/startOfDay');
+const endOfDay = require('date-fns/endOfDay');
+const startOfMonth = require('date-fns/startOfMonth');
+const endOfMonth = require('date-fns/endOfMonth');
+
 const mongoose = require('mongoose');
 
 router.get("/training/list/:id", async (req, res, next) => {
@@ -28,6 +33,91 @@ router.get("/training/list/:id", async (req, res, next) => {
 				}
 			});
 			
+		}
+	})(req,res,next);
+});
+
+router.get("/training/list/:id/:date", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			const dateStart = startOfDay(new Date(req.params.date));
+			const dateEnd = endOfDay(new Date(req.params.date));
+
+			await RoutineModel.findById(id)
+				.populate({
+					path: "entrenamientosRutina",
+					populate: {
+						path: "trabajoEntrenamiento",
+						populate: {
+							path: "ejercicioEntrenamiento"
+						}
+					},
+					
+					match: {
+						diaEntrenamiento: {
+							$gte: dateStart,
+							$lte: dateEnd
+						}
+					}
+				})
+				.exec((err, routine) => {
+					if(err) {
+						next(err);	
+					} 
+					else {
+						res.json(routine.entrenamientosRutina);	
+					}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/training/list/month/:id/:date", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			const dateStart = startOfMonth(new Date(req.params.date));
+			const dateEnd = endOfMonth(new Date(req.params.date));
+
+			await RoutineModel.findById(id)
+				.populate({
+					path: "entrenamientosRutina",
+					populate: {
+						path: "trabajoEntrenamiento",
+						populate: {
+							path: "ejercicioEntrenamiento"
+						}
+					},
+					match: {
+						diaEntrenamiento: {
+							$gte: dateStart,
+							$lte: dateEnd
+						}
+					}
+				})
+				.exec((err, routine) => {
+					if(err) {
+						next(err);	
+					} 
+					else {
+						res.json(routine.entrenamientosRutina);	
+					}
+			});
 		}
 	})(req,res,next);
 });

@@ -3,19 +3,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 import { getMeasures, deleteMeasure, getTracking } from '../../api';
 
-const formatDate = (date) => {
-	
-	const [year, month, day] = date.substr(0,10).split("-");
-	return `${day}/${month}/${year}`;
-}
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
 
-const measureFormat = (m) => {
-	const measurevalue = m.valorMedida;
-	const measureday = formatDate(m.fechaMedida);
-	return (
-		`Medida: ${measurevalue} - Día ${measureday}`
-	)
-}
+import { Table, TableBody, TableCell, Paper, List, ListItem, Divider, Grid, CircularProgress } from '@material-ui/core';
+import { FullWidthPaper, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, CustomListItemText as ListItemText, NutrientBar, VerticalDivider, HorizontalGrid, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography as Typography, TableContainerWithMargin as TableContainer, VerticalGrid } from '../../style/style';
+import { MeasureList } from './MeasureList';
 
 export const AssociateMeasureToTracking = () => {
 	
@@ -23,7 +16,6 @@ export const AssociateMeasureToTracking = () => {
 
 	const [tracking, setTracking] = useState();
 	const [measures, setMeasures] = useState();
-	const [deleted, setDeleted] = useState(); // Permite recargar la lista de entrenamientos al borrar
 
 	useEffect(() => {
 		const fetchTracking = async () => {
@@ -36,21 +28,49 @@ export const AssociateMeasureToTracking = () => {
 		// eslint-disable-next-line 
 	}, []);
 
-	useEffect(() => {
-		const fetchMeasures = async () => {
-			const measures = await getMeasures(match.params.id);
-			setMeasures(measures);
-		}
-		fetchMeasures();
-	}, [deleted]);
-	
-	const deleteMeasureFromTracking = async (measureid) => {
-		await deleteMeasure(match.params.id,measureid); // Debemos borrar tanto la medida como su referencia en el seguimiento...
-		setDeleted(measureid);
-	}
-
-	return (
-		<>
+	return tracking ? (
+		<MeasureList tracking={tracking}/>
+		/*
+		
+		<BodyContainer children="">
+			<Typography component="h2" variant="h5">
+				Medidas del seguimiento {tracking?.nombrePlan}
+			</Typography>
+			<TableContainer component={Paper} children="">
+				<Table size="medium">
+					<TableHead>
+						<TableRow>
+							{measures && measures.length > 0 && measures.map((measure) => (
+								<TableHeaderCell key={measure._id}>
+									<HorizontalGrid container spacing={1}>
+										<HorizontalGrid item xs={8}>
+											{measureFormat(measure)}
+										</HorizontalGrid>
+										<HorizontalGrid item xs={2}>
+											<Link to={`/edit/measure/${tracking._id}/${measure._id}`}><CustomEditOutlinedIcon /></Link>
+										</HorizontalGrid>
+										<HorizontalGrid item xs={2}>
+											<Link to={"#"} onClick={() => { deleteMeasureFromTracking(measure._id) } }><CustomDeleteForeverOutlinedIcon /></Link>
+										</HorizontalGrid>
+									</HorizontalGrid>
+								</TableHeaderCell>
+							))}
+							{
+								<TableHeaderCell align='center'><Link to={`/create/measure/${match.params.id}`}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
+							}
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{measures.map(measure => (
+							<TableRow key={measure._id}>
+								<TableCell component="th" scope="row">{measure.valorMedida}</TableCell>
+								<TableCell>{measure.fechaMedida}</TableCell>
+								<TableCell align="center"><Link to={`/measure/info/${measure._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
 			{
 				tracking && tracking.medidasSeguidas && (
 					<>
@@ -84,9 +104,10 @@ export const AssociateMeasureToTracking = () => {
 					</>
 				)
 			}
-			<Link to={`/create/measure/${match.params.id}`}>Añadir medida</Link>			
-		</>
+		</BodyContainer>
+		*/
+	) : (
+		<></>
 	);
-	
 }
 

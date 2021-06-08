@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { getActivities } from '../../api';
 import AuthContext from '../../context/AuthContext';
 
-import { Table, TableBody, TableCell, Paper, Modal, Button } from '@material-ui/core';
+import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
 import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
@@ -30,14 +30,14 @@ export const ActivityList = () => {
 				<Table size="medium">
 					<TableHead>
 						<TableRow>
-							<TableHeaderCell>Nombre de la actividad</TableHeaderCell>
-							<TableHeaderCell>Equipamiento de la actividad</TableHeaderCell>
+							<TableHeaderCell>Nombre</TableHeaderCell>
+							<TableHeaderCell>Equipamiento</TableHeaderCell>
 							<TableHeaderCell>Descripción</TableHeaderCell>
 							{
-								loggedIn.role === "Administrador" ? (
+								loggedIn && loggedIn.role === "Administrador" ? (
 									<TableHeaderCell align='center'><Link to={'/create/activity'}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
 								) :
-								<TableHeaderCell align='center'>Acción</TableHeaderCell>
+									<TableHeaderCell align='center'>Acción</TableHeaderCell>
 							}
 							
 						</TableRow>
@@ -45,8 +45,8 @@ export const ActivityList = () => {
 					<TableBody>
 						{activities.map(activity => (
 							<TableRow key={activity._id}>
-								<TableCell component="td" scope="row">{activity.nombreActividad}</TableCell>
-								<TableCell>{activity.equipamientoActividad}</TableCell>
+								<TableCell component="th" scope="row">{activity.nombreActividad}</TableCell>
+								<TableCell>{`${activity.equipamientoActividad}`}</TableCell>
 								<TableCell>{activity.descripcionActividad}</TableCell>
 								<TableCell align='center'><Link to={`/activity/info/${activity._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
 							</TableRow>

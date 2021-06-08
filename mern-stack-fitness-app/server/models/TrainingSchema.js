@@ -7,16 +7,6 @@ const TrainingSchema = mongoose.Schema({
 	diaEntrenamiento: { type: Date, required: true, trim: true },
 	
 	trabajoEntrenamiento: [{ type: mongoose.Schema.Types.ObjectId, ref: "Trabajo"}]
-
-	/*
-	trabajoEntrenamiento: 
-	[{
-		ejercicioEntrenamiento: { type: mongoose.Schema.Types.ObjectId, ref: "Ejercicio" },
-		numSeries: { type: Number, required: true, trim: true },
-		numRepeticiones: [{ type: Number, required: true, trim: true }],
-		pesosUtilizados: [{ type: Number, required: true, trim: true }],
-	}]
-	*/
 });
 
 TrainingSchema.post('remove', async function() {

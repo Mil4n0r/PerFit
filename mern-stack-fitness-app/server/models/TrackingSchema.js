@@ -11,6 +11,7 @@ const options = {
 const TrackingSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
     valorObjetivo: {  type: Number, required: true, trim: true },
+    unidadObjetivo: { type: String, required: true, trim: true },
     medidasSeguidas: [{ type: mongoose.Schema.Types.ObjectId, ref: "Medida" }]
 }, options);
 

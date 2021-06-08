@@ -3,6 +3,8 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { addTraining, getExercises } from '../../api';
 import { TrainingForm } from '../common/forms/training/TrainingForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const CreateTraining = () => {
 	const match = useRouteMatch();
 	const [exercises, setExercises] = useState();	
@@ -19,17 +21,17 @@ export const CreateTraining = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		const training = await addTraining(data, match.params.id); // ID rutina
-		history.push(`/associate/training/exercise/${training._id}`);
+		await addTraining(data, match.params.id); // ID rutina
+		history.push(`/associate/routine/training/${match.params.id}`);
 	};
 
 	return exercises ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Asociar entrenamiento</h3>
-				<TrainingForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear entrenamiento
+			</CustomTypography>
+			<TrainingForm onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

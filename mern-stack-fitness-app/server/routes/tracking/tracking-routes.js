@@ -14,11 +14,12 @@ router.post("/associate/tracking/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			// Creación de la rutina
+			// Creación del seguimiento
 			const Tracking = new TrackingModel({
 				nombrePlan: req.body.trackingname,
 				usuarioPlan: req.params.id,
 				valorObjetivo: req.body.targetvalue,
+				unidadObjetivo: req.body.trackingunit,
 				medidasSeguidas: req.body.trackedmeasures
 			});
 			Tracking
@@ -127,7 +128,7 @@ router.post("/tracking/:id", async (req, res, next) => {
 				else {
 					tracking.nombrePlan = req.body.trackingname,
 					tracking.valorObjetivo = req.body.targetvalue,
-					tracking.medidasSeguidas = req.body.trackedmeasures
+					tracking.unidadObjetivo = req.body.trackingunit,
 					tracking
 						.save()
 						.then(tracking => {

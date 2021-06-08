@@ -3,6 +3,8 @@ import { getExercise, updateExercise } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { ExerciseForm } from '../common/forms/exercise/ExerciseForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditExercise = () => {
 	const match = useRouteMatch();
 	const [exercise, setExercise] = useState();
@@ -24,12 +26,12 @@ export const EditExercise = () => {
 	}
 
 	return exercise ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar ejercicio</h3>
-				<ExerciseForm exercise={exercise} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar ejercicio
+			</CustomTypography>
+			<ExerciseForm exercise={exercise} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

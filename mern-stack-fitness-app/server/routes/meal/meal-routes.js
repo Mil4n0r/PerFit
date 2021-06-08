@@ -6,6 +6,13 @@ const DietModel = require('../../models/DietSchema');
 const RationModel = require('../../models/RationSchema');
 const MealModel = require('../../models/MealSchema');
 
+const { zonedTimeToUtc, utcToZonedTime, format } = require('date-fns-tz')
+
+const startOfDay = require('date-fns/startOfDay');
+const endOfDay = require('date-fns/endOfDay');
+const startOfMonth = require('date-fns/startOfMonth');
+const endOfMonth = require('date-fns/endOfMonth');
+
 const mongoose = require('mongoose');
 
 router.post("/associate/diet/meal/:id", async (req, res, next) => {
@@ -22,7 +29,7 @@ router.post("/associate/diet/meal/:id", async (req, res, next) => {
 				nombreComida: req.body.mealname,
 				diaComida: req.body.mealday
 			});
-			
+
 			Meal
 				.save()
 				.then((Meal) => {
@@ -62,15 +69,148 @@ router.get("/meal/list/:id", async (req, res, next) => {
 		}
 		else {
 			const id = req.params.id;
-			await DietModel.findById(id).populate("comidasDieta").exec((err, meals) => {
-				if(err) {
-					next(err);	
-				} 
-				else {
-					res.json(meals.comidasDieta);	
-				}
+			await DietModel.findById(id)
+				.populate({
+					path: "comidasDieta",
+					populate: {
+						path: "racionesComida",
+						populate: {
+							path: "alimentoComida"
+						}
+					}
+				})
+				.exec((err, meals) => {
+					if(err) {
+						next(err);	
+					} 
+					else {
+						res.json(meals.comidasDieta);	
+					}
 			});
 			
+		}
+	})(req,res,next);
+});
+/*
+router.get("/meal/list/:id/:date", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			await DietModel.findById(id)
+				.populate({
+					path: "comidasDieta",
+					populate: {
+						path: "racionesComida",
+						populate: {
+							path: "alimentoComida"
+						}
+					}
+				})
+				.exec((err, diet) => {
+					if(err) {
+						next(err);	
+					} 
+					else {
+						const date = new Date(req.params.date).toISOString();
+						const dateMeals = diet.comidasDieta.filter(m => {
+							return m.diaComida.toISOString() === date
+						});
+						res.json(dateMeals);	
+					}
+			});
+			
+		}
+	})(req,res,next);
+});
+*/
+
+router.get("/meal/list/:id/:date", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			const dateStart = startOfDay(new Date(req.params.date));
+			const dateEnd = endOfDay(new Date(req.params.date));
+
+			await DietModel.findById(id)
+				.populate({
+					path: "comidasDieta",
+					populate: {
+						path: "racionesComida",
+						populate: {
+							path: "alimentoComida"
+						}
+					},
+					match: {
+						diaComida: {
+							$gte: dateStart,
+							$lte: dateEnd
+						}
+					}
+				})
+				.exec((err, diet) => {
+					if(err) {
+						next(err);	
+					} 
+					else {
+						res.json(diet.comidasDieta);	
+					}
+			});
+		}
+	})(req,res,next);
+});
+
+router.get("/meal/list/month/:id/:date", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const id = req.params.id;
+			const dateMonthStart = startOfMonth(new Date(req.params.date));
+			const dateMonthEnd = endOfMonth(new Date(req.params.date));
+
+			await DietModel.findById(id)
+				.populate({
+					path: "comidasDieta",
+					populate: {
+						path: "racionesComida",
+						populate: {
+							path: "alimentoComida"
+						}
+					},
+					match: {
+						diaComida: {
+							$gte: dateMonthStart,
+							$lte: dateMonthEnd
+						}
+					}
+				})
+				.exec((err, diet) => {
+					if(err) {
+						next(err);	
+					} 
+					else {
+						res.json(diet.comidasDieta);	
+					}
+			});
 		}
 	})(req,res,next);
 });
@@ -88,7 +228,7 @@ router.delete("/meal/:dietid/:id", async (req, res, next) => {
 		else {
 			const id = req.params.id;
 			try {
-				const meal = await MealModel.findByIdAndDelete(id, {useFindAndModify: false})	// Se busca el ejercicio cuya id coincida
+				const meal = await MealModel.findByIdAndDelete(id, {useFindAndModify: false})	// Se busca la comida cuya id coincida
 				if(!meal) {
 					res.status(404).send("Comida no encontrada");
 				}
@@ -321,7 +461,7 @@ router.post("/meal/:id", async (req, res, next) => {
 				else {
 					meal.nombreComida = req.body.mealname;
 					meal.diaComida = req.body.mealday;
-					training
+					meal
 						.save()
 						.then(meal => {
 							res.json(meal)

@@ -14,6 +14,12 @@ export const deleteTraining = (routineid, id) => axios.delete(`http://localhost:
 export const getTrainings = (id) => axios.get(`http://localhost:4000/admin/training/list/${id}`) // id = id rutina
 	.then(res => res.data)
 
+export const getTrainingsForDate = (id, date) => axios.get(`http://localhost:4000/admin/training/list/${id}/${date}`) // id = id rutina
+	.then(res => res.data)
+
+export const getTrainingsForMonth = (id, date) => axios.get(`http://localhost:4000/admin/training/list/month/${id}/${date}`) // id = id rutina
+	.then(res => res.data)
+
 export const getTraining = (id) => axios.get(`http://localhost:4000/admin/training/${id}`) // id = id training
 	.then(res => res.data)
 

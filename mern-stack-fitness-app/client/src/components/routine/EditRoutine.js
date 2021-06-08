@@ -3,6 +3,8 @@ import { getRoutine, updateRoutine } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { RoutineForm } from '../common/forms/routine/RoutineForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditRoutine = () => {
 	const match = useRouteMatch();
 	const [routine, setRoutine] = useState();
@@ -24,12 +26,12 @@ export const EditRoutine = () => {
 	}
 
 	return routine ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar rutina</h3>
-				<RoutineForm routine={routine} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar rutina
+			</CustomTypography>
+			<RoutineForm routine={routine} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

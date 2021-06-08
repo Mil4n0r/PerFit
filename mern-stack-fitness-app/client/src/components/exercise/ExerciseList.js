@@ -2,7 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getExercises } from '../../api';
 
-export const ExerciseList = () => {
+import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
+import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
+import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
+import ArrowForwardOutlinedIcon from '@material-ui/icons/ArrowForwardOutlined';
+
+import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
+
+
+export const ExerciseList = (props) => {
 	const [exercises, setExercises] = useState([])	// Creamos una variable de estado para almacenar la información de los ejercicios y una función para actualizarla
 
 	useEffect(() => {
@@ -14,35 +22,43 @@ export const ExerciseList = () => {
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Lista de Ejercicios</h3>	
-				<table className="table table-stripped mt-3">
-					<thead>
-						<tr>
-							<th>Nombre del ejercicio</th>
-							<th>Tipo de ejercicio</th>
-						</tr>
-					</thead>
-					<tbody>
-						{
-							exercises.map(exercise => (
-								<tr key={exercise._id}>
-									<td>
-										{exercise.nombreEjercicio}
-									</td>
-									<td>
-										{exercise.tipoEjercicio}
-									</td>
-									<td>
-										<Link to={`/exercise/info/${exercise._id}`}>Ver</Link>
-									</td>
-								</tr>
-							))
-						}
-					</tbody>
-				</table>
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h2" variant="h5">
+				Listado de ejercicios
+			</CustomTypography>
+			<TableContainer component={Paper}>
+				<Table size="medium">
+					<TableHead>
+						<TableRow>
+							<TableHeaderCell>Nombre</TableHeaderCell>
+							<TableHeaderCell>Tipo</TableHeaderCell>
+							<TableHeaderCell align='center'>
+								{
+									props && props.training ? (
+										<Link to={`/create/exercise/${props.routine}/${props.training}`}><AddCircleOutlinedIcon color='secondary'/></Link>
+									) : 
+										<Link to={'/create/exercise'}><AddCircleOutlinedIcon color='secondary'/></Link>
+								}
+							</TableHeaderCell>
+						</TableRow>
+					</TableHead>
+					<TableBody>
+						{exercises.map(exercise => (
+							<TableRow key={exercise._id}>
+								<TableCell component="th" scope="row">{exercise.nombreEjercicio}</TableCell>
+								<TableCell>{exercise.tipoEjercicio}</TableCell>
+								{ 
+									props && props.training ? (
+										<TableCell align="center"><Link to={`/create/workout/${props.routine}/${props.training}/${exercise._id}`}><ArrowForwardOutlinedIcon/></Link></TableCell>
+									) :
+										<TableCell align='center'><Link to={`/exercise/info/${exercise._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
+								}
+								
+							</TableRow>
+						))}
+					</TableBody>
+				</Table>
+			</TableContainer>
+		</BodyContainer>
 	);
 }

@@ -3,6 +3,8 @@ import { getSubscription, updateSubscription } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { SubscriptionForm } from '../common/forms/subscription/SubscriptionForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditSubscription = () => {
 	const match = useRouteMatch();
 	const [subscription, setSubscription] = useState();
@@ -24,12 +26,12 @@ export const EditSubscription = () => {
 	}
 
 	return subscription ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar suscripción</h3>
-				<SubscriptionForm subscription={subscription} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar suscripción
+			</CustomTypography>
+			<SubscriptionForm subscription={subscription} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

@@ -3,6 +3,8 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { associateRoutine } from '../../api';
 import { RoutineForm } from '../common/forms/routine/RoutineForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const AssociateRoutineToUser = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
@@ -13,11 +15,11 @@ export const AssociateRoutineToUser = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Asociar rutina</h3>
-				<RoutineForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear rutina
+			</CustomTypography>
+			<RoutineForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 }

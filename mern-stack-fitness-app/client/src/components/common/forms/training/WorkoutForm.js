@@ -7,16 +7,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { WorkoutSchema } from '../../schemas/training/WorkoutSchema';
 
-const normalizeUnsigned = (value) => {
-	return value > 10 ? 10 : value < 0 ? 0 : value
-};
+import { Button, Grid, Typography, List, ListItem, TextField } from '@material-ui/core';
+import { HiddenTextField, FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel, TextFieldWithMargin } from '../../../../style/style';
 
 const createArrayWithNumbers = (length) => {
 	return Array.from({ length }, (_, k) => k);
 }
 
 export const WorkoutForm = ({ workout, exercise, onSubmit }) => {
-	const [size, setSize] = useState(workout ? workout.numSeries : 0);
+	const [numberOfSets, setNumberOfSets] = useState(workout ? workout.numSeries : 0);
 
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
@@ -24,65 +23,94 @@ export const WorkoutForm = ({ workout, exercise, onSubmit }) => {
 			trainingexercise: workout ? workout.ejercicioEntrenamiento._id : exercise ? exercise.exerciseInfo._id : "",
 			numberofseries: workout ? workout.numSeries : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
-		//resolver: yupResolver(WorkoutSchema),
+		resolver: yupResolver(WorkoutSchema),
 		mode: "onTouched"
 	});
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
 		onSubmit(data);
 	});
 
-	const changeSize = (event) => {
-		event.target.value = normalizeUnsigned(event.target.value);
-		setSize(event.target.value >= 0 ? event.target.value : 0);
-	}
-
 	return (	
-		<form onSubmit={submitHandler}>
-			<div className="form-group">
-				<label htmlFor="text">
-					Ejercicio
-				</label>
-				<input className="form-control" ref={register} type="text" name="exercisepreview" id="exercisepreview" disabled />
-				<input className="form-control" ref={register} type="text" name="trainingexercise" id="trainingexercise" readOnly /><p>Hay que marcarlo como hidden</p>
-				<label htmlFor="text">
-					Número de series
-				</label>
-				<input className="form-control" ref={register} type="number" min="0" max="10" name="numberofseries" id="numberofseries"
-					onChange={changeSize}
+		<FormContainer>
+			<FullWidthForm onSubmit={submitHandler}>
+				<TextFieldWithMargin
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Ejercicio"
+					type="text"
+					name="exercisepreview"
+					id="exercisepreview"
+					disabled
 				/>
-				<ErrorMessage errors={errors} name="numberofseries" as="p" />
-				<ol>
+				<HiddenTextField
+					inputRef={register}
+					fullWidth
+					label="Alimento"
+					type="text"
+					name="trainingexercise"
+					id="trainingexercise"
+				/>
+				<TextFieldWithMargin
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Número de series"
+					type="number"
+					name="numberofseries"
+					id="numberofseries"
+					inputProps={{ min: "1", step: "1"}}
+					onChange={(event) => setNumberOfSets(event.target.value)}
+				/>
+				<ErrorMessage errors={errors} name="numberofseries" as={Typography} />
+				<List dense component="ol">
 					{
 						(
-							createArrayWithNumbers(size).map((index) => {
+							createArrayWithNumbers(numberOfSets).map((index) => {
 								return (
-									<li key={`serie ${index}`}>
-										<input
-											name={`numberofreps[${index}]`}
-											ref={register()}
-											defaultValue={workout ? workout.numRepeticiones[index] : ""}
-											placeholder="Repeticiones"
-										/>
-										<input
-											name={`weightsused[${index}]`}
-											ref={register()}
-											defaultValue={workout ? workout.pesosUtilizados[index] : ""}
-											placeholder="Pesos empleados"
-										/>
-										<ErrorMessage errors={errors} name={`numberofreps[${index}]`} as="p" />
-										<ErrorMessage errors={errors} name={`weightsused[${index}]`} as="p" />
-									</li>
+									<ListItem key={`serie ${index}`}>
+										<Grid container spacing={2}>
+											<Grid item xs>
+												<TextField
+													variant="standard"
+													inputRef={register()}
+													fullWidth
+													label="Número de repeticiones"
+													type="number"
+													name={`numberofreps[${index}]`}
+													id={`numberofreps[${index}]`}
+													inputProps={{ min: "1", step: "1"}}
+													defaultValue={workout ? workout.numRepeticiones[index] : ""}
+												/>
+												<ErrorMessage errors={errors} name={`numberofreps[${index}]`} as={Typography} />
+											</Grid>
+											<Grid item xs>
+												<TextField
+													variant="standard"
+													inputRef={register()}
+													fullWidth
+													label="Pesos utilizados"
+													type="number"
+													name={`weightsused[${index}]`}
+													id={`weightsused[${index}]`}
+													inputProps={{ min: "0", step: "0.1"}}
+													defaultValue={workout ? workout.pesosUtilizados[index] : ""}
+												/>
+											<ErrorMessage errors={errors} name={`weightsused[${index}]`} as={Typography} />
+											</Grid>
+										</Grid>
+									</ListItem>
 								)
 							})
 						)
 					}
-				</ol>
-			</div>
-			<div className="form-group">
-				<button type="submit" className="btn btn-primary">
-					Guardar entrenamiento
-				</button>
-			</div>
-		</form>
+				</List>
+				<ButtonsContainer>
+					<Button type="submit" variant="contained" color='primary'>
+						Guardar series
+					</Button>
+				</ButtonsContainer>
+			</FullWidthForm>
+		</FormContainer>
 	)
 }

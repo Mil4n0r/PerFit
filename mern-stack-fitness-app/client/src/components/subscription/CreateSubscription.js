@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { createSubscription } from '../../api';
 import { SubscriptionForm } from '../common/forms/subscription/SubscriptionForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const CreateSubscription = () => {
 	const history = useHistory();
 	const onSubmit = async (data) => {
@@ -11,11 +13,11 @@ export const CreateSubscription = () => {
 	};
 
 	return (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Crear suscripción</h3>
-				<SubscriptionForm onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear suscripción
+			</CustomTypography>
+			<SubscriptionForm onSubmit={onSubmit} />
+		</BodyContainer>
 	);
 }

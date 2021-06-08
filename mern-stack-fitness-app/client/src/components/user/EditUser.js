@@ -3,6 +3,8 @@ import { getUser, updateUser } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { UserForm } from '../common/forms/user/UserForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const EditUser = () => {
 	const match = useRouteMatch();
 	const [user, setUser] = useState();	// Creamos una variable de estado para almacenar la información del usuario y una función para actualizarla
@@ -24,12 +26,12 @@ export const EditUser = () => {
 	}
 
 	return user ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Editar usuario</h3>
-				<UserForm user={user} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Editar usuario
+			</CustomTypography>
+			<UserForm user={user} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

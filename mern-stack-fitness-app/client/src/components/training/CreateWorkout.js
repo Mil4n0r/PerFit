@@ -4,6 +4,8 @@ import { addWorkout, getExercises } from '../../api';
 import { getExercise } from '../../api/exercise_api';
 import { WorkoutForm } from '../common/forms/training/WorkoutForm';
 
+import { BodyContainer, CustomTypography } from '../../style/style';
+
 export const CreateWorkout = () => {
 	const match = useRouteMatch();
 	const [exercise, setExercise] = useState();
@@ -27,16 +29,16 @@ export const CreateWorkout = () => {
 
 	const onSubmit = async (data) => {
 		const training = await addWorkout(data, match.params.trainingid); // ID training
-		history.push(`/associate/training/exercise/${training._id}`);
+		history.push(`/associate/routine/training/${match.params.routineid}`);
 	};
 
 	return exercises && exercise ? (
-		<div className="container">
-			<div className="mt-3">
-				<h3>Asociar ejercicios</h3>
-				<WorkoutForm exercise={exercise} onSubmit={onSubmit} />
-			</div>
-		</div>
+		<BodyContainer>
+			<CustomTypography component="h3" variant="h5">
+				Crear series de ejercicios
+			</CustomTypography>
+			<WorkoutForm exercise={exercise} onSubmit={onSubmit} />
+		</BodyContainer>
 	) : (
 		<>
 		</>

@@ -3,9 +3,10 @@ import { logOut } from '../../api';
 import { useHistory } from "react-router-dom";
 import AuthContext from '../../context/AuthContext';
 
-import { Container } from '@material-ui/core'
+import { Typography, Grid } from '@material-ui/core';
+import {BodyContainer, ButtonsContainer, LoginAvatar, CustomTypography, LogOutButton} from '../../style/style'
 
-import {LogOutButton} from '../../style/style';
+import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 export const Logout = () => {
 	const history = useHistory();
@@ -22,10 +23,40 @@ export const Logout = () => {
 	}
 
 	return (
-		<Container>
-			<h3>¿Está seguro de que desea cerrar sesión?</h3>
-			<LogOutButton variant="contained" color="primary" onClick={onAccept}>SÍ</LogOutButton>
-			<LogOutButton variant="contained" color="secondary" onClick={onReject}>NO</LogOutButton>
-		</Container>
+		<BodyContainer>
+			<LoginAvatar>
+				<LockOutlinedIcon />
+			</LoginAvatar>
+			<CustomTypography component="h3" variant="h5">
+				Cierre de sesión
+			</CustomTypography>
+			<Typography>
+				¿Está seguro de que desea cerrar la sesión actual?
+			</Typography>
+			<ButtonsContainer>
+				<Grid container spacing={1}>
+					<Grid item xs>
+						<LogOutButton
+							onClick={onAccept} 
+							fullWidth
+							variant="contained"
+							color="secondary"
+						>
+							Sí
+						</LogOutButton>
+					</Grid>
+					<Grid item xs>
+						<LogOutButton
+							onClick={onReject}
+							fullWidth
+							variant="contained"
+							color="primary"
+						>
+							No
+						</LogOutButton>
+					</Grid>
+				</Grid>
+			</ButtonsContainer>
+		</BodyContainer>
 	);
 };

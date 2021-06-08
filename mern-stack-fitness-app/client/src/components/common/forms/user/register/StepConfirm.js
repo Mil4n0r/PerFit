@@ -2,8 +2,8 @@ import React, { useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import FormContext from '../../../../../context/FormContext';
 
-import { Stepper, Step, StepLabel, Button, Grid } from '@material-ui/core';
-import { FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField } from '../../../../../style/style';
+import { Step, StepLabel, Button, Grid } from '@material-ui/core';
+import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField } from '../../../../../style/style';
 import { Link } from "react-router-dom";
 
 const dateToISO = (date) => {
@@ -15,7 +15,7 @@ const dateToISO = (date) => {
 
 export const StepConfirm = ({ onSubmit }) => {
 	const { data } = useContext(FormContext);
-	
+
 	const submitHandler = (data) => {	// Pasamos los datos del formulario
 		onSubmit(data);
 	};
@@ -36,8 +36,7 @@ export const StepConfirm = ({ onSubmit }) => {
 				event.preventDefault();
 				submitHandler(data);
 			}}>
-				{console.log(data)}
-				<Stepper alternativeLabel activeStep={3}>
+				<NoBackgroundStepper alternativeLabel activeStep={3}>
 					<Step key={"label1"}>
 						<StepLabel>{"Datos de inicio de sesión"}</StepLabel>
 					</Step>
@@ -47,7 +46,7 @@ export const StepConfirm = ({ onSubmit }) => {
 					<Step key={"label3"}>
 						<StepLabel>{"Datos adicionales"}</StepLabel>
 					</Step>
-				</Stepper>
+				</NoBackgroundStepper>
 				<Grid container spacing={1} direction={'row'}>
 					<Grid item xs={4}>
 						<TextField
@@ -199,9 +198,6 @@ export const StepConfirm = ({ onSubmit }) => {
 						/>
 					</Grid>
 				</Grid>
-				{
-					console.log("ROL: ",data.role)
-				}
 				{
 					data.role === "Miembro" && (
 						<TextField

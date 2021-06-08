@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { useForm } from 'react-hook-form';
+import React, { useContext, useState, useEffect } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 import { useHistory } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -7,26 +7,23 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import FormContext from '../../../../../context/FormContext';
 import { RegisterSchema2 } from '../../../schemas/user/register/RegisterSchema2';
 
-import { Stepper, Step, StepLabel, Button, Grid, Typography } from '@material-ui/core';
-import { FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField} from '../../../../../style/style';
-
-const dateToISO = (date) => {
-	const day = date.getDate().toString().padStart(2,0);
-	const month = (date.getMonth()+1).toString().padStart(2,0);
-	const year = date.getFullYear().toString().padStart(4,0);
-	return `${year}-${month}-${day}`;
-}
+import { Step, StepLabel, Button, Grid, Typography } from '@material-ui/core';
+import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField} from '../../../../../style/style';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 
 export const Step2 = () => {
 	const { data, getData } = useContext(FormContext);
-	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
+
+	const [selectedDate, handleDateChange] = useState(new Date(2000, 0, 1));
+
+	const { register, errors, handleSubmit, control } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: { // Asignamos los valores previamente introducidos como valores por defecto
 			name: data.name ? data.name : "",
 			surname: data.surname ? data.surname : "",
 			dni: data.dni ? data.dni : "",
 			address: data.address ? data.address : "",
 			telephone: data.telephone ? data.telephone : "",
-			birthdate: data.birthdate ? dateToISO(data.birthdate) : "" // Ajustamos la fecha al formato del formulario
+			birthdate: data.birthdate ? data.birthdate : selectedDate
 		},
 		resolver: yupResolver(RegisterSchema2),
 		criteriaMode: 'all',
@@ -35,6 +32,7 @@ export const Step2 = () => {
 	const history = useHistory();
 	
 	const onSubmit = (data) => {	// Pasamos los datos del formulario
+		handleDateChange(data.birthdate);
 		getData(data);
 		history.push("./3");
 	};
@@ -46,7 +44,7 @@ export const Step2 = () => {
 	return (
 		<FormContainer>
 			<FullWidthForm onSubmit={handleSubmit(onSubmit)}>
-				<Stepper alternativeLabel activeStep={1}>
+				<NoBackgroundStepper alternativeLabel activeStep={1}>
 					<Step key={"label1"}>
 						<StepLabel>{"Datos de inicio de sesión"}</StepLabel>
 					</Step>
@@ -56,7 +54,7 @@ export const Step2 = () => {
 					<Step key={"label3"}>
 						<StepLabel>{"Datos adicionales"}</StepLabel>
 					</Step>
-				</Stepper>
+				</NoBackgroundStepper>
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -131,15 +129,20 @@ export const Step2 = () => {
 					id="telephone"
 				/>
 				<ErrorMessage errors={errors} name="telephone" as={Typography} />
-				<TextField
-					variant="outlined"
-					inputRef={register}
-					fullWidth
-					label="Fecha de nacimiento"
-					type="date"
+				<Controller
+					control={control}
 					name="birthdate"
 					id="birthdate"
-					InputLabelProps={{ shrink: true }}  
+					render={({ ref, ...rest }) => (
+						<KeyboardDatePicker
+							inputVariant="outlined"
+							format="dd/MM/yyyy"
+							autoOk
+							value={selectedDate}
+							cancelLabel="Cancelar"
+							{...rest}
+						/>
+					)}
 				/>
 				<ErrorMessage errors={errors} name="birthdate" as={Typography} />
 				<ButtonsContainer>

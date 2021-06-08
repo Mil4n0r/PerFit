@@ -11,35 +11,6 @@ const mongoose = require('mongoose');
 
 // MEDIDAS
 
-// Creación de medida
-router.post("/create/measure", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			// Creación de la medida
-			const Measure = new MeasureModel({
-				valorMedida: req.body.measurevalue,
-				fechaMedida: req.body.measuredate,
-				fotoMedida: req.body.measurephoto
-			});
-			Measure
-				.save()		// Se almacena la medida
-				.then((Measure) => {
-					res.json(Measure);		// Se manda como respuesta la medida
-				})
-				.catch((err) => {
-					next(err);
-				});
-		}
-	})(req,res,next);
-});
-
 // Lista de medidas
 router.get("/measure/list/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
