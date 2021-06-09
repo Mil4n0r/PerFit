@@ -3,11 +3,11 @@ import 'yup-phone';
 
 export const UserSchema = yup.object().shape({
 	alias: yup.string()
-        .required("Por favor introduzca un nombre de usuario")
-        .matches(/^([a-zA-Z0-9\-\_\.]+)$/, "El nombre de usuario debe constar únicamente de caracteres alfanuméricos, guiones (-), guiones bajos (_) y puntos (.)")
-        .matches(/^.{3,16}$/, "El nombre de usuario debe ocupar entre 3 y 16 caracteres"),
-    email: yup.string()
-        .email("Por favor introduzca un email válido")
+		.required("Por favor introduzca un nombre de usuario")
+		.matches(/^([a-zA-Z0-9\-\_\.]+)$/, "El nombre de usuario debe constar únicamente de caracteres alfanuméricos, guiones (-), guiones bajos (_) y puntos (.)")
+		.matches(/^.{3,16}$/, "El nombre de usuario debe ocupar entre 3 y 16 caracteres"),
+	email: yup.string()
+		.email("Por favor introduzca un email válido")
 		.required("Por favor introduzca un email"),
 	name: yup.string()
 		.required("Por favor introduzca su nombre")
@@ -44,7 +44,7 @@ export const UserSchema = yup.object().shape({
 			}
 		),
 	role: yup.string()
-        .required("Debe seleccionar un rol"),
-    privacy: yup.string()
-        .required("Debe seleccionar una política de privacidad")
+		.required("Debe seleccionar un rol"),
+	privacy: yup.string()
+		.required("Debe seleccionar una política de privacidad")
 });

@@ -39,18 +39,9 @@ const UserSchema = mongoose.Schema({
 	aliasUsuario: { type: String, required: true, unique: true, trim: true },
 
 	amigosUsuario: [ { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"} ],
-	/*
-	peticionesPendientes: [ 
-		{
-			usuarioSolicitante: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
-			tipoPeticion: { 
-				type: String,
-				enum: ['Amistad', 'Entrenamiento']
-			},
-		}
-	]
-	*/
 	peticionesPendientes: [ { type: mongoose.Schema.Types.ObjectId, ref: "Solicitud"} ],
+
+	cuentaActivada: { type: Boolean, required: true }
 	/*
 	// Componentes de seguridad
 	loginAttempts: { type: Number, required: true, default: 0 },
@@ -62,7 +53,7 @@ const UserSchema = mongoose.Schema({
 // https://www.mongodb.com/blog/post/password-authentication-with-mongoose-part-1
 
 UserSchema.pre('save', async function(next) {
-    const user = this;
+	const user = this;
 	
 	// Sólo se aplica la función hash si la contraseña está siendo cambiada (o introducida por primera vez)
 	if (!user.isModified('passwordUsuario')) 
@@ -87,7 +78,7 @@ UserSchema.post('remove', async function() {
 });
 
 UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB = Callback para recoger los errores
-    return bcrypt.compare(candidatePassword, this.passwordUsuario);
+	return bcrypt.compare(candidatePassword, this.passwordUsuario);
 };
 
 module.exports = mongoose.model("Usuario", UserSchema);

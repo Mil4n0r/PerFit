@@ -14,7 +14,7 @@ export const RoutineForm = ({ routine, onSubmit }) => {
 
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-            routinename: routine ? routine.nombrePlan : "",
+			routinename: routine ? routine.nombrePlan : "",
 			routinetime: routine ? routine.tiempoRutina : ""
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(RoutineSchema),

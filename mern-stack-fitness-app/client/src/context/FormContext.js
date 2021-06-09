@@ -10,7 +10,7 @@ export const FormContextProvider = (props) => {
 			...prevData,
 			...values
 		}));
-  	}
+	}
 
 	return (
 		<FormContext.Provider value={{data, getData}}>

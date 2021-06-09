@@ -10,13 +10,13 @@ const options = {
 
 const TrackingSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
-    valorObjetivo: {  type: Number, required: true, trim: true },
-    unidadObjetivo: { type: String, required: true, trim: true },
-    medidasSeguidas: [{ type: mongoose.Schema.Types.ObjectId, ref: "Medida" }]
+	valorObjetivo: { type: Number, required: true, trim: true },
+	unidadObjetivo: { type: String, required: true, trim: true },
+	medidasSeguidas: [{ type: mongoose.Schema.Types.ObjectId, ref: "Medida" }]
 }, options);
 
 TrackingSchema.post('remove', async function() {
-    await MeasureModel.deleteMany({_id: {$in: this.medidasSeguidas} }).exec();
+	await MeasureModel.deleteMany({_id: {$in: this.medidasSeguidas} }).exec();
 });
 
 //module.exports = mongoose.model("Dieta", DietSchema);

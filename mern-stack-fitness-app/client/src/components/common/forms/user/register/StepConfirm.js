@@ -1,10 +1,13 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import FormContext from '../../../../../context/FormContext';
 
-import { Step, StepLabel, Button, Grid } from '@material-ui/core';
-import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField } from '../../../../../style/style';
-import { Link } from "react-router-dom";
+import { getSubscriptionName } from '../../../../../api';
+
+import { Step, StepLabel, Button, Grid, Modal } from '@material-ui/core';
+import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField, CenterPaper } from '../../../../../style/style';
+import { RegisteredMessage } from '../../../../user/RegisteredMessage';
+import Confetti from 'react-confetti';
 
 const dateToISO = (date) => {
 	const day = date.getDate().toString().padStart(2,0);
@@ -15,8 +18,11 @@ const dateToISO = (date) => {
 
 export const StepConfirm = ({ onSubmit }) => {
 	const { data } = useContext(FormContext);
+	const [open, setOpen] = useState();
+	const [subscription, setSubscription] = useState();
 
 	const submitHandler = (data) => {	// Pasamos los datos del formulario
+		setOpen(true)
 		onSubmit(data);
 	};
 
@@ -29,6 +35,14 @@ export const StepConfirm = ({ onSubmit }) => {
 	const onRestart = () => {
 		history.push("./1");
 	}
+
+	useEffect(() => {
+		const fetchSubscription = async () => {
+			const subscription = await getSubscriptionName(data.subscription);	// Llamamos a la API para obtener la información de las suscripciones
+			setSubscription(subscription);	// Actualizamos la información de nuestra variable de estado para que contenga la información de las salas
+		}
+		fetchSubscription();
+	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 	
 	return (
 		<FormContainer>
@@ -171,7 +185,7 @@ export const StepConfirm = ({ onSubmit }) => {
 							name="birthdate"
 							id="birthdate"
 							defaultValue={data.birthdate ? dateToISO(data.birthdate) : ""}
-							InputLabelProps={{ shrink: true }}  
+							InputLabelProps={{ shrink: true }}
 							disabled
 						/>
 					</Grid>
@@ -199,7 +213,7 @@ export const StepConfirm = ({ onSubmit }) => {
 					</Grid>
 				</Grid>
 				{
-					data.role === "Miembro" && (
+					data.role === "Miembro" && subscription && (
 						<TextField
 							variant="outlined"
 							fullWidth
@@ -207,7 +221,7 @@ export const StepConfirm = ({ onSubmit }) => {
 							type="text"
 							name="subscription"
 							id="subscription"
-							defaultValue={data.subscription ? data.subscription : ""}
+							defaultValue={subscription && subscription}
 							disabled
 						/>
 					)

@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { getDiet, getUser } from '../../api';
-import { useRouteMatch  } from "react-router-dom";
+import { useRouteMatch } from "react-router-dom";
 
 import {Grid, Modal, InputLabel, } from '@material-ui/core';
 

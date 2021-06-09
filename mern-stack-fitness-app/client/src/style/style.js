@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import {Stepper, Divider, Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress, List, ListItem, ListItemText, LinearProgress } from '@material-ui/core';
+import {FormControlLabel, Tooltip, Stepper, Divider, Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress, List, ListItem, ListItemText, LinearProgress } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import {green, red, orange, lightGreen} from '@material-ui/core/colors'
 import { ErrorMessage } from '@hookform/error-message';
@@ -154,8 +154,10 @@ const ButtonAvatar = styled(Avatar)`
 `
 
 const FullWidthForm = styled.form`
+	& p {
+		color: ${red[500]}; // Color de los errores
+	}
 	width: 100%;
-	color: ${red[500]}; // Color de los errores
 `
 
 const CustomTypography = styled(Typography)`
@@ -384,4 +386,16 @@ const HiddenTextField = styled(TextField)`
 	}
 `
 
-export {HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}
+const CustomToolTip = styled(Tooltip)`
+	&& {
+		white-space: pre-wrap;
+	}
+`
+
+const NoMarginFormControlLabel = styled(FormControlLabel)`
+	&& {
+		margin: 0
+	}
+`
+
+export {NoMarginFormControlLabel, CustomToolTip, HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}

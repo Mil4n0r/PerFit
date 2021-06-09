@@ -5,10 +5,16 @@ export const createSubscription = (subscription) => axios.post("http://localhost
 })
 	.then(res => res.data);
 
-export const getSubscriptions = () => axios.get("http://localhost:4000/subscription/list")
+export const getSubscriptions = () => axios.get("http://localhost:4000/admin/subscription/list")
+	.then(res => res.data)
+
+export const getSubscriptionsGuest = () => axios.get("http://localhost:4000/subscription/list")
 	.then(res => res.data)
 
 export const getSubscription = (id) => axios.get(`http://localhost:4000/admin/subscription/${id}`)
+	.then(res => res.data);
+
+export const getSubscriptionName = (id) => axios.get(`http://localhost:4000/subscription/${id}`)
 	.then(res => res.data);
 
 export const updateSubscription = (subscription,id) => axios.post(`http://localhost:4000/admin/subscription/${id}`, subscription, {

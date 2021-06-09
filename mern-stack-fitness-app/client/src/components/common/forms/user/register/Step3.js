@@ -7,14 +7,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import FormContext from '../../../../../context/FormContext';
 import { RegisterSchema3 } from '../../../schemas/user/register/RegisterSchema3';
 
-import { getSubscriptions } from '../../../../../api';
+import { getSubscriptionsGuest } from '../../../../../api';
 
-import { Step, StepLabel, Button, Grid, Typography, MenuItem, Chip } from '@material-ui/core';
+import { Step, StepLabel, Button, Grid, Typography, MenuItem, Chip, Card, Tooltip, Box } from '@material-ui/core';
 import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel } from '../../../../../style/style';
 
 export const Step3 = () => {
 	const { data, getData } = useContext(FormContext);
 	const [subscriptions, setSubscriptions] = useState([])	// Creamos una variable de estado para almacenar la información de las suscripciones y una función para actualizarla
+
 	const { register, errors, handleSubmit, watch, control } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: { 
 			role: data.role ? data.role : "",
@@ -41,7 +42,7 @@ export const Step3 = () => {
 
 	useEffect(() => {
 		const fetchSubscriptions = async () => {
-			const subscriptions = await getSubscriptions();	// Llamamos a la API para obtener la información de las suscripciones
+			const subscriptions = await getSubscriptionsGuest();	// Llamamos a la API para obtener la información de las suscripciones
 			setSubscriptions(subscriptions);	// Actualizamos la información de nuestra variable de estado para que contenga la información de las salas
 		}
 		fetchSubscriptions();
@@ -122,9 +123,9 @@ export const Step3 = () => {
 										fullWidth
 										renderValue={(selected) => (
 											<>
-											  {selected.map((value) => (
-												<Chip key={value} label={value} />
-											  ))}
+												{selected.map((value) => (
+													<Chip key={value} label={value} />
+												))}
 											</>
 										)}
 									>
@@ -159,7 +160,22 @@ export const Step3 = () => {
 									{
 										subscriptions && ( 
 											subscriptions.map(subscription => (
-												<MenuItem key={subscription._id} value={subscription._id}>{subscription.nombreSuscripcion}</MenuItem>
+												<MenuItem key={subscription._id} value={subscription._id}>
+													<Tooltip 
+														placement="right" 
+														title={
+															<>
+																<Typography>Descripción: {subscription.descripcionSuscripcion}</Typography><br/>
+																<Typography>Coste: {subscription.costeSuscripcion}€</Typography>
+																<Typography>Fecha de vencimiento: {}</Typography>
+															</>
+														}
+													>
+														<Box component="span">
+															{subscription.nombreSuscripcion}
+														</Box>
+													</Tooltip>
+												</MenuItem>
 											))
 										)
 									}

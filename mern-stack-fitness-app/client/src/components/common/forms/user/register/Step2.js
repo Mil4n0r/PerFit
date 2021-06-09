@@ -8,7 +8,7 @@ import FormContext from '../../../../../context/FormContext';
 import { RegisterSchema2 } from '../../../schemas/user/register/RegisterSchema2';
 
 import { Step, StepLabel, Button, Grid, Typography } from '@material-ui/core';
-import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField} from '../../../../../style/style';
+import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField, InputLabelWithMargin as InputLabel,} from '../../../../../style/style';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 
 export const Step2 = () => {
@@ -129,6 +129,9 @@ export const Step2 = () => {
 					id="telephone"
 				/>
 				<ErrorMessage errors={errors} name="telephone" as={Typography} />
+				<InputLabel htmlFor="birthdate">
+					Fecha de nacimiento
+				</InputLabel>
 				<Controller
 					control={control}
 					name="birthdate"

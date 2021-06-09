@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 import { LoginSchema } from '../../../schemas/user/login/LoginSchema';
 
-import {Grid, Typography, Link} from '@material-ui/core';
+import {Grid, Typography, Link, Checkbox, FormControlLabel} from '@material-ui/core';
 
 import {FormContainer, LoginButton, FullWidthForm, TextFieldWithMargin as TextField} from '../../../../../style/style'
 
@@ -18,6 +18,7 @@ export const LoginForm = ({ onSubmit }) => {
 	});
 	
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
+		console.log(data)
 		onSubmit(data);
 	});
 
@@ -48,14 +49,20 @@ export const LoginForm = ({ onSubmit }) => {
 					id="password"
 				/>
 				<ErrorMessage errors={errors} name="password" as={Typography} />
+				<FormControlLabel
+					control={<Checkbox />}
+					label="Recordarme"
+					name="rememberme"
+					inputRef={register}
+				/>
 				<LoginButton
 					type="submit"
 					fullWidth
 					variant="contained"
 					color="primary"
 				>
-            		INICIAR SESIÓN
-          		</LoginButton>
+					INICIAR SESIÓN
+				</LoginButton>
 				<Grid container>
 					<Grid item xs>
 						<Link href="#" color="primary">

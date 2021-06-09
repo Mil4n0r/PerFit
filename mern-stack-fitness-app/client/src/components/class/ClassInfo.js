@@ -160,8 +160,8 @@ export const ClassInfo = () => {
 							</ContainerWithPadding>
 						</VerticalGrid>
 						{
-							sclass.permission.includes('join')  || sclass.permission.includes('leave') ||
-							sclass.permission.includes('write') || sclass.permission.includes('delete')  ? (
+							sclass.permission.includes('join') || sclass.permission.includes('leave') ||
+							sclass.permission.includes('write') || sclass.permission.includes('delete') ? (
 								<Typography component="h3" variant="h6">Opciones</Typography>
 							) : 
 								<></>

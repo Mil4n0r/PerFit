@@ -15,7 +15,7 @@ export const Login = () => {
 	const { getLoggedIn } = useContext(AuthContext);
 
 	const onSubmit = async (data) => {
-		await logIn(data.email, data.password);
+		await logIn(data.email, data.password, data.rememberme);
 		await getLoggedIn();
 		history.push("/");
 	};

@@ -13,15 +13,15 @@ import { KeyboardDatePicker } from '@material-ui/pickers';
 
 const DatePicker = ({ name, validation, label, control, disablePast, ...props }) => (
 	<Controller
-        render={
-          ({ field }) => <Select {...field}>
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-          </Select>
-        }
-        control={control}
-        name="select"
-        defaultValue={10}
+		render={
+			({ field }) => <Select {...field}>
+			<MenuItem value={10}>Ten</MenuItem>
+			<MenuItem value={20}>Twenty</MenuItem>
+			</Select>
+		}
+		control={control}
+		name="select"
+		defaultValue={10}
 	/>
 )
 	

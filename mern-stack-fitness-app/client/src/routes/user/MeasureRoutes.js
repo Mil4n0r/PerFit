@@ -12,7 +12,7 @@ import { CreateMeasure } from '../../components/measure/CreateMeasure';
 function ExerciseRoutes() {
 	return (
 		<>
-            <Route exact path="/create/measure/:id" component={ CreateMeasure } />
+			<Route exact path="/create/measure/:id" component={ CreateMeasure } />
 			<Route path="/edit/measure/:trackingid/:id" component={ EditMeasure } />
 			<Route exact path="/associate/tracking/measure/:id" component={ AssociateMeasureToTracking } />
 		</>

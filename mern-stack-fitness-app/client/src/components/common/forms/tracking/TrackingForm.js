@@ -14,7 +14,7 @@ export const TrackingForm = ({ tracking, onSubmit }) => {
 
 	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de seguimiento
 		defaultValues: {
-            trackingname: tracking ? tracking.nombrePlan : "",
+			trackingname: tracking ? tracking.nombrePlan : "",
 			targetvalue: tracking ? tracking.valorObjetivo : "",
 			trackingunit: tracking ? tracking.unidadObjetivo : "",
 		},	// Asignamos valores por defecto en caso de estar modificando

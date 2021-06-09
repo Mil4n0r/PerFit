@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { registerUser } from '../../api';
 import { Step1 } from '../common/forms/user/register/Step1';
@@ -8,15 +8,22 @@ import { StepConfirm } from '../common/forms/user/register/StepConfirm';
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
-import {BodyContainer, RegisterAvatar, CustomTypography as Typography} from '../../style/style'
+import { Modal } from '@material-ui/core';
+import {BodyContainer, RegisterAvatar, CustomTypography as Typography, CenterPaper} from '../../style/style'
+
+import { RegisteredMessage } from './RegisteredMessage';
+import Confetti from 'react-confetti';
 
 export const Register = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
 
+	const [open, setOpen] = useState();
+
 	const onSubmit = async (data) => {
 		await registerUser(data);	// Llamamos a la API para registrar al usuario
-		history.push("/");	// Redireccionamos al listado de usuarios
+		setOpen(true);
+		//history.push("/");	// Redireccionamos al listado de usuarios
 	};
 
 	const selectStep = (step) => {
@@ -44,8 +51,20 @@ export const Register = () => {
 			</Typography>
 			{
 				<>
-				{selectStep(match.params.step)}
+					{selectStep(match.params.step)}
 				</>
+			}
+			{
+				open && (
+					<>
+						<Confetti/>
+						<Modal
+							open={open}
+						>
+							<CenterPaper><RegisteredMessage/></CenterPaper>
+						</Modal>
+					</>
+				)
 			}
 		</BodyContainer>
 	);

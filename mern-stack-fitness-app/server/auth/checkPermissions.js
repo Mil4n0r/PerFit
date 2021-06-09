@@ -30,6 +30,20 @@ const checkPermissionsUser = async (activeUser, req) => {
 		}
 		//else if(activeUser.rolUsuario === "admin") {
 		else if(activeUser.role === "Administrador") {
+			if(!checkedUser.cuentaActivada) {
+				return {
+					error: null,
+					user: checkedUser,
+					permission: ["read", "write", "delete", "checkplans", "allowfriends", "activateaccount"]
+				};
+			}
+			else {
+				return {
+					error: null,
+					user: checkedUser,
+					permission: ["read", "write", "delete", "checkplans", "allowfriends"]
+				};
+			}
 			return {
 				error: null,
 				user: checkedUser,
@@ -306,7 +320,6 @@ const checkPermissionsSubscription = async (activeUser, req) => {
 		};
 	}
 	else {
-		//if(activeUser.rolUsuario === "admin") {
 		if(activeUser.role === "Administrador") {
 			return {
 				error: null,

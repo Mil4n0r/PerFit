@@ -37,7 +37,8 @@ passport.use("register",
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias,
 							balanceMonedas: 0,
-							suscripcionMiembro: req.body.subscription.id
+							suscripcionMiembro: req.body.subscription,
+							cuentaActivada: false
 						});
 					}
 					else if(req.body.role === "Entrenador") {
@@ -53,7 +54,8 @@ passport.use("register",
 								fechaNacUsuario: req.body.birthdate
 							},
 							privacidadUsuario: req.body.privacy,
-							aliasUsuario: req.body.alias
+							aliasUsuario: req.body.alias,
+							cuentaActivada: false
 						});
 					}
 					else if(req.body.role === "Monitor") {
@@ -70,7 +72,8 @@ passport.use("register",
 							},
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias,
-							especialidadesMonitor: req.body.specialty
+							especialidadesMonitor: req.body.specialty,
+							cuentaActivada: false
 						});
 					}
 					else if(req.body.role === "Administrador") {
@@ -86,8 +89,8 @@ passport.use("register",
 								fechaNacUsuario: req.body.birthdate
 							},
 							privacidadUsuario: req.body.privacy,
-							aliasUsuario: req.body.alias
-
+							aliasUsuario: req.body.alias,
+							cuentaActivada: false
 						});
 					}
 					return done(null, user, { message: "Se ha registrado satisfactoriamente" });

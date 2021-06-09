@@ -71,6 +71,28 @@ router.post("/subscription/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
+router.get("/subscription/list", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			await SubscriptionModel.find((err, activities) => {
+				if(err) {
+					next(err);	
+				} 
+				else {
+					res.json(activities);	
+				}
+			});
+		}
+	})(req,res,next);
+});
+
 router.get("/subscription/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {

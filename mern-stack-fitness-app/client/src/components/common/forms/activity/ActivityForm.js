@@ -52,9 +52,9 @@ export const ActivityForm = ({ activity, onSubmit }) => {
 							fullWidth
 							renderValue={(selected) => (
 								<>
-								  {selected.map((value) => (
-									<Chip key={value} label={value} />
-								  ))}
+									{selected.map((value) => (
+										<Chip key={value} label={value} />
+									))}
 								</>
 							)}
 						>

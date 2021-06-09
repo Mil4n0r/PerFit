@@ -28,8 +28,8 @@ function App() {
 					</ThemeProvider>
 				</MuiThemeProvider>
 			</FormContextProvider>
-    	</AuthContextProvider>
-  );
+		</AuthContextProvider>
+	);
 }
 
 export default App;

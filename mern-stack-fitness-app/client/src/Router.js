@@ -2,63 +2,74 @@ import React, { useContext } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Home } from './components/common/layout/Home';
 
+import AdminActivityRoutes from './routes/admin/AdminActivityRoutes';
+import AdminClassRoutes from './routes/admin/AdminClassRoutes';
+import AdminRoomRoutes from './routes/admin/AdminRoomRoutes';
+import AdminSubscriptionRoutes from './routes/admin/AdminSubscriptionRoutes';
+
+import ActivityRoutes from './routes/user/ActivityRoutes';
+import AuthenticationProtectedRoutes from './routes/user/AuthenticationRoutes';
+import ClassRoutes from './routes/user/ClassRoutes';
+import DietRoutes from './routes/user/DietRoutes';
 import ExerciseRoutes from './routes/user/ExerciseRoutes';
-import RoutineRoutes from './routes/admin/RoutineRoutes';
-import DietRoutes from './routes/admin/DietRoutes';
 import FoodRoutes from './routes/user/FoodRoutes';
-import UserRoutes from './routes/admin/UserRoutes';
-import AuthenticationRoutes from './routes/unprotected/AuthenticationRoutes';
-import AuthenticationProtectedRoutes from './routes/unprotected/AuthenticationProtectedRoutes';
-import ActivityRoutes from './routes/admin/ActivityRoutes';
-import ClassRoutes from './routes/admin/ClassRoutes';
+import MeasureRoutes from './routes/user/MeasureRoutes';
+import RequestRoutes from './routes/user/RequestRoutes';
+import RoomRoutes from './routes/user/RoomRoutes';
+import RoutineRoutes from './routes/user/RoutineRoutes';
+import SubscriptionRoutes from './routes/user/SubscriptionRoutes';
+import TrackingRoutes from './routes/user/TrackingRoutes';
+import UserRoutes from './routes/user/UserRoutes';
+
+import AuthenticationRoutes from './routes/unprotected/AuthenticationUnprotectedRoutes';
 
 import AuthContext from './context/AuthContext';
-import TrackingRoutes from './routes/admin/TrackingRoutes';
-import MeasureRoutes from './routes/user/MeasureRoutes';
-import RoomRoutes from './routes/admin/RoomRoutes';
-import SubscriptionRoutes from './routes/admin/SubscriptionRoutes';
-import SubscriptionUnprotectedRoutes from './routes/unprotected/SubscriptionUnprotectedRoutes';
-import RequestRoutes from './routes/admin/RequestRoutes';
 
 function Router() {
 
 	const { loggedIn } = useContext(AuthContext);
 	// DIFERENCIAR ENTRE 'Miembro', 'Entrenador', 'Monitor', 'Administrador'
-    return(
-        <div>
+	return(
+		<div>
 			<Switch>
 				<Route exact path="/" component={ Home } />
 				{
-					loggedIn && (//loggedIn.role === "Miembro" && (
+					loggedIn ? (
 						<>
-							{ActivityRoutes()}
-							{ExerciseRoutes()}
 							{RoutineRoutes()}
 							{DietRoutes()}
-							{FoodRoutes()}
+							{RoomRoutes()}
+							{AuthenticationProtectedRoutes()}
 							{UserRoutes()}
 							{TrackingRoutes()}
-							{MeasureRoutes()}
-							{RoomRoutes()}
-							{ClassRoutes()}
 							{SubscriptionRoutes()}
-							{SubscriptionUnprotectedRoutes()}
 							{RequestRoutes()}
-							{AuthenticationProtectedRoutes()}
+							{ActivityRoutes()}
+							{ClassRoutes()}
+							{ExerciseRoutes()}
+							{FoodRoutes()}
+							{MeasureRoutes()}
+							{
+								loggedIn.role === "Administrador" && (
+									<>
+										{AdminSubscriptionRoutes()}
+										{AdminActivityRoutes()}
+										{AdminClassRoutes()}
+										{AdminRoomRoutes()}
+									</>
+								)
+							}
 						</>
 					)
-				}
-				{
-					!loggedIn && (
+					: (
 						<>
 							{AuthenticationRoutes()}
-							{SubscriptionUnprotectedRoutes()}
 						</>
 					)
 				}
 			</Switch>
 		</div>
-    )
+	)
 }
 
 export default Router;

@@ -9,7 +9,7 @@ const { checkPermissionsUser } = require('../../auth/checkPermissions');
 const mongoose = require('mongoose');
 
 // Consulta de usuarios
-router.get("/user/list", async (req,res,next) => {
+router.get("/user/list/:inactive?/:search?", async (req,res,next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -19,14 +19,21 @@ router.get("/user/list", async (req,res,next) => {
 			next(error);
 		}
 		else {
-			const token = req.cookies.token;
-			await UserModel.find((queryErr, users) => {	// Buscamos en el modelo todos los usuarios registrados
-				if(queryErr) {	// Se imprime un mensaje de error en consola
-					next(queryErr);
-				} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
-					res.json(users);	
+			await UserModel.find(
+				// Condición de búsqueda
+				req.params.search !== "undefined" ?
+					{aliasUsuario: new RegExp(req.params.search, 'i'), cuentaActivada: req.params.inactive === "false"} 
+				:
+					{cuentaActivada: req.params.inactive === "false"}
+				,
+				(queryErr, users) => {	// Buscamos en el modelo todos los usuarios registrados
+					if(queryErr) {	// Se imprime un mensaje de error en consola
+						next(queryErr);
+					} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
+						res.json(users);	
+					}
 				}
-			});
+			);
 		}
 	})(req,res,next);
 });
@@ -83,6 +90,37 @@ router.post("/user/:id", async (req, res, next) => {
 				resUser.datosPersonales.fechaNacUsuario = req.body.birthdate;
 				//resUser.rolUsuario = req.body.role;
 				resUser.privacidadUsuario = req.body.privacy;
+				resUser
+					.save()		// Se almacena el usuario
+					.then(userData => {
+						res.json(userData)	// Se manda como respuesta el usuario modificado
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+			else {
+				res.status(401).send("Usuario no autorizado");
+			}
+		}
+	})(req,res,next);
+});
+
+router.post("/user/activate/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err || !user) {
+			next(info.message);
+		}
+		else {
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resUser = permissionsResData.user;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("write")) {	// Se reasignan los campos del usuario
+				resUser.cuentaActivada = true;
 				resUser
 					.save()		// Se almacena el usuario
 					.then(userData => {

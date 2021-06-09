@@ -45,7 +45,7 @@ router.get("/food/list", async (req, res, next) => {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
 		}
 		else {
-			FoodModel.find((err, foods) => {	// Buscamos en el modelo todas las comidas registradas
+			await FoodModel.find((err, foods) => {	// Buscamos en el modelo todas las comidas registradas
 				if(err) {
 					next(err);	
 				} 
