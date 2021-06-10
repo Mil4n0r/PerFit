@@ -41,7 +41,10 @@ const UserSchema = mongoose.Schema({
 	amigosUsuario: [ { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"} ],
 	peticionesPendientes: [ { type: mongoose.Schema.Types.ObjectId, ref: "Solicitud"} ],
 
-	cuentaActivada: { type: Boolean, required: true }
+	cuentaActivada: { type: Boolean, required: true },
+
+	tieneEntrenador: { type: Boolean, required: true }
+
 	/*
 	// Componentes de seguridad
 	loginAttempts: { type: Number, required: true, default: 0 },

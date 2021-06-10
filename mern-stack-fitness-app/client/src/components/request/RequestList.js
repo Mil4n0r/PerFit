@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getRequestsForUser } from '../../api';
-import { AcceptRequest } from './AcceptRequest';
-import { RejectRequest } from './RejectRequest';
 import { useRouteMatch } from "react-router-dom";
 
 import { Grid, Table, TableBody, TableCell, Paper } from '@material-ui/core';
@@ -13,7 +11,7 @@ import CancelOutlinedIcon from '@material-ui/icons/CancelOutlined';
 
 import { CenterPaper, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography as Typography, TableContainerWithMargin as TableContainer, HorizontalGrid } from '../../style/style';
 
-import { acceptFriendRequest, rejectFriendRequest } from '../../api';
+import { acceptFriendRequest, rejectFriendRequest, acceptTrainingRequest, rejectTrainingRequest } from '../../api';
 
 export const RequestList = () => {
 	const match = useRouteMatch();
@@ -28,8 +26,7 @@ export const RequestList = () => {
 			await acceptFriendRequest(requestId);
 		}
 		else if(requestType === "Entrenamiento") {
-			//await acceptTrainingRequest(requestId);
-			console.log("FALTA PROGRAMAR")
+			await acceptTrainingRequest(requestId);
 		}
 		setUpdated(requestId);
 	}
@@ -42,8 +39,7 @@ export const RequestList = () => {
 			await rejectFriendRequest(requestId);
 		}
 		else if(requestType === "Entrenamiento") {
-			//await rejectTrainingRequest(requestId);
-			console.log("FALTA PROGRAMAR")
+			await rejectTrainingRequest(requestId);
 		}
 		setUpdated(requestId);
 	}

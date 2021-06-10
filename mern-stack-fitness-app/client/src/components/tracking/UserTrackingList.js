@@ -56,12 +56,6 @@ export const UserTrackingList = () => {
 								<TableCell component="th" scope="row">{tracking.nombrePlan}</TableCell>
 								<TableCell>{tracking.valorObjetivo} {tracking.unidadObjetivo}</TableCell>
 								<TableCell align='center'><Link to={`/tracking/info/${tracking._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
-								{
-									/*
-									<Link to={`/edit/tracking/${match.params.id}/${tracking._id}`}>Editar</Link>
-									<Link to={`/delete/tracking/${match.params.id}/${tracking._id}`}>Eliminar</Link>
-									*/
-								}
 							</TableRow>
 						))}
 					</TableBody>

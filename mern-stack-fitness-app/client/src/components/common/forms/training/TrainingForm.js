@@ -65,7 +65,7 @@ export const TrainingForm = ({ training, onSubmit }) => {
 					name="trainingname"
 					id="trainingname"
 				/>
-				<ErrorMessage errors={errors} name="trainingname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="trainingname" as={Typography} />
 				<InputLabel htmlFor="trainingday">
 					Fecha del entrenamiento
 				</InputLabel>
@@ -84,7 +84,7 @@ export const TrainingForm = ({ training, onSubmit }) => {
 						/>
 					)}
 				/>
-				<ErrorMessage errors={errors} name="trainingday" as="p" />
+				<ErrorMessage className="error" errors={errors} name="trainingday" as="p" />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar entrenamiento

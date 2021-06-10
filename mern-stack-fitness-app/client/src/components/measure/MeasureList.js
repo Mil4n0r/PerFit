@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getMeasures, deleteMeasure } from '../../api';
 
+import {format, parseISO} from 'date-fns';
+import { es } from 'date-fns/locale'
+
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
 
@@ -56,7 +59,7 @@ export const MeasureList = (props) => {
 				)
 			}
 			<CustomTypography component="h2" variant="h5">
-				Listado de medidas del seguimiento {props?.tracking?.nombrePlan}
+				Listado de medidas del seguimiento {props?.tracking?.nombrePlan || "???"}
 			</CustomTypography>
 			<TableContainer component={Paper}>
 				<Table size="medium">
@@ -78,7 +81,7 @@ export const MeasureList = (props) => {
 									)
 								}
 								
-								<TableCell>{measure.fechaMedida}</TableCell>
+								<TableCell>{format(parseISO(measure.fechaMedida), 'dd/MM/yyyy', {locale: es})}</TableCell>
 								<TableCell align="center">
 									<HorizontalGrid container spacing={1}>
 										<HorizontalGrid item xs>

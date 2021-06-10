@@ -38,23 +38,44 @@ router.post("/create/food", async (req, res, next) => {
 	})(req,res,next)
 });
 
-// Lista de alimentos
-router.get("/food/list", async (req, res, next) => {
+router.get("/food/list/:search?", async (req,res,next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(!user) {
-			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
 		}
 		else {
-			await FoodModel.find((err, foods) => {	// Buscamos en el modelo todas las comidas registradas
-				if(err) {
-					next(err);	
-				} 
-				else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
-					res.json(foods);	
-				}
-			});
+			if(req.params.search) {
+				await FoodModel.find(
+					req.params.search !== "undefined" ?
+						{nombreAlimento: new RegExp(req.params.search, 'i')} 
+					:
+						{}
+					,
+					(err, foods) => {	// Buscamos en el modelo todas las comidas registradas
+					if(err) {
+						next(err);	
+					} 
+					else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
+						res.json(foods);	
+					}
+				});
+			}
+			else {
+				await FoodModel.find((err, foods) => {	// Buscamos en el modelo todas las comidas registradas
+					if(err) {
+						next(err);	
+					} 
+					else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
+						res.json(foods);	
+					}
+				});
+			}
 		}
-	})(req,res,next)
+	})(req,res,next);
 });
 
 // Consulta del alimento con la id correspondiente

@@ -8,7 +8,7 @@ const options = {
 
 const TrainerSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
-	alumnosEntrenados: [ { type: mongoose.Schema.Types.ObjectId, ref: "Miembro"} ]
+	alumnosEntrenados: [ { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"} ]
 }, options);
 
 module.exports = UserModel.discriminator("Entrenador", TrainerSchema);

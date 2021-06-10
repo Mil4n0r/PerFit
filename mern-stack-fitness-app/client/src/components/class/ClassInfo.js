@@ -3,6 +3,10 @@ import { getClass } from '../../api';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
+import {format, parseISO, parse, formatISO} from 'date-fns';
+import { es } from 'date-fns/locale'
+import { utcToZonedTime } from 'date-fns-tz';
+
 import {Grid, Paper, Modal, Button, List, Avatar, ListItemAvatar, Divider} from '@material-ui/core';
 
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
@@ -86,8 +90,8 @@ export const ClassInfo = () => {
 									<TextField
 										variant="outlined"
 										fullWidth
-										type="date"
-										defaultValue={sclass.classInfo?.diaClase.substr(0,10)}
+										type="datetime-local"
+										defaultValue={sclass && formatISO(utcToZonedTime(sclass.classInfo.diaClase, 'Europe/Madrid')).substr(0,16)}
 										InputProps={{
 											readOnly: true,
 										}}

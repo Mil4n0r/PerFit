@@ -40,7 +40,7 @@ export const FoodForm = ({ food, onSubmit }) => {
 					name="foodname"
 					id="foodname"
 				/>
-				<ErrorMessage errors={errors} name="foodname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="foodname" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -52,7 +52,7 @@ export const FoodForm = ({ food, onSubmit }) => {
 					inputProps={{ min: "0", step: "1"}}
 					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
 				/>
-				<ErrorMessage errors={errors} name="foodsize" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="foodsize" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -64,7 +64,7 @@ export const FoodForm = ({ food, onSubmit }) => {
 					inputProps={{ min: "0", step: "1" }}
 					InputProps={{endAdornment: <InputAdornment position="end">Kcal</InputAdornment>}}
 				/>
-				<ErrorMessage errors={errors} name="calories" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="calories" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -77,7 +77,7 @@ export const FoodForm = ({ food, onSubmit }) => {
 					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
 					onChange={() => trigger("calories")}
 				/>
-				<ErrorMessage errors={errors} name="carbs" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="carbs" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -90,7 +90,7 @@ export const FoodForm = ({ food, onSubmit }) => {
 					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
 					onChange={() => trigger("calories")}
 				/>
-				<ErrorMessage errors={errors} name="proteins" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="proteins" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -103,7 +103,7 @@ export const FoodForm = ({ food, onSubmit }) => {
 					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
 					onChange={() => trigger("calories")}
 				/>
-				<ErrorMessage errors={errors} name="fats" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="fats" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar alimento

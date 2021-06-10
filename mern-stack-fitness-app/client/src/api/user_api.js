@@ -37,4 +37,9 @@ export const getRequestsForUser = (id) => axios.get(`http://localhost:4000/admin
 export const getFriendsForUser = (id) => axios.get(`http://localhost:4000/admin/friend/list/${id}`)
 	.then(res => res.data)
 
+export const getClientsForTrainer = (id) => axios.get(`http://localhost:4000/admin/client/list/${id}`)
+	.then(res => res.data)
+
 export const deleteFriend = (id, id2) => axios.delete(`http://localhost:4000/admin/friend/${id}/${id2}`);
+
+export const deleteClient = (id, id2) => axios.delete(`http://localhost:4000/admin/client/${id}/${id2}`);

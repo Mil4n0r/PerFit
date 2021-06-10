@@ -64,7 +64,7 @@ export const Step2 = () => {
 					name="name"
 					id="name"
 				/>
-				<ErrorMessage errors={errors} name="name" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="name" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -74,7 +74,7 @@ export const Step2 = () => {
 					name="surname"
 					id="surname"
 				/>
-				<ErrorMessage errors={errors} name="surname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="surname" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -84,7 +84,7 @@ export const Step2 = () => {
 					name="dni"
 					id="dni"
 				/>
-				<ErrorMessage
+				<ErrorMessage className="error"
 					errors={errors} name="dni" render={
 						({ messages }) =>
 							messages &&
@@ -106,7 +106,7 @@ export const Step2 = () => {
 					name="address"
 					id="address"
 				/>
-				<ErrorMessage
+				<ErrorMessage className="error"
 					errors={errors} name="address" render={
 						({ messages }) =>
 							messages &&
@@ -128,7 +128,7 @@ export const Step2 = () => {
 					name="telephone"
 					id="telephone"
 				/>
-				<ErrorMessage errors={errors} name="telephone" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="telephone" as={Typography} />
 				<InputLabel htmlFor="birthdate">
 					Fecha de nacimiento
 				</InputLabel>
@@ -147,7 +147,7 @@ export const Step2 = () => {
 						/>
 					)}
 				/>
-				<ErrorMessage errors={errors} name="birthdate" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="birthdate" as={Typography} />
 				<ButtonsContainer>
 					<Grid container spacing={1}>
 						<Grid item>

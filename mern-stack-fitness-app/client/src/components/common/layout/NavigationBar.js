@@ -4,12 +4,11 @@ import AuthContext from '../../../context/AuthContext';
 
 import logo from '../../../images/Logo.png'
 
-import { Container, AppBar, Tab, Tabs, CircularProgress } from '@material-ui/core'
-
 import { NavLink, NavBar, NavTab, NavTabs, NavProgress, HeaderContainer } from '../../../style/style';
 
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import PermIdentityOutlinedIcon from '@material-ui/icons/PermIdentityOutlined';
+import NotificationsActiveOutlinedIcon from '@material-ui/icons/NotificationsActiveOutlined';
 import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined';
 import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import GroupOutlinedIcon from '@material-ui/icons/GroupOutlined';
@@ -64,6 +63,7 @@ function NavigationBar() {
 	}, [loggedIn]);
 
 	const getTabs = () => {
+		console.log("LOGGED", loggedIn)
 		if(loggedIn) {
 			setTabs([
 				<NavTab icon={<HomeOutlinedIcon/>} key="home" label = "INICIO" to= "/" component = {NavLink} value = {0} wrapped/>,
@@ -75,8 +75,10 @@ function NavigationBar() {
 				<NavTab icon={<FitnessCenterOutlinedIcon/>} key="exerciselist" label = "EJERCICIOS" to = "/exercise/list" component = {NavLink} value = {6} wrapped/>,
 				<NavTab icon={<GroupOutlinedIcon/>} key="userlist" label = "LISTAR USUARIOS" to = "/user/list" component = {NavLink} value = {7} wrapped/>,
 				<NavTab icon={<PermIdentityOutlinedIcon/>} key="myprofile" label = "MI PERFIL" to = {`/user/profile/${loggedIn._id}`} component = {NavLink} value = {8} wrapped/>,
-				<NavTab icon={<NotificationsOutlinedIcon/>} key="requestlist" label = "SOLICITUDES" to = {`/request/list/${loggedIn._id}`} component = {NavLink} value = {9} wrapped/>,
-				<NavTab icon={<ExitToAppOutlinedIcon/>} key="logout" label = "CERRAR SESIÓN" to = "/logout" component = {NavLink} value = {10} wrapped/>
+				<NavTab icon={loggedIn.peticionesPendientes.length > 0 ? <NotificationsActiveOutlinedIcon color='secondary'/> : <NotificationsOutlinedIcon/>} key="requestlist" label = "SOLICITUDES" to = {`/request/list/${loggedIn._id}`} component = {NavLink} value = {9} wrapped/>,
+				<NavTab key="friendlist" label = "AMIGOS" to = {`/friend/list/${loggedIn._id}`} component = {NavLink} value = {10} wrapped/>,
+				<NavTab key="clientlist" label = "ALUMNOS" to = {`/client/list/${loggedIn._id}`} component = {NavLink} value = {11} wrapped/>,
+				<NavTab icon={<ExitToAppOutlinedIcon/>} key="logout" label = "CERRAR SESIÓN" to = "/logout" component = {NavLink} value = {12} wrapped/>
 			])
 		}
 		else if(loggedIn === false) { // Evita problemas cuando loggedIn está sin definir

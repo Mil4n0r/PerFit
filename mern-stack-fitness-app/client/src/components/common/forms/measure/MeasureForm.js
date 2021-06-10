@@ -52,7 +52,7 @@ export const MeasureForm = ({ measure, unit, onSubmit }) => {
 					inputProps={{ min: "0", step: "1"}}
 					InputProps={{endAdornment: <InputAdornment position="end">{unit ? unit : ""}</InputAdornment>}}
 				/>
-				<ErrorMessage errors={errors} name="measurevalue" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="measurevalue" as={Typography} />
 				<InputLabel htmlFor="measuredate">
 					Fecha de la medida
 				</InputLabel>
@@ -71,7 +71,7 @@ export const MeasureForm = ({ measure, unit, onSubmit }) => {
 						/>
 					)}
 				/>
-				<ErrorMessage errors={errors} name="measuredate" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="measuredate" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar medida

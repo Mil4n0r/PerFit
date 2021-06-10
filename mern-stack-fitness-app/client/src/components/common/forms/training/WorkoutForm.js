@@ -62,7 +62,7 @@ export const WorkoutForm = ({ workout, exercise, onSubmit }) => {
 					inputProps={{ min: "1", step: "1"}}
 					onChange={(event) => setNumberOfSets(event.target.value)}
 				/>
-				<ErrorMessage errors={errors} name="numberofseries" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="numberofseries" as={Typography} />
 				<List dense component="ol">
 					{
 						(
@@ -82,7 +82,7 @@ export const WorkoutForm = ({ workout, exercise, onSubmit }) => {
 													inputProps={{ min: "1", step: "1"}}
 													defaultValue={workout ? workout.numRepeticiones[index] : ""}
 												/>
-												<ErrorMessage errors={errors} name={`numberofreps[${index}]`} as={Typography} />
+												<ErrorMessage className="error" errors={errors} name={`numberofreps[${index}]`} as={Typography} />
 											</Grid>
 											<Grid item xs>
 												<TextField
@@ -96,7 +96,7 @@ export const WorkoutForm = ({ workout, exercise, onSubmit }) => {
 													inputProps={{ min: "0", step: "0.1"}}
 													defaultValue={workout ? workout.pesosUtilizados[index] : ""}
 												/>
-											<ErrorMessage errors={errors} name={`weightsused[${index}]`} as={Typography} />
+											<ErrorMessage className="error" errors={errors} name={`weightsused[${index}]`} as={Typography} />
 											</Grid>
 										</Grid>
 									</ListItem>

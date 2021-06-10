@@ -55,7 +55,7 @@ export const Step1 = () => {
 					name="alias"
 					id="alias"
 				/>
-				<ErrorMessage
+				<ErrorMessage className="error"
 					errors={errors} name="alias" render={
 						({ messages }) =>
 							messages &&
@@ -77,7 +77,7 @@ export const Step1 = () => {
 					name="email"
 					id="email"
 				/>
-				<ErrorMessage errors={errors} name="email" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="email" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -87,7 +87,7 @@ export const Step1 = () => {
 					name="password"
 					id="password"
 				/>
-				<ErrorMessage
+				<ErrorMessage className="error"
 					errors={errors} name="password" render={
 						({ messages }) =>
 							messages &&
@@ -109,7 +109,7 @@ export const Step1 = () => {
 					name="passwordConfirm"
 					id="passwordConfirm"
 				/>
-				<ErrorMessage errors={errors} name="passwordConfirm" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="passwordConfirm" as={Typography} />
 				<ButtonsContainer>
 					<Grid container spacing={1}>
 						<Grid item>

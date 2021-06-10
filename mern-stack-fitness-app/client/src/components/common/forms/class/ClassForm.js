@@ -9,7 +9,7 @@ import { getActivities, getUsers, getRooms } from '../../../../api';
 
 import { Button, Grid, Typography, MenuItem, Chip } from '@material-ui/core';
 import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel, TextFieldWithMargin as TextField } from '../../../../style/style';
-import { KeyboardDatePicker } from '@material-ui/pickers';
+import { KeyboardDateTimePicker } from '@material-ui/pickers';
 
 import { ClassSchema } from '../../schemas/class/ClassSchema'
 
@@ -89,7 +89,7 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 					}
 					defaultValue={[]}
 				/>
-				<ErrorMessage errors={errors} name="classactivity" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="classactivity" as={Typography} />
 				<InputLabel htmlFor="classday">
 					Fecha de la clase
 				</InputLabel>
@@ -98,9 +98,10 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 					name="classday"
 					id="classday"
 					render={({ ref, ...rest }) => (
-						<KeyboardDatePicker
+						<KeyboardDateTimePicker
+							ampm={false}
 							inputVariant="outlined"
-							format="dd/MM/yyyy"
+							format="dd/MM/yyyy HH:mm"
 							autoOk
 							value={selectedDate}
 							cancelLabel="Cancelar"
@@ -108,7 +109,7 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 						/>
 					)}
 				/>
-				<ErrorMessage errors={errors} name="classday" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="classday" as={Typography} />
 				<InputLabel htmlFor="classmonitor">
 					Monitor de la clase
 				</InputLabel>
@@ -132,7 +133,7 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 					}
 					defaultValue={[]}
 				/>
-				<ErrorMessage errors={errors} name="classmonitor" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="classmonitor" as={Typography} />
 				<InputLabel htmlFor="classroom">
 					Sala de la clase
 				</InputLabel>
@@ -156,7 +157,7 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 					}
 					defaultValue={[]}
 				/>
-				<ErrorMessage errors={errors} name="classroom" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="classroom" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar clase

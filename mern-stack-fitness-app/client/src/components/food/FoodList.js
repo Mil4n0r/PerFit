@@ -1,29 +1,46 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { getFoods } from '../../api';
+import { getFoods, getFoodsMatching } from '../../api';
 
-import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
+import { Table, TableBody, TableCell, Paper, TextField, InputAdornment } from '@material-ui/core';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
 import ArrowForwardOutlinedIcon from '@material-ui/icons/ArrowForwardOutlined';
-import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
+import { ContainerWithPadding, HorizontalGrid, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
+
+import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 
 export const FoodList = (props) => {
 	const [foods, setFoods] = useState([])	// Creamos una variable de estado para almacenar la información del alimentos y una función para actualizarla
-	
+	const [search, setSearch] = useState();
+
 	useEffect(() => {
 		const fetchFoods = async () => {
-			const foods = await getFoods();	// Llamamos a la API para obtener la información de los alimentos
+			const foods = await getFoodsMatching(search);	// Llamamos a la API para obtener la información de los alimentos
 			setFoods(foods);	// Actualizamos la información de nuestra variable de estado para que contenga la información del alimento
 		}
 		fetchFoods();	// Llamamos aparte a fetchFoods para no hacer el useEffect completo asíncrono (práctica no recomendada)
-	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
+	}, [search]);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	return (
 		<BodyContainer>
 			<CustomTypography component="h2" variant="h5">
 				Listado de alimentos
 			</CustomTypography>
+			<ContainerWithPadding>
+				<HorizontalGrid container spacing={1}>
+					<HorizontalGrid item xs={6}>
+						<TextField
+							variant="outlined"
+							fullWidth
+							type="text"
+							onChange={(e)=>setSearch(e.target.value)}
+							placeholder="Buscar alimentos"
+							InputProps={{endAdornment: <InputAdornment position="end"><SearchOutlinedIcon /></InputAdornment>}}
+						/>
+					</HorizontalGrid>					
+				</HorizontalGrid>
+			</ContainerWithPadding>
 			<TableContainer component={Paper}>
 				<Table size="medium">
 					<TableHead>

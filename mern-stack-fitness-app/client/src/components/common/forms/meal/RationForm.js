@@ -58,7 +58,7 @@ export const RationForm = ({ ration, food, onSubmit }) => {
 					inputProps={{ min: "0", step: "0.1"}}
 					onChange={(event) => setNumberOfRations(event.target.value)}
 				/>
-				<ErrorMessage errors={errors} name="numberofrations" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="numberofrations" as={Typography} />
 				<TextField
 					variant="outlined"
 					fullWidth
@@ -66,7 +66,7 @@ export const RationForm = ({ ration, food, onSubmit }) => {
 					type="number"
 					name="rationcalories"
 					id="rationcalories"
-					value={ration ? ration.alimentoComida.nutrientesRacion.calorias * numberOfRations : food ? food.foodInfo.nutrientesRacion.calorias * numberOfRations : 0}
+					value={ration ? Math.trunc(ration.alimentoComida.nutrientesRacion.calorias * numberOfRations) : food ? Math.trunc(food.foodInfo.nutrientesRacion.calorias * numberOfRations) : 0}
 					disabled
 				/>
 				<Grid container spacing={1}>
@@ -78,7 +78,7 @@ export const RationForm = ({ ration, food, onSubmit }) => {
 							type="number"
 							name="rationcarbs"
 							id="rationcarbs"
-							value={ration ? ration.alimentoComida.nutrientesRacion.carbohidratos * numberOfRations : food ? food.foodInfo.nutrientesRacion.carbohidratos * numberOfRations : 0}
+							value={ration ? Math.trunc(ration.alimentoComida.nutrientesRacion.carbohidratos * numberOfRations) : food ? Math.trunc(food.foodInfo.nutrientesRacion.carbohidratos * numberOfRations) : 0}
 							disabled
 						/>
 					</Grid>
@@ -90,7 +90,7 @@ export const RationForm = ({ ration, food, onSubmit }) => {
 							type="number"
 							name="rationproteins"
 							id="rationproteins"
-							value={ration ? ration.alimentoComida.nutrientesRacion.proteinas * numberOfRations : food ? food.foodInfo.nutrientesRacion.proteinas * numberOfRations : 0}
+							value={ration ? Math.trunc(ration.alimentoComida.nutrientesRacion.proteinas * numberOfRations) : food ? Math.trunc(food.foodInfo.nutrientesRacion.proteinas * numberOfRations) : 0}
 							disabled
 						/>
 					</Grid>
@@ -102,7 +102,7 @@ export const RationForm = ({ ration, food, onSubmit }) => {
 							type="number"
 							name="rationfats"
 							id="rationfats"
-							value={ration ? ration.alimentoComida.nutrientesRacion.grasas * numberOfRations : food ? food.foodInfo.nutrientesRacion.grasas * numberOfRations : 0}
+							value={ration ? Math.trunc(ration.alimentoComida.nutrientesRacion.grasas * numberOfRations) : food ? Math.trunc(food.foodInfo.nutrientesRacion.grasas * numberOfRations) : 0}
 							disabled
 						/>
 					</Grid>

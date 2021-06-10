@@ -38,7 +38,7 @@ export const TrackingForm = ({ tracking, onSubmit }) => {
 					name="trackingname"
 					id="trackingname"
 				/>
-				<ErrorMessage errors={errors} name="trackingname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="trackingname" as={Typography} />
 				<Grid container spacing={1}>
 					<Grid item xs={8}>
 						<TextField
@@ -51,7 +51,7 @@ export const TrackingForm = ({ tracking, onSubmit }) => {
 							id="targetvalue"
 							inputProps={{ min: "0", step: "1"}}
 						/>
-						<ErrorMessage errors={errors} name="targetvalue" as={Typography} />
+						<ErrorMessage className="error" errors={errors} name="targetvalue" as={Typography} />
 					</Grid>
 					<Grid item xs={4}>
 						<TextField
@@ -63,7 +63,7 @@ export const TrackingForm = ({ tracking, onSubmit }) => {
 							name="trackingunit"
 							id="trackingunit"
 						/>
-						<ErrorMessage errors={errors} name="trackingunit" as={Typography} />
+						<ErrorMessage className="error" errors={errors} name="trackingunit" as={Typography} />
 					</Grid>
 				</Grid>
 				<ButtonsContainer>

@@ -65,4 +65,9 @@ router.post("/login/:remember", (req, res, next) => {
 	})(req, res, next);
 });
 
+// Reinicio de contraseña
+router.post("/forgottenpassword", (req, res, next) => {
+	
+});
+
 module.exports = router;

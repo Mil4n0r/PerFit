@@ -43,7 +43,7 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 					name="subscriptionname"
 					id="subscriptionname"
 				/>
-				<ErrorMessage errors={errors} name="subscriptionname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="subscriptionname" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -53,7 +53,7 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 					name="subscriptiondescription"
 					id="subscriptiondescription"
 				/>
-				<ErrorMessage errors={errors} name="subscriptiondescription" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="subscriptiondescription" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -65,7 +65,7 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 					inputProps={{ min: "0", step: "1"}}
 					InputProps={{endAdornment: <InputAdornment position="end">€</InputAdornment>}}
 				/>
-				<ErrorMessage errors={errors} name="subscriptioncost" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="subscriptioncost" as={Typography} />
 				<InputLabel htmlFor="subscriptionend">
 					Fecha de vencimiento de la suscripción
 				</InputLabel>
@@ -84,7 +84,7 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 						/>
 					)}
 				/>
-				<ErrorMessage errors={errors} name="subscriptionend" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="subscriptionend" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar suscripción

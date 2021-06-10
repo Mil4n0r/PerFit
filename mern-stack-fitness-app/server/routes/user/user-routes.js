@@ -3,7 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 
 const UserModel = require('../../models/UserSchema');
-
+const TrainerModel = require('../../models/TrainerSchema');
 const { checkPermissionsUser } = require('../../auth/checkPermissions');
 
 const mongoose = require('mongoose');
@@ -19,21 +19,36 @@ router.get("/user/list/:inactive?/:search?", async (req,res,next) => {
 			next(error);
 		}
 		else {
-			await UserModel.find(
-				// Condición de búsqueda
-				req.params.search !== "undefined" ?
-					{aliasUsuario: new RegExp(req.params.search, 'i'), cuentaActivada: req.params.inactive === "false"} 
-				:
-					{cuentaActivada: req.params.inactive === "false"}
-				,
-				(queryErr, users) => {	// Buscamos en el modelo todos los usuarios registrados
-					if(queryErr) {	// Se imprime un mensaje de error en consola
-						next(queryErr);
-					} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
-						res.json(users);	
+			if(req.params.inactive && req.params.search) {
+				await UserModel.find(
+					// Condición de búsqueda
+					req.params.search !== "undefined" ?
+						{aliasUsuario: new RegExp(req.params.search, 'i'), cuentaActivada: req.params.inactive === "false"} 
+					:
+						{cuentaActivada: req.params.inactive === "false"}
+					,
+					(queryErr, users) => {	// Buscamos en el modelo todos los usuarios registrados
+						if(queryErr) {	// Se imprime un mensaje de error en consola
+							next(queryErr);
+						} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
+							res.json(users);	
+						}
 					}
-				}
-			);
+				);
+			}
+			else {
+				await UserModel.find(
+					{cuentaActivada: true},
+					(queryErr, users) => {	// Buscamos en el modelo todos los usuarios registrados
+						if(queryErr) {	// Se imprime un mensaje de error en consola
+							next(queryErr);
+						} else {	// Se manda como respuesta el contenido de la lista de usuarios (en JSON)
+							res.json(users);	
+						}
+					}
+				);
+			}
+			
 		}
 	})(req,res,next);
 });
@@ -88,8 +103,11 @@ router.post("/user/:id", async (req, res, next) => {
 				resUser.datosPersonales.direccionUsuario = req.body.address;
 				resUser.datosPersonales.telefonoUsuario = req.body.telephone;
 				resUser.datosPersonales.fechaNacUsuario = req.body.birthdate;
-				//resUser.rolUsuario = req.body.role;
 				resUser.privacidadUsuario = req.body.privacy;
+				if(req.body.specialty)
+					resUser.especialidadesMonitor = req.body.specialty;
+				if(req.body.subscription)
+					resUser.suscripcionMiembro = req.body.specialty;
 				resUser
 					.save()		// Se almacena el usuario
 					.then(userData => {
@@ -193,6 +211,34 @@ router.get("/friend/list/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
+router.get("/client/list/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			const userid = req.params.id;
+			await TrainerModel.findById(userid).populate("alumnosEntrenados").exec((err, user) => {
+				if(err) {
+					next(err);	
+				} 
+				else {	// Se manda como respuesta el contenido de la lista de clientes (en JSON)
+					if(user) {
+						res.json(user.alumnosEntrenados);
+					}
+					else {
+						res.status(401).send("Usuario no autorizado");
+					}
+				}
+			});
+		}
+	})(req,res,next);
+});
+
 router.delete("/friend/:id/:id2", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(!user) {
@@ -218,6 +264,46 @@ router.delete("/friend/:id/:id2", async (req, res, next) => {
 								$pull: {
 									amigosUsuario: mongoose.Types.ObjectId(req.params.id)
 								}
+							},
+							{useFindAndModify: false}
+						)
+						res.json(userData);
+					})
+					.catch((err) => {
+						next(err);
+					});
+			}
+			else
+			{
+				res.status(401).send("Usuario no autorizado");
+			}
+		}
+	})(req,res,next);
+});
+
+router.delete("/client/:id/:id2", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(!user) {
+			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
+		}
+		else {
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resUser = permissionsResData.user;
+			const resPermission = permissionsResData.permission;
+
+			if(resError) {
+				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+			}
+			else if(permissionsResData && resPermission.includes("managefriends")) {				
+				resUser
+					.update({$pull: {alumnosEntrenados: mongoose.Types.ObjectId(req.params.id2)} })
+					.then(async (userData) => {
+						// Quitamos también la relación mutua
+						await UserModel.findByIdAndUpdate(
+							req.params.id2,
+							{
+								tieneEntrenador: false
 							},
 							{useFindAndModify: false}
 						)

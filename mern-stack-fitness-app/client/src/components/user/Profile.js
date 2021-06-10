@@ -2,7 +2,8 @@ import React, {useState, useEffect} from 'react';
 import { getUser } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
-import { SendFriendRequest } from '../request/SendFriendRequest'
+import { SendFriendRequest } from '../request/SendFriendRequest';
+import { SendTrainingRequest } from '../request/SendTrainingRequest';
 import { DeleteUser } from './DeleteUser';
 
 import {Grid, Paper, Modal, Button, List, Avatar, ListItemAvatar, Divider} from '@material-ui/core';
@@ -14,7 +15,7 @@ import RestaurantMenuOutlinedIcon from '@material-ui/icons/RestaurantMenuOutline
 import TrendingUpOutlinedIcon from '@material-ui/icons/TrendingUpOutlined';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
 
-import {CustomListItem as ListItem, ContainerWithPadding, CustomListItemText as ListItemText, HorizontalList, FullWidthPaper, BodyContainer, CustomTypography as Typography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin as InputLabel, PrimaryLink, CenterPaper, CapacityInputLabel} from '../../style/style'
+import {ButtonAvatarSecondary, CustomListItem as ListItem, ContainerWithPadding, CustomListItemText as ListItemText, HorizontalList, FullWidthPaper, BodyContainer, CustomTypography as Typography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin as InputLabel, PrimaryLink, CenterPaper, CapacityInputLabel} from '../../style/style'
 
 import CheckOutlinedIcon from '@material-ui/icons/CheckOutlined';
 import ClearOutlinedIcon from '@material-ui/icons/ClearOutlined';
@@ -27,6 +28,7 @@ export const Profile = () => {
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
 	const [openFriendModal, setOpenFriendModal] = useState(false);
 	const [openActivateModal, setOpenActivateModal] = useState(false);
+	const [openTrainingModal, setOpenTrainingModal] = useState(false);
 
 	useEffect(() => {
 		const fetchUser = async () => {
@@ -52,6 +54,12 @@ export const Profile = () => {
 							onClose={() => {setOpenFriendModal(false)}}
 						>
 							<CenterPaper><SendFriendRequest setOpen={setOpenFriendModal}/></CenterPaper>
+						</Modal>
+						<Modal
+							open={openTrainingModal}
+							onClose={() => {setOpenTrainingModal(false)}}
+						>
+							<CenterPaper><SendTrainingRequest setOpen={setOpenTrainingModal}/></CenterPaper>
 						</Modal>
 						<Modal
 							open={openDeleteModal}
@@ -129,7 +137,7 @@ export const Profile = () => {
 												<PrimaryLink to={"#"} onClick={() => {setOpenDeleteModal(true)}}>
 													<FullWidthPaper>												
 														<VerticalGrid item xs className="zoom">
-															<ButtonAvatar><ClearOutlinedIcon/></ButtonAvatar>
+															<ButtonAvatarSecondary><ClearOutlinedIcon/></ButtonAvatarSecondary>
 															<Typography color='secondary' className="caps">
 																Deshabilitar cuenta
 															</Typography>
@@ -197,6 +205,26 @@ export const Profile = () => {
 									</ContainerWithPadding>
 									<ContainerWithPadding>
 										{
+											user.permission.includes('allowtraining') && (
+												<Grid container>
+													<Grid item xs>
+														<PrimaryLink to={`#`} onClick={() => {setOpenTrainingModal(true)}}>
+															<FullWidthPaper>
+																<VerticalGrid item xs className="zoom">
+																	<ButtonAvatarSecondary><TrendingUpOutlinedIcon /></ButtonAvatarSecondary>
+																	<Typography color='secondary' className="caps">
+																		Solicitar entrenamiento personal
+																	</Typography>
+																</VerticalGrid>
+															</FullWidthPaper>
+														</PrimaryLink>
+													</Grid>
+												</Grid>
+											)
+										}
+									</ContainerWithPadding>
+									<ContainerWithPadding>
+										{
 											user.permission.includes('checkplans') && (
 												<Grid container spacing={3}>
 													<Grid item xs>
@@ -237,6 +265,9 @@ export const Profile = () => {
 													</Grid>
 												</Grid>
 											)
+										}
+										{
+											console.log(user)
 										}
 									</ContainerWithPadding>
 								</>

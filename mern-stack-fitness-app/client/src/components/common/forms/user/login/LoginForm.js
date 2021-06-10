@@ -18,7 +18,6 @@ export const LoginForm = ({ onSubmit }) => {
 	});
 	
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
-		console.log(data)
 		onSubmit(data);
 	});
 
@@ -38,7 +37,7 @@ export const LoginForm = ({ onSubmit }) => {
 					name="email"
 					id="email"
 				/>
-				<ErrorMessage errors={errors} name="email" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="email" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -48,7 +47,7 @@ export const LoginForm = ({ onSubmit }) => {
 					name="password"
 					id="password"
 				/>
-				<ErrorMessage errors={errors} name="password" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="password" as={Typography} />
 				<FormControlLabel
 					control={<Checkbox />}
 					label="Recordarme"

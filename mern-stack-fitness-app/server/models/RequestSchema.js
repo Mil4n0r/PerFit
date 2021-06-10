@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const ExerciseSchema = mongoose.Schema({
+const RequestSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
 	usuarioSolicitante: { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"},
 	tipoPeticion: { 
@@ -9,4 +9,4 @@ const ExerciseSchema = mongoose.Schema({
 	},
 });
 
-module.exports = mongoose.model("Solicitud", ExerciseSchema);
+module.exports = mongoose.model("Solicitud", RequestSchema);

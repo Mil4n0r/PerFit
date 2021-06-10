@@ -37,7 +37,7 @@ export const RoutineForm = ({ routine, onSubmit }) => {
 					name="routinename"
 					id="routinename"
 				/>
-				<ErrorMessage errors={errors} name="routinename" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="routinename" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -49,7 +49,7 @@ export const RoutineForm = ({ routine, onSubmit }) => {
 					inputProps={{ min: "30", step: "1"}}
 					InputProps={{endAdornment: <InputAdornment position="end">minutos</InputAdornment>}}
 				/>
-				<ErrorMessage errors={errors} name="routinetime" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="routinetime" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar rutina

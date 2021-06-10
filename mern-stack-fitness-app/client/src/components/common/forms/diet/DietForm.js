@@ -41,7 +41,7 @@ export const DietForm = ({ diet, onSubmit }) => {
 					name="dietname"
 					id="dietname"
 				/>
-				<ErrorMessage errors={errors} name="dietname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="dietname" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -53,7 +53,7 @@ export const DietForm = ({ diet, onSubmit }) => {
 					inputProps={{ min: "0", step: "1" }}
 					InputProps={{endAdornment: <InputAdornment position="end">Kcal</InputAdornment>}}
 				/>
-				<ErrorMessage errors={errors} name="calories" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="calories" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -66,7 +66,7 @@ export const DietForm = ({ diet, onSubmit }) => {
 					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
 					onChange={() => trigger("calories")}
 				/>
-				<ErrorMessage errors={errors} name="carbs" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="carbs" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -79,7 +79,7 @@ export const DietForm = ({ diet, onSubmit }) => {
 					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
 					onChange={() => trigger("calories")}
 				/>
-				<ErrorMessage errors={errors} name="proteins" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="proteins" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -92,7 +92,7 @@ export const DietForm = ({ diet, onSubmit }) => {
 					InputProps={{endAdornment: <InputAdornment position="end">g</InputAdornment>}}
 					onChange={() => trigger("calories")}
 				/>
-				<ErrorMessage errors={errors} name="fats" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="fats" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar dieta

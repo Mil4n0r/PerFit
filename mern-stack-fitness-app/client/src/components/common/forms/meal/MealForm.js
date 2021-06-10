@@ -50,7 +50,7 @@ export const MealForm = ({ meal, onSubmit }) => {
 					name="mealname"
 					id="mealname"
 				/>
-				<ErrorMessage errors={errors} name="mealname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="mealname" as={Typography} />
 				<InputLabel htmlFor="mealday">
 					Fecha de la comida
 				</InputLabel>
@@ -69,7 +69,7 @@ export const MealForm = ({ meal, onSubmit }) => {
 						/>
 					)}
 				/>
-				<ErrorMessage errors={errors} name="mealday" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="mealday" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar comida

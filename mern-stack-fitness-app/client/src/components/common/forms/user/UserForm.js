@@ -1,22 +1,20 @@
-import React from 'react'
-import { useForm } from 'react-hook-form';
+import React, {useState} from 'react'
+import { useForm, Controller } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { UserSchema } from '../../schemas/user/UserSchema';
 
-const dateToISO = (date) => {
-	const realDate = new Date(date);
-	const day = realDate.getDate().toString().padStart(2,0);
-	const month = (realDate.getMonth()+1).toString().padStart(2,0);
-	const year = realDate.getFullYear().toString().padStart(4,0);
-	return `${year}-${month}-${day}`;
-}
+import { Button, Typography, MenuItem, Chip, Card, Tooltip, Box, Container } from '@material-ui/core';
+import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel, TextFieldWithMargin as TextField } from '../../../../style/style';
+import { KeyboardDatePicker } from '@material-ui/pickers';
 
 export const UserForm = ({ user, onSubmit }) => {
-	
-	const { register, errors, handleSubmit } = useForm({	// Creamos el formulario de creación de usuario
+	const [selectedDate, handleDateChange] = useState(new Date(2000, 0, 1));
+	const [subscriptions, setSubscriptions] = useState([])	// Creamos una variable de estado para almacenar la información de las suscripciones y una función para actualizarla
+
+	const { register, errors, handleSubmit, watch, control } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: {
 			alias: user ? user.userInfo.aliasUsuario : "",
 			email: user ? user.userInfo.emailUsuario : "",
@@ -25,156 +23,293 @@ export const UserForm = ({ user, onSubmit }) => {
 			dni: user ? user.userInfo.datosPersonales.dniUsuario : "",
 			address: user ? user.userInfo.datosPersonales.direccionUsuario : "",
 			telephone: user ? user.userInfo.datosPersonales.telefonoUsuario : "",
-			birthdate: user.userInfo.datosPersonales.fechaNacUsuario ? dateToISO(user.userInfo.datosPersonales.fechaNacUsuario) : "", // Ajustamos la fecha al formato del formulario
-			//role: user.userInfo.rolUsuario ? user.userInfo.rolUsuario : "",
+			birthdate: user.userInfo.datosPersonales.fechaNacUsuario ? user.userInfo.datosPersonales.fechaNacUsuario : selectedDate, // Ajustamos la fecha al formato del formulario
 			role: user.userInfo.role ? user.userInfo.role : "",
 			privacy: user.userInfo.privacidadUsuario ? user.userInfo.privacidadUsuario : "",
+			specialty: user.userInfo.especialidadesMonitor ? user.userInfo.especialidadesMonitor : [],
+			subscription: user.userInfo.suscripcionMiembro ? user.userInfo.suscripcionMiembro : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(UserSchema),
 		criteriaMode: 'all',
 		mode: "onTouched"
 	});
 
+	const role = watch("role");
+
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
 		onSubmit(data);
 	});
 	return (
-		<form onSubmit={submitHandler}>
-			<div className="form-group">
-				<label htmlFor="text">
-					Nombre de usuario:
-				</label>
-				<input className="form-control" type="text" name="alias" id="alias"
-				ref={
-					register({})
-				} 
+		<FormContainer>
+			<FullWidthForm onSubmit={submitHandler}>
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Nombre de usuario"
+					type="text"
+					name="alias"
+					id="alias"
 				/>
-				<ErrorMessage
+				<ErrorMessage className="error"
 					errors={errors} name="alias" render={
 						({ messages }) =>
 							messages &&
 								Object.entries(messages).map(([typeArray, messageArray]) => (
-									<div key={"alias " + typeArray}>
+									<Box className="error" key={"alias " + typeArray}>
 										{Array.isArray(messageArray) ? (
-											messageArray.map((message, id) => <p key={"alias" + id}>{message}</p>)
-										) : <p>{messageArray}</p>}
-									</div>
+											messageArray.map((message, id) => <Typography key={"alias" + id}>{message}</Typography>)
+										) : <Typography>{messageArray}</Typography>}
+									</Box>
 								))
 					}
 				/>
-				<label htmlFor="text">
-					Email de usuario:
-				</label>
-				<input className="form-control" type="text" name="email" id="email"
-				ref={
-					register({})
-				} 
+				
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Email"
+					type="text"
+					name="email"
+					id="email"
 				/>
-				<ErrorMessage errors={errors} name="email" as="p" />
-				<label htmlFor="text">
-					Nombre:
-				</label>
-				<input className="form-control" type="text" name="name" id="name"
-				ref={
-					register({})
-				} />
-				<ErrorMessage errors={errors} name="name" as="p" />
-				<label htmlFor="text">
-					Apellidos:
-				</label>
-				<input className="form-control" type="text" name="surname" id="surname"
-				ref={
-					register({})
-				} />
-				<ErrorMessage errors={errors} name="surname" as="p" />
-				<label htmlFor="text">
-					DNI:
-				</label>
-				<input className="form-control" type="text" name="dni" id="dni"
-				ref={
-					register({})
-				} />
-				<ErrorMessage
+				<ErrorMessage className="error" errors={errors} name="email" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Nombre"
+					type="text"
+					name="name"
+					id="name"
+				/>
+				<ErrorMessage className="error" errors={errors} name="name" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Apellidos"
+					type="text"
+					name="surname"
+					id="surname"
+				/>
+				<ErrorMessage className="error" errors={errors} name="surname" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="DNI"
+					type="text"
+					name="dni"
+					id="dni"
+				/>
+				<ErrorMessage className="error"
 					errors={errors} name="dni" render={
 						({ messages }) =>
 							messages &&
 								Object.entries(messages).map(([typeArray, messageArray]) => (
-									<div key={"dni " + typeArray}>
+									<Box className="error" key={"dni " + typeArray}>
 										{Array.isArray(messageArray) ? (
 											messageArray.map((message, id) => <p key={"dni" + id}>{message}</p>)
 										) : <p>{messageArray}</p>}
-									</div>
+									</Box>
 								))
 					}
 				/>
-				<label htmlFor="text">
-					Dirección:
-				</label>
-				<input className="form-control" type="text" name="address" id="address"
-				ref={
-					register({})
-				} />
-				<ErrorMessage
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Dirección"
+					type="text"
+					name="address"
+					id="address"
+				/>
+				<ErrorMessage className="error"
 					errors={errors} name="address" render={
 						({ messages }) =>
 							messages &&
 								Object.entries(messages).map(([typeArray, messageArray]) => (
-									<div key={"address " + typeArray}>
+									<Box className="error" key={"address " + typeArray}>
 										{Array.isArray(messageArray) ? (
 											messageArray.map((message, id) => <p key={"address" + id}>{message}</p>)
 										) : <p>{messageArray}</p>}
-									</div>
+									</Box>
 								))
 					}
 				/>
-				<label htmlFor="text">
-					Teléfono:
-				</label>
-				<input className="form-control" type="text" name="telephone" id="telephone"
-				ref={
-					register({})
-				} />
-				<ErrorMessage errors={errors} name="telephone" as="p" />
-				<label htmlFor="text">
-					Fecha de nacimiento:
-				</label>
-				<input className="form-control" type="date" name="birthdate" id="birthdate"
-				ref={
-					register({})
-				} />
-				<ErrorMessage errors={errors} name="birthdate" as="p" />
-				<label htmlFor="text">
-					Rol:
-				</label>
-				<select className="form-control" type="text" name="role" id="role"
-					ref={
-						register({})
-					}>
-					<option value="Miembro">Miembro</option>
-					<option value="Entrenador">Entrenador personal</option>
-					<option value="Monitor">Monitor</option>
-					{/*<option value="Moderador">Moderador</option>*/}
-					<option value="Administrador">Administrador</option>
-				</select>
-				<ErrorMessage errors={errors} name="role" as="p" />
-				<label htmlFor="text">
-					Configuración de privacidad:
-				</label>
-				<select className="form-control" type="text" name="privacy" id="privacy"
-					ref={
-						register({})
-					}>
-					<option value="Público">Público: Perfil visible para todo el mundo</option>
-					<option value="Sólo amigos">Sólo amigos: Perfil visible para mi y para mis amigos</option>
-					<option value="Privado">Privado: Perfil visible sólo para mi</option>
-				</select>
-				<ErrorMessage errors={errors} name="privacy" as="p" />
-			</div>
-			<div className="form-group">
-				<button type="submit" className="btn btn-primary">
-					Enviar
-				</button>
-			</div>
-		</form>
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Teléfono"
+					type="text"
+					name="telephone"
+					id="telephone"
+				/>
+				<ErrorMessage className="error" errors={errors} name="telephone" as={Typography} />
+				<InputLabel htmlFor="birthdate">
+					Fecha de nacimiento
+				</InputLabel>
+				<Controller
+					control={control}
+					name="birthdate"
+					id="birthdate"
+					render={({ ref, ...rest }) => (
+						<KeyboardDatePicker
+							inputVariant="outlined"
+							format="dd/MM/yyyy"
+							autoOk
+							value={selectedDate}
+							cancelLabel="Cancelar"
+							{...rest}
+						/>
+					)}
+				/>
+				<ErrorMessage className="error" errors={errors} name="birthdate" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Rol"
+					type="text"
+					name="role"
+					id="role"
+					InputProps={{
+						readOnly: true,
+					}}
+				/>
+				{
+					/*
+					<Controller
+						control={control}
+						name="role"
+						id="role"
+						as={
+							<Select
+								variant="outlined"
+								fullWidth
+							>
+								<MenuItem value="Miembro">Miembro</MenuItem>
+								<MenuItem value="Entrenador">Entrenador personal</MenuItem>
+								<MenuItem value="Monitor">Monitor</MenuItem>
+								<MenuItem value="Administrador">Administrador</MenuItem>
+							</Select>
+						}
+						defaultValue={"Miembro"}
+					/>
+					<ErrorMessage className="error" errors={errors} name="role" as={Typography} />
+					*/
+				}
+				
+				<InputLabel htmlFor="privacy">
+					Configuración de seguridad
+				</InputLabel>
+				<Controller
+					control={control}
+					name="privacy"
+					id="privacy"
+					as={
+						<Select
+							variant="outlined"
+							fullWidth
+						>
+							<MenuItem value="Público">Público: Perfil visible para todo el mundo</MenuItem>
+							<MenuItem value="Sólo amigos">Sólo amigos: Perfil visible para mi y para mis amigos</MenuItem>
+							<MenuItem value="Privado">Privado: Perfil visible sólo para mi</MenuItem>
+						</Select>
+					}
+					defaultValue={"Público"}
+				/>
+				<ErrorMessage className="error" errors={errors} name="privacy" as={Typography} />
+				{
+					role === "Monitor" && (
+						<>
+							<InputLabel htmlFor="specialty">
+								Especialidad
+							</InputLabel>
+							<Controller
+								control={control}
+								name="specialty"
+								id="specialty"
+								as={
+									<Select
+										multiple
+										variant="outlined"
+										fullWidth
+										renderValue={(selected) => (
+											<>
+												{selected.map((value) => (
+													<Chip key={value} label={value} />
+												))}
+											</>
+										)}
+									>
+										<MenuItem value="Bicicletas">Bicicletas</MenuItem>
+										<MenuItem value="Peso libre">Peso libre</MenuItem>
+										<MenuItem value="Piscina">Piscina</MenuItem>
+										<MenuItem value="Esterillas">Esterillas</MenuItem>
+										<MenuItem value="Cintas de correr">Cintas de correr</MenuItem>
+									</Select>
+								}
+								defaultValue={[]}
+							/>
+							<ErrorMessage className="error" errors={errors} name="specialty" as={Typography} />
+						</>
+					)
+				}
+				{
+					role === "Miembro" && (
+						<>
+							<InputLabel htmlFor="subscription">
+								Suscripción
+							</InputLabel>
+							<Controller
+								control={control}
+								name="subscription"
+								id="subscription"
+								as={
+									<Select
+										variant="outlined"
+										fullWidth
+									>
+									{
+										subscriptions && ( 
+											subscriptions.map(subscription => (
+												<MenuItem key={subscription._id} value={subscription._id}>
+													<Tooltip 
+														placement="right" 
+														title={
+															<>
+																<Typography>Descripción: {subscription.descripcionSuscripcion}</Typography><br/>
+																<Typography>Coste: {subscription.costeSuscripcion}€</Typography>
+																<Typography>Fecha de vencimiento: {}</Typography>
+															</>
+														}
+													>
+														<Box component="span">
+															{subscription.nombreSuscripcion}
+														</Box>
+													</Tooltip>
+												</MenuItem>
+											))
+										)
+									}
+									</Select>
+								}
+								defaultValue={[]}
+							/>
+							<ErrorMessage className="error" errors={errors} name="subscription" as={Typography} />
+						</>
+					)
+				}
+				<ButtonsContainer>
+					<Button type="submit" variant="contained" color='primary'>
+						Guardar usuario
+					</Button>
+				</ButtonsContainer>
+			</FullWidthForm>
+		</FormContainer>
 	);
 }

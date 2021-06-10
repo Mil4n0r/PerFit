@@ -85,7 +85,7 @@ export const Step3 = () => {
 					}
 					defaultValue={"Miembro"}
 				/>
-				<ErrorMessage errors={errors} name="role" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="role" as={Typography} />
 				<InputLabel htmlFor="privacy">
 					Configuración de seguridad
 				</InputLabel>
@@ -105,7 +105,7 @@ export const Step3 = () => {
 					}
 					defaultValue={"Público"}
 				/>
-				<ErrorMessage errors={errors} name="privacy" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="privacy" as={Typography} />
 				{
 					role === "Monitor" && (
 						<>
@@ -138,7 +138,7 @@ export const Step3 = () => {
 								}
 								defaultValue={[]}
 							/>
-							<ErrorMessage errors={errors} name="specialty" as={Typography} />
+							<ErrorMessage className="error" errors={errors} name="specialty" as={Typography} />
 						</>
 					)
 				}
@@ -183,7 +183,7 @@ export const Step3 = () => {
 								}
 								defaultValue={[]}
 							/>
-							<ErrorMessage errors={errors} name="subscription" as={Typography} />
+							<ErrorMessage className="error" errors={errors} name="subscription" as={Typography} />
 						</>
 					)
 				}

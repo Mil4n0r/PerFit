@@ -36,7 +36,7 @@ export const ExerciseForm = ({ exercise, onSubmit }) => {
 					name="exercisename"
 					id="exercisename"
 				/>
-				<ErrorMessage errors={errors} name="exercisename" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="exercisename" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -46,7 +46,7 @@ export const ExerciseForm = ({ exercise, onSubmit }) => {
 					name="exercisetype"
 					id="exercisetype"
 				/>
-				<ErrorMessage errors={errors} name="exercisetype" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="exercisetype" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar ejercicio

@@ -11,6 +11,9 @@ export const createFood = (food) => axios.post("http://localhost:4000/user/creat
 export const getFoods = () => axios.get("http://localhost:4000/user/food/list")
 	.then(res => res.data)
 
+export const getFoodsMatching = (search) => axios.get(`http://localhost:4000/user/food/list/${search}`)
+	.then(res => res.data)
+
 export const getFood = (id) => axios.get(`http://localhost:4000/user/food/${id}`)
 	.then(res => res.data);
 

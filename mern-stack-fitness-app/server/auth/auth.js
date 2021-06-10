@@ -38,7 +38,8 @@ passport.use("register",
 							aliasUsuario: req.body.alias,
 							balanceMonedas: 0,
 							suscripcionMiembro: req.body.subscription,
-							cuentaActivada: false
+							cuentaActivada: false,
+							tieneEntrenador: false,
 						});
 					}
 					else if(req.body.role === "Entrenador") {
@@ -104,7 +105,6 @@ passport.use("register",
 		}
 	)
 );
-
 
 // Estrategia local para login de usuarios
 passport.use("login",

@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { getClasses } from '../../api';
 import AuthContext from '../../context/AuthContext';
 
+import {format, parseISO} from 'date-fns';
+import { es } from 'date-fns/locale'
+
 import { Table, TableBody, TableCell, Paper, Modal, Button } from '@material-ui/core';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
@@ -51,7 +54,7 @@ export const ClassList = () => {
 						{classes.map(sclass => (
 							<TableRow key={sclass._id}>
 								<TableCell component="th" scope="row"> {sclass.actividadClase?.nombreActividad}</TableCell>
-								<TableCell>{sclass.diaClase}</TableCell>
+								<TableCell>{format(parseISO(sclass.diaClase), 'dd/MM/yyyy HH:mm', {locale: es})}</TableCell>
 								<TableCell>
 									{sclass.monitorClase?.aliasUsuario}
 								</TableCell>

@@ -37,7 +37,7 @@ export const ActivityForm = ({ activity, onSubmit }) => {
 					name="activityname"
 					id="activityname"
 				/>
-				<ErrorMessage errors={errors} name="activityname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="activityname" as={Typography} />
 				<InputLabel htmlFor="activityequipment">
 					Equipamiento requerido
 				</InputLabel>
@@ -67,7 +67,7 @@ export const ActivityForm = ({ activity, onSubmit }) => {
 					}
 					defaultValue={[]}
 				/>
-				<ErrorMessage errors={errors} name="activityequipment" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="activityequipment" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -77,7 +77,7 @@ export const ActivityForm = ({ activity, onSubmit }) => {
 					name="activitydescription"
 					id="activitydescription"
 				/>
-				<ErrorMessage errors={errors} name="activitydescription" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="activitydescription" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar actividad

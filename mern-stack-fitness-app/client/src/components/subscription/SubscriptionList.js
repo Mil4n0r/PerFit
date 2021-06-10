@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { getSubscriptions } from '../../api';
 import AuthContext from '../../context/AuthContext';
 
+import {format, parseISO} from 'date-fns';
+import { es } from 'date-fns/locale'
+
 import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
@@ -49,7 +52,7 @@ export const SubscriptionList = () => {
 								<TableCell component="th" scope="row">{subscription.nombreSuscripcion}</TableCell>
 								<TableCell>{subscription.descripcionSuscripcion}</TableCell>
 								<TableCell>{subscription.costeSuscripcion}</TableCell>
-								<TableCell>{subscription.vencimientoSuscripcion}</TableCell>
+								<TableCell>{format(parseISO(subscription.vencimientoSuscripcion), 'dd/MM/yyyy', {locale: es})}</TableCell>
 								<TableCell align='center'><Link to={`/subscription/info/${subscription._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
 							</TableRow>
 						))}

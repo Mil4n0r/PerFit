@@ -21,6 +21,7 @@ export const EditUser = () => {
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	const onSubmit = async (data) => {
+		console.log("!OLA")
 		await updateUser(data, match.params.id);	// Llamamos a la API para modificar los datos del usuario
 		history.push(`/user/profile/${match.params.id}`);	// Redireccionamos al listado de usuarios
 	}

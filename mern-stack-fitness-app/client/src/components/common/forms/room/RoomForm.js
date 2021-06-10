@@ -37,7 +37,7 @@ export const RoomForm = ({ room, onSubmit }) => {
 					name="roomname"
 					id="roomname"
 				/>
-				<ErrorMessage errors={errors} name="roomname" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="roomname" as={Typography} />
 				<InputLabel htmlFor="roomequipment">
 					Equipamiento requerido
 				</InputLabel>
@@ -67,7 +67,7 @@ export const RoomForm = ({ room, onSubmit }) => {
 					}
 					defaultValue={[]}
 				/>
-				<ErrorMessage errors={errors} name="roomequipment" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="roomequipment" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -78,7 +78,7 @@ export const RoomForm = ({ room, onSubmit }) => {
 					id="roomcapacity"
 					inputProps={{ min: "1", step: "1"}}
 				/>
-				<ErrorMessage errors={errors} name="roomcapacity" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="roomcapacity" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar sala

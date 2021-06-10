@@ -1,11 +1,8 @@
 import React from 'react';
 
-import { Table, TableBody, TableCell, Paper, List, ListItem, Divider, Grid } from '@material-ui/core';
+import { List, ListItem, Divider, Grid } from '@material-ui/core';
 
-import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
-import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
-
-import { FullWidthPaper, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, CustomListItemText as ListItemText, NutrientBar, VerticalDivider, HorizontalGrid, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography as Typography, TableContainerWithMargin as TableContainer } from '../../style/style';
+import { FullWidthPaper, CustomListItemText as ListItemText, NutrientBar, VerticalDivider, HorizontalGrid, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography as Typography, TableContainerWithMargin as TableContainer } from '../../style/style';
 
 const getNutrientName = (nutrient) => {
 	return nutrient.charAt(0).toUpperCase() + nutrient.slice(1);

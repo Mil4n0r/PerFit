@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 //import { associateDiet } from '../../api';
 import { deleteMeal, getDiet, deleteRation, getMealsForDate, getMealsForMonth } from '../../api';
 
-import { Table, TableBody, TableCell, Paper, List, ListItem, Divider, Grid } from '@material-ui/core';
+import { Table, TableBody, TableCell, Paper, List, ListItem, Divider, Grid, CircularProgress } from '@material-ui/core';
 
 import {format} from 'date-fns';
 import { es } from 'date-fns/locale'
@@ -25,19 +25,19 @@ const nutrientsFormat = (n, multiplier) => {
 	return (
 		<List dense>
 			<ListItem key={"calories"}>
-				<ListItemText className="bold">Calorías: {calories * multiplier}</ListItemText>
+				<ListItemText className="bold">Calorías: {Math.trunc(calories * multiplier)}</ListItemText>
 			</ListItem>
 			<Divider/>
 			<ListItem key={"carbs"}>
-				<ListItemText>Carbohidratos: {carbs * multiplier}</ListItemText>
+				<ListItemText>Carbohidratos: {Math.trunc(carbs * multiplier)}</ListItemText>
 			</ListItem>
 			<Divider/>
 			<ListItem key={"proteins"}>
-				<ListItemText>Proteinas: {proteins * multiplier}</ListItemText>
+				<ListItemText>Proteinas: {Math.trunc(proteins * multiplier)}</ListItemText>
 			</ListItem>
 			<Divider/>
 			<ListItem key={"fats"}>
-				<ListItemText>Grasas: {fats * multiplier}</ListItemText>
+				<ListItemText>Grasas: {Math.trunc(fats * multiplier)}</ListItemText>
 			</ListItem>
 			<Divider/>
 		</List>
@@ -55,7 +55,7 @@ const rationFormat = (r) => {
 			<Grid item xs={6}>
 				<VerticalGrid container>
 					<VerticalGrid item>{foodname}</VerticalGrid>
-					<VerticalGrid item>({rations*foodsize} g)</VerticalGrid>
+					<VerticalGrid item>({Math.trunc(rations*foodsize)} g)</VerticalGrid>
 				</VerticalGrid> 
 			</Grid>
 			<Grid item xs={6}>{nutrients}</Grid>
@@ -80,6 +80,7 @@ const getNutrientsFromMeals = (meals) => {
 				}
 			})
 		)
+		Object.keys(meals_nutrients).map(key => meals_nutrients[key] = Math.trunc(meals_nutrients[key]))
 	return meals_nutrients;
 }
 
@@ -249,6 +250,8 @@ export const AssociateMealToDiet = () => {
 			</TableContainer>
 		</BodyContainer>
 	) : (
-		<></>
+		<BodyContainer>
+			<CircularProgress/>
+		</BodyContainer>
 	);
 }

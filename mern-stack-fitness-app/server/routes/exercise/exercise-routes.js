@@ -39,9 +39,8 @@ router.post("/create/exercise", async (req, res, next) => {
 	})(req,res,next);
 });
 
-// Lista de ejercicios
-router.get("/exercise/list", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+router.get("/exercise/list/:search?", async (req,res,next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
 		}
@@ -50,14 +49,32 @@ router.get("/exercise/list", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			ExerciseModel.find((err, exercises) => {	// Buscamos en el modelo todos los ejercicios registrados
-				if(err) {
-					next(err);	
-				} 
-				else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
-					res.json(exercises);	
-				}
-			});
+			if(req.params.search) {
+				await ExerciseModel.find(
+					req.params.search !== "undefined" ?
+						{nombreEjercicio: new RegExp(req.params.search, 'i')} 
+					:
+						{}
+					,
+					(err, exercises) => {	// Buscamos en el modelo todos los ejercicios registrados
+					if(err) {
+						next(err);	
+					} 
+					else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
+						res.json(exercises);	
+					}
+				});
+			}
+			else {
+				await ExerciseModel.find((err, exercises) => {	// Buscamos en el modelo todos los ejercicios registrados
+					if(err) {
+						next(err);	
+					} 
+					else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
+						res.json(exercises);	
+					}
+				});
+			}
 		}
 	})(req,res,next);
 });

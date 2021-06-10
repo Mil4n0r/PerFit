@@ -8,14 +8,8 @@ import { DeleteUser } from './DeleteUser';
 import { Table, TableBody, TableCell, Paper, Checkbox, TextField, Grid, Typography, InputLabel, Divider, IconButton, InputAdornment } from '@material-ui/core';
 import { HorizontalGrid, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer, ContainerWithPadding, NoMarginFormControlLabel as FormControlLabel } from '../../style/style';
 
-import InputBase from '@material-ui/core/InputBase';
-import MenuIcon from '@material-ui/icons/Menu';
-import SearchIcon from '@material-ui/icons/Search';
-import DirectionsIcon from '@material-ui/icons/Directions';
-
 import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
 
-import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import AccountBoxOutlinedIcon from '@material-ui/icons/AccountBoxOutlined';
 
 export const UserList = () => {
@@ -28,7 +22,6 @@ export const UserList = () => {
 
 	useEffect(() => {
 		const fetchUsers = async () => {
-			console.log("search", search, "toggleInactive", toggleInactive)
 			const users = await getUsersMatching(toggleInactive, search);	// Llamamos a la API para obtener la información de los usuarios
 			setUsers(users);	// Actualizamos la información de nuestra variable de estado para que contenga la información del usuario
 		}

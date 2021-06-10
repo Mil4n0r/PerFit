@@ -11,7 +11,18 @@ const SubscriptionModel = require('../models/SubscriptionSchema');
 const checkPermissionsUser = async (activeUser, req) => {
 	const id = req.params.id;
 	const checkedUser = await UserModel.findById(id);
+
+	var error;
+	var user;
+	var permission;
+
 	if(!checkedUser) {
+		error = {
+			code: 404, message: "Usuario no encontrado"
+		};
+		user = false;
+		permission = [];
+		/*
 		return {
 			error: {
 				code: 404, message: "Usuario no encontrado"
@@ -19,63 +30,119 @@ const checkPermissionsUser = async (activeUser, req) => {
 			user: false,
 			permission: []
 		};
+		*/
 	}
 	else {
-		if(checkedUser._id.equals(activeUser._id)) { // Modificar esto para que la _id sea siempre objectId
+		if(checkedUser._id.equals(activeUser._id)) {
+			error = null;
+			user = checkedUser;
+			permission = ["read", "write", "checkplans", "managefriends"];
+			/*
 			return {
 				error: null,
 				user: checkedUser,
 				permission: ["read", "write", "checkplans", "managefriends"]
 			};
+			*/
 		}
-		//else if(activeUser.rolUsuario === "admin") {
 		else if(activeUser.role === "Administrador") {
 			if(!checkedUser.cuentaActivada) {
+				error = null;
+				user = checkedUser;
+				permission = ["read", "write", "delete", "checkplans", "allowfriends", "activateaccount"];
+				/*
 				return {
 					error: null,
 					user: checkedUser,
 					permission: ["read", "write", "delete", "checkplans", "allowfriends", "activateaccount"]
 				};
+				*/
 			}
 			else {
+				error = null;
+				user = checkedUser;
+				permission = ["read", "write", "delete", "checkplans", "allowfriends"];
+				/*
 				return {
 					error: null,
 					user: checkedUser,
 					permission: ["read", "write", "delete", "checkplans", "allowfriends"]
 				};
+				*/
 			}
-			return {
-				error: null,
-				user: checkedUser,
-				permission: ["read", "write", "delete", "checkplans", "allowfriends"]
-			};
 		}
-		//else if(activeUser.rolUsuario === "entrenador personal") { // Añadir en el futuro la condición de que, además de ser entrenador, entrene al usuario en cuestión
-		else if(activeUser.role === "Entrenador") { // Añadir en el futuro la condición de que, además de ser entrenador, entrene al usuario en cuestión
-			return {
-				error: null,
-				user: checkedUser,
-				permission: ["read", "checkplans", "allowfriends"]
-			};
+		else if(activeUser.role === "Entrenador") {
+			if(activeUser.alumnosEntrenados.includes(checkedUser._id)) {
+				error = null;
+				user = checkedUser;
+				permission = ["read", "checkplans", "allowfriends"];
+				/*
+				return {
+					error: null,
+					user: checkedUser,
+					permission: ["read", "checkplans", "allowfriends"]
+				};
+				*/
+			}
+			else {
+				error = null;
+				user = checkedUser;
+				permission = ["read", "allowfriends"];
+				/*
+				return {
+					error: null,
+					user: checkedUser,
+					permission: ["read", "allowfriends"]
+				};
+				*/
+			}
 		}
-		else if(checkedUser.privacidadUsuario === "Público"
-				|| checkedUser.privacidadUsuario === "Sólo amigos") {// && areFriends(activeUser, checkedUser)) {}
+		else if(checkedUser.privacidadUsuario === "Público") {
+			error = null;
+			user = checkedUser;
+			permission = ["read"];
+			/*
 			return {
 				error: null,
 				user: checkedUser,
 				permission: ["read"]
 			};
+			*/
 		}
-		/*
-		else if(checkedUser.privacidadUsuario === "Sólo amigos" && areFriends(activeUser, checkedUser)) {
-			return {
-				error: null,
-				user: false,
-				permission: ["allowfriends"]
-			};
+		else if(checkedUser.privacidadUsuario === "Sólo amigos") {
+			if(activeUser.amigosUsuario.includes(checkedUser._id)) {
+				error = null;
+				user = checkedUser;
+				permission = ["read"];
+				/*
+				return {
+					error: null,
+					user: checkedUser,
+					permission: ["read"]
+				};
+				*/
+			}
+			else {
+				error = null;
+				user = checkedUser;
+				permission = ["allowfriends"];
+				/*
+				return {
+					error: null,
+					user: checkedUser,
+					permission: ["allowfriends"]
+				};
+				*/
+			}
 		}
-		*/
 		else {
+			error = {
+				code: 401,
+				message: "Usuario no autorizado"
+			};
+			user = checkedUser;
+			permission = [];
+			/*
 			return {
 				error: {
 					code: 401,
@@ -84,7 +151,16 @@ const checkPermissionsUser = async (activeUser, req) => {
 				user: false,
 				permission: []
 			}
+			*/
 		}
+		if(checkedUser.role === "Entrenador" && !checkedUser.tieneEntrenador) {// && activeUser.suscripcionUsuario.permisosSuscripcion.includes("Entrenador Personal"))) 
+			permission.push("allowtraining");
+		}
+	}
+	return {
+		error: error,
+		user: user,
+		permission: permission
 	}
 };
 
@@ -101,8 +177,7 @@ const checkPermissionsFood = async (activeUser, req) => {
 		};
 	}
 	else {
-		//if(checkedFood.creadoPor.equals(activeUser._id) || activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
-		if(checkedFood.creadoPor.equals(activeUser._id) || activeUser.role === "Administrador") { // Modificar esto para que la _id sea siempre objectId
+		if(checkedFood.creadoPor.equals(activeUser._id) || activeUser.role === "Administrador") { 
 			return {
 				error: null,
 				food: checkedFood,
@@ -132,8 +207,7 @@ const checkPermissionsExercise = async (activeUser, req) => {
 		};
 	}
 	else {
-		//if(checkedExercise.creadoPor.equals(activeUser._id) || activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
-		if(checkedExercise.creadoPor.equals(activeUser._id) || activeUser.role === "Administrador") { // Modificar esto para que la _id sea siempre objectId
+		if(checkedExercise.creadoPor.equals(activeUser._id) || activeUser.role === "Administrador") { 
 			return {
 				error: null,
 				exercise: checkedExercise,
@@ -163,8 +237,7 @@ const checkPermissionsActivity = async (activeUser, req) => {
 		};
 	}
 	else {
-		//if(activeUser.rolUsuario === "admin") { // Modificar esto para que la _id sea siempre objectId
-		if(activeUser.role === "Administrador") { // Modificar esto para que la _id sea siempre objectId
+		if(activeUser.role === "Administrador") {
 			return {
 				error: null,
 				activity: checkedActivity,
@@ -194,7 +267,6 @@ const checkPermissionsRoom = async (activeUser, req) => {
 		};
 	}
 	else {
-		//if(activeUser.rolUsuario === "admin") {
 		if(activeUser.role === "Administrador") {
 			return {
 				error: null,
