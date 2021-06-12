@@ -137,7 +137,7 @@ export const AssociateMealToDiet = () => {
 	}
 
 	const deleteRationFromMeal = async (mealid, rationid) => {
-		await deleteRation(mealid, rationid);
+		await deleteRation(diet._id, mealid, rationid);
 		setDeleted(rationid);
 	}
 
@@ -214,7 +214,7 @@ export const AssociateMealToDiet = () => {
 														{rationFormat(ration)}
 													</HorizontalGrid>
 													<HorizontalGrid item xs={2}>
-														<Link to={`/edit/ration/${match.params.id}/${ration._id}`}><CustomEditOutlinedIcon /></Link>
+														<Link to={`/edit/ration/${match.params.id}/${meal._id}/${ration._id}`}><CustomEditOutlinedIcon /></Link>
 													</HorizontalGrid>
 													<HorizontalGrid item xs={2}>
 														<Link to={"#"} onClick={() => { deleteRationFromMeal(meal._id, ration._id) } }><CustomDeleteForeverOutlinedIcon /></Link>

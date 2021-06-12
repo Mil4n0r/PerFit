@@ -40,9 +40,13 @@ require('./auth/auth');	// Importación de las estrategias de passport
 
 // Agregación de rutas
 
+function isAdmin(req,res,next) {
+	console.log("ISADMIN:", req, res, next)
+}
+
 app.use(routes);
-app.use('/user',userRoutes);
-app.use('/admin',adminRoutes);
+app.use('/user',userRoutes, isAdmin);
+app.use('/admin',adminRoutes, isAdmin);
 
 app.use(logErrors);
 app.use(errorHandler);

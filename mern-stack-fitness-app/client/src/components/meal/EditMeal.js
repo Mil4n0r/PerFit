@@ -9,10 +9,9 @@ export const EditMeal = () => {
 	const match = useRouteMatch();
 	const [meal, setMeal] = useState();
 	const history = useHistory();
-
 	useEffect(() => {
 		const fetchMeal = async() => {
-			const meal = await getMeal(match.params.id);
+			const meal = await getMeal(match.params.dietid, match.params.id);
 			setMeal(meal);
 		}
 		fetchMeal();
@@ -21,7 +20,7 @@ export const EditMeal = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateMeal(data, match.params.id); // ID rutina
+		await updateMeal(match.params.dietid, match.params.id, data);
 		history.push(`/associate/diet/meal/${match.params.dietid}`);
 	};
 

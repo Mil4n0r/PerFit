@@ -7,7 +7,7 @@ const ActivityModel = require('../../models/ActivitySchema');
 const { checkPermissionsActivity } = require('../../auth/checkPermissions');
 
 router.post("/create/activity", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
 		}
@@ -16,26 +16,35 @@ router.post("/create/activity", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const Activity = new ActivityModel({
-				nombreActividad: req.body.activityname,
-				equipamientoActividad: req.body.activityequipment,
-				descripcionActividad: req.body.activitydescription
-			});
-			Activity
-				.save()
-				.then((Activity) => {
-					res.json(Activity);
-				})
-				.catch((err) => {
+			const permissionsResData = await checkPermissionsActivity(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);
+			}
+			else if(permissionsResData && resPermission.includes("write")) {
+				try {
+					const Activity = new ActivityModel({
+						nombreActividad: req.body.activityname,
+						equipamientoActividad: req.body.activityequipment,
+						descripcionActividad: req.body.activitydescription
+					});
+					const savedActivity = await Activity.save();
+					res.json(savedActivity);
+				} catch(err) {
 					next(err);
-				});
+				}
+			}
+			else {
+				res.status(401).send("Usuario no autorizado");
+			}
 		}
 	})(req,res,next);
 });
 
 // Lista de actividades
 router.get("/activity/list", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
 		}
@@ -44,14 +53,12 @@ router.get("/activity/list", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			ActivityModel.find((err, activities) => {
-				if(err) {
-					next(err);	
-				} 
-				else {
-					res.json(activities);	
-				}
-			});
+			try {
+				const activities = await ActivityModel.find({});
+				res.json(activities);
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -66,18 +73,22 @@ router.get("/activity/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsRes = await checkPermissionsActivity(user, req);
-			const resError = permissionsRes.error;
-			const resActivity = permissionsRes.activity;
-			const resPermission = permissionsRes.permission;
-			if(resError || !resActivity) {
-				res.status(resError.code).send(resError.message);
-			}
-			else if(resActivity) {
-				res.json({
-					activityInfo: resActivity,
-					permission: resPermission
-				});
+			try {
+				const permissionsRes = await checkPermissionsActivity(user, req);
+				const resError = permissionsRes.error;
+				const resActivity = permissionsRes.activity;
+				const resPermission = permissionsRes.permission;
+				if(resError || !resActivity) {
+					res.status(resError.code).send(resError.message);
+				}
+				else {
+					res.json({
+						activityInfo: resActivity,
+						permission: resPermission
+					});
+				}
+			} catch(err) {
+				next(err)
 			}
 		}
 	})(req,res,next);
@@ -94,27 +105,27 @@ router.post("/activity/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsActivity(user, req);
-			const resError = permissionsResData.error;
-			const resActivity = permissionsResData.activity;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("write")) {
-				resActivity.nombreActividad = req.body.activityname;
-				resActivity.equipamientoActividad = req.body.activityequipment;
-				resActivity.descripcionActividad = req.body.activitydescription;
-				// resActivity.creadoPor se queda igual
-
-				resActivity
-					.save()		// Se almacena el alimento
-					.then(activityData => {
-						res.json(activityData)	// Se manda como respuesta el alimento modificado
-					})
-					.catch((err) => {
-						next(err);
-					});
+			try {
+				const permissionsResData = await checkPermissionsActivity(user, req);
+				const resError = permissionsResData.error;
+				const resActivity = permissionsResData.activity;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					resActivity.nombreActividad = req.body.activityname;
+					resActivity.equipamientoActividad = req.body.activityequipment;
+					resActivity.descripcionActividad = req.body.activitydescription;
+					
+					const savedActivity = await resActivity.save();
+					res.json(savedActivity);	
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -131,22 +142,23 @@ router.delete("/activity/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsActivity(user, req);
-			const resError = permissionsResData.error;
-			const resActivity = permissionsResData.activity;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("delete")) {
-				resActivity
-					.remove()	// Se elimina el alimento
-					.then(activityData => {
-						res.json(activityData);	// Se manda como respuesta el alimento eliminado
-					})
-					.catch((err) => {
-						next(err);
-					});
+			try {
+				const permissionsResData = await checkPermissionsActivity(user, req);
+				const resError = permissionsResData.error;
+				const resActivity = permissionsResData.activity;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					const removedActivity = await resActivity.remove();	// Se elimina la actividad
+					res.json(removedActivity);	// Se manda como respuesta la actividad eliminada
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);

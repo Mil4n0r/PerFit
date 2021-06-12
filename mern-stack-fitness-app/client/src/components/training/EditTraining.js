@@ -12,7 +12,7 @@ export const EditTraining = () => {
 
 	useEffect(() => {
 		const fetchTraining = async() => {
-			const training = await getTraining(match.params.id);
+			const training = await getTraining(match.params.routineid, match.params.id);
 			setTraining(training);
 		}
 		fetchTraining();
@@ -21,7 +21,7 @@ export const EditTraining = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateTraining(data, match.params.id); // ID rutina
+		await updateTraining(match.params.routineid, match.params.id, data);
 		history.push(`/associate/routine/training/${match.params.routineid}`);
 	};
 

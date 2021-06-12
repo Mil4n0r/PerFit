@@ -27,7 +27,7 @@ export const CreateRation = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		const meal = await addRation(data, match.params.mealid);
+		const meal = await addRation(match.params.dietid, match.params.mealid, data);
 		history.push(`/associate/diet/meal/${match.params.dietid}`);
 	};
 

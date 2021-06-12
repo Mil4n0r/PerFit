@@ -266,9 +266,6 @@ export const Profile = () => {
 												</Grid>
 											)
 										}
-										{
-											console.log(user)
-										}
 									</ContainerWithPadding>
 								</>
 							)

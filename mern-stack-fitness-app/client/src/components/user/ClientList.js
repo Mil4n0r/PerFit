@@ -50,7 +50,7 @@ export const ClientList = () => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{clients.map(client => (
+						{clients && clients.map(client => (
 							<TableRow key={client._id}>
 								<TableCell>
 									{client.aliasUsuario}

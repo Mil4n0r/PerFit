@@ -29,16 +29,13 @@ router.post("/friend/request/:id", async (req, res, next) => {
 					tipoPeticion: "Amistad"
 				})
 				try {
-					await Request.save();
-					await resUser.update({$push: 
-						{
-							peticionesPendientes: mongoose.Types.ObjectId(Request._id)
-						}
-					})
+					const savedRequest = await Request.save();
+					await resUser.peticionesPendientes.push(mongoose.Types.ObjectId(Request._id))
+					const savedUser = await resUser.save();
+					res.json(savedRequest);
 				} catch(err) {
 					next(err);
 				} 
-				res.json(Request);
 			}
 			else
 			{
@@ -55,25 +52,25 @@ router.post("/accept/friend/request/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const request = await RequestModel.findByIdAndDelete(req.params.id)
-				await UserModel.findByIdAndUpdate(
-					request.usuarioSolicitante,
-					{
-						$push: {
-							amigosUsuario: mongoose.Types.ObjectId(user._id)
-						}
-					},
-					{useFindAndModify: false}
-				)
-				user
-					.update({$push: {amigosUsuario: mongoose.Types.ObjectId(request.usuarioSolicitante)} })
-					.update({$pull: {peticionesPendientes: mongoose.Types.ObjectId(req.params.id) } })
-					.then(userData => {
-						res.json(userData);	// Se manda como respuesta el usuario editado
-					})
-					.catch((err) => {
-						next(err);
-					});
+				if(user.peticionesPendientes.includes(mongoose.Types.ObjectId(req.params.id))) {
+					const request = await RequestModel.findByIdAndDelete(req.params.id)
+					await UserModel.findByIdAndUpdate(
+						request.usuarioSolicitante,
+						{
+							$push: {
+								amigosUsuario: mongoose.Types.ObjectId(user._id)
+							}
+						},
+						{useFindAndModify: false}
+					)
+					await user.amigosUsuario.push(mongoose.Types.ObjectId(request.usuarioSolicitante));
+					await user.peticionesPendientes.pull(mongoose.Types.ObjectId(req.params.id));
+					const savedUser = await user.save();
+					res.json(savedUser)
+				}
+				else {
+					res.status(404).send("Solicitud no encontrada");
+				}
 			} catch(err) {
 				next(err);
 			}
@@ -89,14 +86,9 @@ router.post("/reject/friend/request/:id", async (req, res, next) => {
 		else {
 			try {
 				const request = await RequestModel.findByIdAndDelete(req.params.id)
-				user
-					.update({$pull: {peticionesPendientes: mongoose.Types.ObjectId(req.params.id) } })
-					.then(userData => {
-						res.json(userData);	// Se manda como respuesta el usuario editado
-					})
-					.catch((err) => {
-						next(err);
-					});
+				await user.peticionesPendientes.pull(mongoose.Types.ObjectId(req.params.id))
+				const savedUser = await user.save();
+				res.json(savedUser);
 			} catch(err) {
 				next(err);
 			}			
@@ -104,7 +96,7 @@ router.post("/reject/friend/request/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.post("/training/request/:id", async (req, res, next) => {
+router.post("/train/request/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(!user) {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
@@ -124,16 +116,13 @@ router.post("/training/request/:id", async (req, res, next) => {
 					tipoPeticion: "Entrenamiento"
 				})
 				try {
-					await Request.save();
-					await resUser.update({$push: 
-						{
-							peticionesPendientes: mongoose.Types.ObjectId(Request._id)
-						}
-					})
+					const savedRequest = await Request.save();
+					await resUser.peticionesPendientes.push(mongoose.Types.ObjectId(savedRequest._id))
+					await resUser.save();
+					res.json(savedRequest);
 				} catch(err) {
 					next(err);
 				} 
-				res.json(Request);
 			}
 			else
 			{
@@ -143,30 +132,30 @@ router.post("/training/request/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.post("/accept/training/request/:id", async (req, res, next) => {
+router.post("/accept/train/request/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(!user) {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
 		}
 		else {
 			try {
-				const request = await RequestModel.findByIdAndDelete(req.params.id)
-				await UserModel.findByIdAndUpdate(
-					request.usuarioSolicitante,
-					{
-						tieneEntrenador: true
-					},
-					{useFindAndModify: false}
-				)
-				user
-					.update({$push: {alumnosEntrenados: mongoose.Types.ObjectId(request.usuarioSolicitante)} })
-					.update({$pull: {peticionesPendientes: mongoose.Types.ObjectId(req.params.id) } })
-					.then(userData => {
-						res.json(userData);	// Se manda como respuesta el usuario editado
-					})
-					.catch((err) => {
-						next(err);
-					});
+				if(user.peticionesPendientes.includes(mongoose.Types.ObjectId(req.params.id))) {
+					const request = await RequestModel.findByIdAndDelete(req.params.id)
+					await UserModel.findByIdAndUpdate(
+						request.usuarioSolicitante,
+						{
+							tieneEntrenador: true
+						},
+						{useFindAndModify: false}
+					)
+					await user.alumnosEntrenados.push(mongoose.Types.ObjectId(request.usuarioSolicitante));
+					await user.peticionesPendientes.pull(mongoose.Types.ObjectId(req.params.id));
+					const savedUser = await user.save();
+					res.json(savedUser)
+				}
+				else {
+					res.status(404).send("Solicitud no encontrada");
+				}
 			} catch(err) {
 				next(err);
 			}
@@ -174,25 +163,25 @@ router.post("/accept/training/request/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.post("/reject/training/request/:id", async (req, res, next) => {
+router.post("/reject/train/request/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(!user) {
 			res.status(401).send("Usuario no autenticado");	// En caso de no encontrarlo se lanza el mensaje 401 Unauthorized
 		}
 		else {
 			try {
-				const request = await RequestModel.findByIdAndDelete(req.params.id)
-				user
-					.update({$pull: {peticionesPendientes: mongoose.Types.ObjectId(req.params.id) } })
-					.then(userData => {
-						res.json(userData);	// Se manda como respuesta el usuario editado
-					})
-					.catch((err) => {
-						next(err);
-					});
+				if(user.peticionesPendientes.includes(mongoose.Types.ObjectId(req.params.id))) {
+					const request = await RequestModel.findByIdAndDelete(req.params.id)
+					await user.peticionesPendientes.pull(mongoose.Types.ObjectId(req.params.id));
+					const savedUser = await user.save();
+					res.json(savedUser)
+				}
+				else {
+					res.status(404).send("Solicitud no encontrada");
+				}
 			} catch(err) {
 				next(err);
-			}			
+			}
 		}
 	})(req,res,next);
 });
@@ -207,12 +196,28 @@ router.get("/request/list/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			await UserModel.findById(user._id).populate({
-				path: "peticionesPendientes",
-				populate: {path: "usuarioSolicitante"}
-			}).exec((err, user) => {
-				res.json(user.peticionesPendientes);
-			})
+			try {
+				const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
+				const resError = permissionsResData.error;
+				const resUser = permissionsResData.user;
+				const resPermission = permissionsResData.permission;
+				
+				if(resError) {
+					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				}
+				else if(permissionsResData && resPermission.includes("readrequests")) {
+					const user = await UserModel.findById(resUser._id).populate({
+						path: "peticionesPendientes",
+						populate: {path: "usuarioSolicitante"}
+					});
+					res.json(user.peticionesPendientes);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}			
 		}
 	})(req,res,next);
 });

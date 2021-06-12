@@ -5,7 +5,7 @@ const router = express.Router();
 const MeasureModel = require('../../models/MeasureSchema');
 const TrackingModel = require('../../models/TrackingSchema');
 
-const { checkPermissionsMeasure } = require('../../auth/checkPermissions');
+const { checkPermissionsMeasure, checkPermissionsPlan } = require('../../auth/checkPermissions');
 
 const mongoose = require('mongoose');
 
@@ -22,15 +22,23 @@ router.get("/measure/list/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await TrackingModel.findById(id).populate("medidasSeguidas").exec((err, measures) => {	// Buscamos en el modelo todas las rutinas registradas
-				if(err) {
-					next(err);	
-				} 
-				else {	// Se manda como respuesta el contenido de la lista de rutinas (en JSON)
-					res.json(measures.medidasSeguidas);	
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
 				}
-			});
+				else if(permissionsResData && resPermission.includes("read")) {
+					const tracking = await TrackingModel.findById(req.params.id).populate("medidasSeguidas")
+					res.json(tracking.medidasSeguidas);	
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -46,18 +54,25 @@ router.get("/measure/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsRes = await checkPermissionsMeasure(user, req);	// Se busca el usuario cuya id coincida
-			const resError = permissionsRes.error;
-			const resMeasure = permissionsRes.measure;
-			const resPermission = permissionsRes.permission;
-			if(resError || !resMeasure) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-			}
-			else if(resMeasure) {
-				res.json({
-					measureInfo: resMeasure,
-					permission: resPermission
-				});
+			try {
+				const permissionsRes = await checkPermissionsMeasure(user, req);	// Se busca el usuario cuya id coincida
+				const resError = permissionsRes.error;
+				const resMeasure = permissionsRes.measure;
+				const resPermission = permissionsRes.permission;
+				if(resError || !resMeasure) {
+					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				}
+				else if(resMeasure) {
+					res.json({
+						measureInfo: resMeasure,
+						permission: resPermission
+					});
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -74,26 +89,27 @@ router.post("/measure/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsMeasure(user, req);
-			const resError = permissionsResData.error;
-			const resMeasure = permissionsResData.measure;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("write")) {
-				resMeasure.valorMedida = req.body.measurevalue
-				resMeasure.fechaMedida = req.body.measuredate
-				resMeasure.fotoMedida = req.body.measurephoto
+			try {
+				const permissionsResData = await checkPermissionsMeasure(user, req);
+				const resError = permissionsResData.error;
+				const resMeasure = permissionsResData.measure;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					resMeasure.valorMedida = req.body.measurevalue
+					resMeasure.fechaMedida = req.body.measuredate
+					resMeasure.fotoMedida = req.body.measurephoto
 
-				resMeasure
-					.save()		// Se almacena la medida
-					.then(measureData => {
-						res.json(measureData)	// Se manda como respuesta la medida modificada
-					})
-					.catch((err) => {
-						next(err);
-					});
+					const savedMeasure = await resMeasure.save();
+					res.json(savedMeasure)
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -110,30 +126,34 @@ router.delete("/measure/:trackingid/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsMeasure(user, req);
-			const resError = permissionsResData.error;
-			const resMeasure = permissionsResData.measure;
-			const resPermission = permissionsResData.permission;
+			try {
+				const permissionsResData = await checkPermissionsMeasure(user, req);
+				const resError = permissionsResData.error;
+				const resMeasure = permissionsResData.measure;
+				const resPermission = permissionsResData.permission;
+				
+				if(resError) {
+					res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					const removedMeasure = await resMeasure.remove();
+					var tracking;
+					try {
+						tracking = await TrackingModel.findByIdAndUpdate(req.params.trackingid, {$pull: {medidasSeguidas: req.params.id} }, {useFindAndModify: false} );
+					} catch(err) {
+						res.status(404).send("Seguimiento no encontrado");
+					}
+					if(tracking) {
+						res.json(removedMeasure);	// Se manda como respuesta la medida eliminada
+					}
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 			
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("delete")) {
-				resMeasure
-					.remove()	// Se elimina la medida
-					.then(async (measureData) => {
-						const tracking = await TrackingModel.findByIdAndUpdate(req.params.trackingid, {$pull: {medidasSeguidas: req.params.id} }, {useFindAndModify: false} );
-						if(!tracking) {
-							res.status(404).send("Seguimiento no encontrado");
-						}
-						else {
-							res.json(measureData);	// Se manda como respuesta la medida eliminada
-						}
-					})
-					.catch((err) => {
-						next(err);
-					});
-			}
 		}
 	})(req,res,next);
 });
@@ -148,35 +168,32 @@ router.post("/associate/tracking/measure/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const Measure = new MeasureModel({
-				valorMedida: req.body.measurevalue,
-				fechaMedida: req.body.measuredate
-			});
-			
-			Measure
-				.save()
-				.then((Measure) => {
-					return TrackingModel.findByIdAndUpdate(
+			try {
+				const Measure = new MeasureModel({
+					valorMedida: req.body.measurevalue,
+					fechaMedida: req.body.measuredate
+				});
+				const savedMeasure = await Measure.save();
+				var savedTracking;
+				try {
+					savedTracking = await TrackingModel.findByIdAndUpdate(
 						req.params.id,
 						{
 							$push: {
-								medidasSeguidas: mongoose.Types.ObjectId(Measure._id)
+								medidasSeguidas: mongoose.Types.ObjectId(savedMeasure._id)
 							}
 						},
 						{useFindAndModify: false}
 					)
-				})
-				.then((Tracking) => {
-					if(!Tracking) {
-						res.status(404).send("Seguimiento no encontrado");
-					}
-					else {
-						res.json(Tracking)
-					}
-				})
-				.catch((err) => {
-					next(err);
-				})
+				} catch(err) {
+					res.status(404).send("Seguimiento no encontrado");
+				}
+				if(savedTracking) {
+					res.json(savedTracking);
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });

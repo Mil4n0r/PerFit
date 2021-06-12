@@ -22,7 +22,7 @@ function DietRoutes() {
 			<Route exact path="/associate/diet/meal/:id" component={ AssociateMealToDiet } />
 			<Route exact path="/create/meal/:id" component={ CreateMeal } />
 			<Route exact path="/create/ration/:dietid/:mealid/:foodid" component={ CreateRation } />
-			<Route exact path="/edit/ration/:mealid/:id" component={ EditRation } />
+			<Route exact path="/edit/ration/:dietid/:mealid/:id" component={ EditRation } />
 			<Route exact path="/edit/meal/:dietid/:id" component={ EditMeal } />
 		</>
 	)

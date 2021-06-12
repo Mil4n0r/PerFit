@@ -50,14 +50,13 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 	const { register, errors, handleSubmit, control } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
 			classday: sclass ? sclass.classInfo.diaClase : selectedDate,
-			classmonitor: sclass ? sclass.classInfo.classMonitor : "",
-			classactivity: sclass ? sclass.classInfo.actividadClase : "",
-			classroom: sclass ? sclass.classInfo.salaClase : "",
+			classmonitor: sclass  ? sclass.classInfo.monitorClase._id : "",
+			classactivity: sclass ? sclass.classInfo.actividadClase._id : "",
+			classroom: sclass ? sclass.classInfo.salaClase._id : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(ClassSchema),
 		mode: "onTouched"
 	});
-
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
 		handleDateChange(data.classday);
 		onSubmit(data);

@@ -28,7 +28,7 @@ export const CreateWorkout = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		const training = await addWorkout(data, match.params.trainingid); // ID training
+		const training = await addWorkout(match.params.routineid, match.params.trainingid, data);
 		history.push(`/associate/routine/training/${match.params.routineid}`);
 	};
 

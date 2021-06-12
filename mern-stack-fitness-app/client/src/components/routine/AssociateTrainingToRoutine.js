@@ -102,7 +102,7 @@ export const AssociateTrainingToRoutine = () => {
 	}
 
 	const deleteWorkoutFromTraining = async (trainingid, workoutid) => {
-		await deleteWorkout(trainingid, workoutid);
+		await deleteWorkout(routine._id, trainingid, workoutid);
 		setDeleted(workoutid);
 	}
 

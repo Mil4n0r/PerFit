@@ -6,25 +6,21 @@ const SubscriptionModel = require('../../models/SubscriptionSchema');
 
 // Lista de actividades
 router.get("/subscription/list", async (req, res, next) => {
-	await SubscriptionModel.find((err, activities) => {
-		if(err) {
-			next(err);	
-		} 
-		else {
-			res.json(activities);	
-		}
-	});
+	try {
+		const activities = await SubscriptionModel.find({});
+		res.json(activities);
+	} catch(err) {
+		next(err);
+	}
 });
 
 router.get("/subscription/:id", async (req, res, next) => {
-	await SubscriptionModel.findById(req.params.id,(err, activity) => {
-		if(err) {
-			next(err);	
-		} 
-		else {
-			res.json(activity.nombreSuscripcion);	
-		}
-	});
+	try {
+		const activity = await SubscriptionModel.findById(req.params.id);
+		res.json(activity.nombreSuscripcion);
+	} catch(err) {
+		next(err);
+	}
 });
 
 module.exports = router;

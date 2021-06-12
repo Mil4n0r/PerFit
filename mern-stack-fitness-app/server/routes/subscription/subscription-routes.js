@@ -7,7 +7,7 @@ const SubscriptionModel = require('../../models/SubscriptionSchema');
 const { checkPermissionsSubscription } = require('../../auth/checkPermissions');
 
 router.post("/create/subscription", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
 		}
@@ -16,20 +16,29 @@ router.post("/create/subscription", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const Subscription = new SubscriptionModel({
-				nombreSuscripcion: req.body.subscriptionname,
-				descripcionSuscripcion: req.body.subscriptiondescription,
-				costeSuscripcion: req.body.subscriptioncost,
-				vencimientoSuscripcion: req.body.subscriptionend
-			});
-			Subscription
-				.save()
-				.then((Subscription) => {
-					res.json(Subscription);
-				})
-				.catch((err) => {
+			const permissionsResData = await checkPermissionsSubscription(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);
+			}
+			else if(permissionsResData && resPermission.includes("write")) {
+				try {
+					const Subscription = new SubscriptionModel({
+						nombreSuscripcion: req.body.subscriptionname,
+						descripcionSuscripcion: req.body.subscriptiondescription,
+						costeSuscripcion: req.body.subscriptioncost,
+						vencimientoSuscripcion: req.body.subscriptionend
+					});
+					const savedSubscription = await Subscription.save();
+					res.json(savedSubscription);
+				} catch(err) {
 					next(err);
-				});
+				}
+			}
+			else {
+				res.status(401).send("Usuario no autorizado");
+			}
 		}
 	})(req,res,next);
 });
@@ -45,28 +54,29 @@ router.post("/subscription/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsSubscription(user, req);
-			const resError = permissionsResData.error;
-			const resSubscription = permissionsResData.subscription;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+			try {
+				const permissionsResData = await checkPermissionsSubscription(user, req);
+				const resError = permissionsResData.error;
+				const resSubscription = permissionsResData.subscription;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					resSubscription.nombreSuscripcion = req.body.subscriptionname;
+					resSubscription.descripcionSuscripcion = req.body.subscriptiondescription;
+					resSubscription.costeSuscripcion = req.body.subscriptioncost;
+					resSubscription.vencimientoSuscripcion = req.body.subscriptionend;
+					const savedSubscription = await resSubscription.save();
+					res.json(savedSubscription);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
-			else if(permissionsResData && resPermission.includes("write")) {
-				resSubscription.nombreSuscripcion = req.body.subscriptionname,
-				resSubscription.descripcionSuscripcion = req.body.subscriptiondescription,
-				resSubscription.costeSuscripcion = req.body.subscriptioncost,
-				resSubscription.vencimientoSuscripcion = req.body.subscriptionend
-
-				resSubscription
-					.save()		// Se almacena la sala
-					.then(subscriptionData => {
-						res.json(subscriptionData)	// Se manda como respuesta la suscripción modificada
-					})
-					.catch((err) => {
-						next(err);
-					});
-			}
+			
 		}
 	})(req,res,next);
 });
@@ -81,14 +91,12 @@ router.get("/subscription/list", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			await SubscriptionModel.find((err, activities) => {
-				if(err) {
-					next(err);	
-				} 
-				else {
-					res.json(activities);	
-				}
-			});
+			try {
+				const subscriptions = await SubscriptionModel.find({});
+				res.json(subscriptions);
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -103,19 +111,27 @@ router.get("/subscription/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsRes = await checkPermissionsSubscription(user, req);
-			const resError = permissionsRes.error;
-			const resSubscription = permissionsRes.subscription;
-			const resPermission = permissionsRes.permission;
-			if(resError || !resSubscription) {
-				res.status(resError.code).send(resError.message);
+			try {
+				const permissionsRes = await checkPermissionsSubscription(user, req);
+				const resError = permissionsRes.error;
+				const resSubscription = permissionsRes.subscription;
+				const resPermission = permissionsRes.permission;
+				if(resError || !resSubscription) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(resSubscription) {
+					res.json({
+						subscriptionInfo: resSubscription,
+						permission: resPermission
+					});
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
-			else if(resSubscription) {
-				res.json({
-					subscriptionInfo: resSubscription,
-					permission: resPermission
-				});
-			}
+			
 		}
 	})(req,res,next);
 });
@@ -131,23 +147,25 @@ router.delete("/subscription/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsSubscription(user, req);
-			const resError = permissionsResData.error;
-			const resSubscription = permissionsResData.subscription;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+			try {
+				const permissionsResData = await checkPermissionsSubscription(user, req);
+				const resError = permissionsResData.error;
+				const resSubscription = permissionsResData.subscription;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					const removedSubscription = await resSubscription.remove();
+					res.json(removedSubscription);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
-			else if(permissionsResData && resPermission.includes("delete")) {
-				resSubscription
-					.remove()	// Se elimina la suscripción
-					.then(subscriptionData => {
-						res.json(subscriptionData);	// Se manda como respuesta la suscripción eliminada
-					})
-					.catch((err) => {
-						next(err);
-					});
-			}
+			
 		}
 	})(req,res,next);
 });

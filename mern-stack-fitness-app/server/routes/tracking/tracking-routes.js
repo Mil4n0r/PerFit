@@ -4,6 +4,8 @@ const router = express.Router();
 
 const TrackingModel = require('../../models/TrackingSchema');
 
+const { checkPermissionsUser, checkPermissionsPlan } = require('../../auth/checkPermissions');
+
 router.post("/associate/tracking/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
@@ -14,47 +16,27 @@ router.post("/associate/tracking/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			// Creación del seguimiento
-			const Tracking = new TrackingModel({
-				nombrePlan: req.body.trackingname,
-				usuarioPlan: req.params.id,
-				valorObjetivo: req.body.targetvalue,
-				unidadObjetivo: req.body.trackingunit,
-				medidasSeguidas: req.body.trackedmeasures
-			});
-			Tracking
-				.save()		// Se almacena el seguimiento
-				.then((Tracking) => {
-					res.json(Tracking);		// Se manda como respuesta el seguimiento
-				})
-				.catch((err) => {
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);
+			}
+			else if(permissionsResData && resPermission.includes("checkplans")) {
+				try {
+					const Tracking = new TrackingModel({
+						nombrePlan: req.body.trackingname,
+						usuarioPlan: req.params.id,
+						valorObjetivo: req.body.targetvalue,
+						unidadObjetivo: req.body.trackingunit,
+						medidasSeguidas: req.body.trackedmeasures
+					});
+					const savedTracking = await Tracking.save();
+					res.json(savedTracking);
+				} catch(err) {
 					next(err);
-				});
-		}
-	})(req,res,next);
-});
-
-router.get("/tracking/list", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			await TrackingModel
-			.find({})
-			.populate("usuarioPlan")
-			.exec((err,trackings) => {
-				if(err) {
-					next(err);	
-				} 
-				else {
-					res.json(trackings);	
 				}
-			});
+			}
 		}
 	})(req,res,next);
 });
@@ -69,20 +51,28 @@ router.get("/tracking/list/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const userid = req.params.id;
-			await TrackingModel.find({usuarioPlan: userid},(err, trackings) => {
-				if(err) {
-					next(err);	
-				} 
-				else {	
-					res.json(trackings);	
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);
+			}
+			else if(permissionsResData && resPermission.includes("checkplans")) {
+				try {
+					const trackings = await TrackingModel.find({usuarioPlan: req.params.id});
+					res.json(trackings)
+				} catch(err) {
+					next(err);
 				}
-			});
+			}
+			else {
+				res.status(401).send("Usuario no autorizado");
+			}
 		}
 	})(req,res,next);
 });
 
-// Consulta del ejercicio con la id correspondiente
+// Consulta del seguimiento con la id correspondiente
 router.get("/tracking/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
@@ -93,18 +83,22 @@ router.get("/tracking/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await TrackingModel.findById(id, (err, tracking) => {
-				if(err) {
-					next(err);
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);	// Se busca el usuario cuya id coincida
+				const resError = permissionsResData.error;
+				const resTracking = permissionsResData.plan;
+				if(resError || !resTracking) {
+					res.status(resError.code).send(resError.message);
 				}
-				else if(!tracking) {
-					res.status(404).send("Seguimiento no encontrado");
+				else if(resTracking) {
+					res.json(resTracking);
 				}
 				else {
-					res.json(tracking);		// Se manda como respuesta el seguimiento encontrado
+					res.status(401).send("Usuario no autorizado");
 				}
-			});
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -120,25 +114,27 @@ router.post("/tracking/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await TrackingModel.findById(id, (err, tracking) => {
-				if(err || !tracking) {
-					res.status(404).send("Seguimiento no encontrado");
-				} 
-				else {
-					tracking.nombrePlan = req.body.trackingname,
-					tracking.valorObjetivo = req.body.targetvalue,
-					tracking.unidadObjetivo = req.body.trackingunit,
-					tracking
-						.save()
-						.then(tracking => {
-							res.json(tracking)
-						})
-						.catch((err) => {
-							next(err);
-						});
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);	// Se busca el usuario cuya id coincida
+				const resError = permissionsResData.error;
+				const resTracking = permissionsResData.plan;
+				const resPermission = permissionsResData.permission;
+				if(resError || !resTracking) {
+					res.status(resError.code).send(resError.message);
 				}
-			});
+				else if(permissionsResData && resPermission.includes("write")) {
+					resTracking.nombrePlan = req.body.trackingname;
+					resTracking.valorObjetivo = req.body.targetvalue;
+					resTracking.unidadObjetivo = req.body.trackingunit;
+					const savedTracking = await resTracking.save();
+					res.json(savedTracking);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -154,55 +150,26 @@ router.delete("/tracking/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await TrackingModel.findById(id, (err, tracking) => {	// Se busca el seguimiento cuya id coincida
-				if(err || !tracking) {
-					res.status(404).send("Seguimiento no encontrada");
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resTracking = permissionsResData.plan;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					const removedTracking = await resTracking.remove();
+					res.json(removedTracking);
 				}
 				else {
-					tracking
-						.remove()	// Se elimina el seguimiento
-						.then(tracking => {
-							res.json(tracking);	// Se manda como respuesta el seguimiento eliminado
-						})
-						.catch((err) => {
-							next(err);
-						});
+					res.status(401).send("Usuario no autorizado");
 				}
-			});
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
-
-// Creación de seguimiento
-/*
-router.post("/create/tracking", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			// Creación del seguimiento
-			const Tracking = new TrackingModel({
-				nombrePlan: req.body.trackingname,
-				valorObjetivo: req.body.targetvalue,
-				medidasSeguidas: req.body.trackedmeasures
-			});
-			Tracking
-				.save()		// Se almacena el seguimiento
-				.then((Tracking) => {
-					res.json(Tracking);		// Se manda como respuesta el seguimiento
-				})
-				.catch((err) => {
-					next(err);
-				});
-		}
-	})(req,res,next);
-});
-*/
 
 module.exports = router;

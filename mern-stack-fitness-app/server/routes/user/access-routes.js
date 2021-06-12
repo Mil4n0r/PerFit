@@ -5,7 +5,7 @@ const router = express.Router();
 
 // Registro de usuarios
 router.post("/register", async (req, res,next) => {
-	passport.authenticate("register", {session: false, badRequestMessage: "Faltan datos por rellenar"}, async (err, user, info) => {
+	passport.authenticate("register", {session: false, badRequestMessage: "Faltan datos por rellenar"}, (err, user, info) => {
 		if(err) {
 			next(err);
 		} 

@@ -1,10 +1,5 @@
 import axios from 'axios';
 
-export const createDiet = (diet) => axios.post("http://localhost:4000/admin/create/diet", diet, {
-	data: diet
-})
-	.then(res => res.data);
-
 export const getDietsForUser = (id) => axios.get(`http://localhost:4000/admin/diet/list/${id}`)
 	.then(res => res.data)
 

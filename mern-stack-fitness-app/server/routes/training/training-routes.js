@@ -11,9 +11,11 @@ const endOfDay = require('date-fns/endOfDay');
 const startOfMonth = require('date-fns/startOfMonth');
 const endOfMonth = require('date-fns/endOfMonth');
 
+const { checkPermissionsPlan } = require('../../auth/checkPermissions');
+
 const mongoose = require('mongoose');
 
-router.get("/training/list/:id", async (req, res, next) => {
+router.post("/associate/routine/training/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -23,21 +25,41 @@ router.get("/training/list/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await RoutineModel.findById(id).populate("entrenamientosRutina").exec((err, trainings) => {	// Buscamos en el modelo todas las rutinas registradas
-				if(err) {
-					next(err);	
-				} 
-				else {	// Se manda como respuesta el contenido de la lista de rutinas (en JSON)
-					res.json(trainings.entrenamientosRutina);	
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
 				}
-			});
-			
+				else if(permissionsResData && resPermission.includes("write")) {
+					const Training = new TrainingModel({
+						nombreEntrenamiento: req.body.trainingname,
+						diaEntrenamiento: req.body.trainingday
+					});
+					const savedTraining = await Training.save();
+					const savedRoutine = await RoutineModel.findByIdAndUpdate(
+						req.params.id,
+						{
+							$push: {
+								entrenamientosRutina: mongoose.Types.ObjectId(Training._id)
+							}
+						},
+						{useFindAndModify: false}
+					);
+					res.json(savedTraining);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err)
+			}
 		}
 	})(req,res,next);
 });
 
-router.get("/training/list/:id/:date", async (req, res, next) => {
+router.get("/training/list/:id/:date?", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -47,35 +69,53 @@ router.get("/training/list/:id/:date", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			const dateStart = startOfDay(new Date(req.params.date));
-			const dateEnd = endOfDay(new Date(req.params.date));
-
-			await RoutineModel.findById(id)
-				.populate({
-					path: "entrenamientosRutina",
-					populate: {
-						path: "trabajoEntrenamiento",
-						populate: {
-							path: "ejercicioEntrenamiento"
-						}
-					},
-					
-					match: {
-						diaEntrenamiento: {
-							$gte: dateStart,
-							$lte: dateEnd
-						}
+			try {	
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("read")) {	
+					if(req.params.date) {
+						const routine = await RoutineModel.findById(req.params.id)
+							.populate({
+								path: "entrenamientosRutina",
+								populate: {
+									path: "trabajoEntrenamiento",
+									populate: {
+										path: "ejercicioEntrenamiento"
+									}
+								},
+								match: {
+									diaEntrenamiento: {
+										$gte: startOfDay(new Date(req.params.date)),
+										$lte: endOfDay(new Date(req.params.date)),
+									}
+								}
+							})
+						res.json(routine.entrenamientosRutina);
 					}
-				})
-				.exec((err, routine) => {
-					if(err) {
-						next(err);	
-					} 
 					else {
-						res.json(routine.entrenamientosRutina);	
+						const routine = await RoutineModel.findById(req.params.id)
+							.populate({
+								path: "entrenamientosRutina",
+								populate: {
+									path: "trabajoEntrenamiento",
+									populate: {
+										path: "ejercicioEntrenamiento"
+									}
+								}
+							});
+						res.json(routine.entrenamientosRutina);
 					}
-			});
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -90,40 +130,44 @@ router.get("/training/list/month/:id/:date", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			const dateStart = startOfMonth(new Date(req.params.date));
-			const dateEnd = endOfMonth(new Date(req.params.date));
-
-			await RoutineModel.findById(id)
-				.populate({
-					path: "entrenamientosRutina",
-					populate: {
-						path: "trabajoEntrenamiento",
-						populate: {
-							path: "ejercicioEntrenamiento"
-						}
-					},
-					match: {
-						diaEntrenamiento: {
-							$gte: dateStart,
-							$lte: dateEnd
-						}
-					}
-				})
-				.exec((err, routine) => {
-					if(err) {
-						next(err);	
-					} 
-					else {
-						res.json(routine.entrenamientosRutina);	
-					}
-			});
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("read")) {
+					const routine = await RoutineModel.findById(req.params.id)
+						.populate({
+							path: "entrenamientosRutina",
+							populate: {
+								path: "trabajoEntrenamiento",
+								populate: {
+									path: "ejercicioEntrenamiento"
+								}
+							},
+							match: {
+								diaEntrenamiento: {
+									$gte: startOfMonth(new Date(req.params.date)),
+									$lte: endOfMonth(new Date(req.params.date))
+								}
+							}
+						})
+					res.json(routine.entrenamientosRutina);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
 // Eliminación del entrenamiento con la id correspondiente
-router.delete("/training/:routineid/:id", async (req, res, next) => {
+router.delete("/training/:id/:trainingid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -133,21 +177,30 @@ router.delete("/training/:routineid/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
 			try {
-				const training = await TrainingModel.findByIdAndDelete(id, {useFindAndModify: false})	// Se busca el ejercicio cuya id coincida
-				if(!training) {
-					res.status(404).send("Entrenamiento no encontrado");
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resRoutine = permissionsResData.plan;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					var deletedTraining;
+					try {
+						deletedTraining = await TrainingModel.findByIdAndDelete(req.params.trainingid, {useFindAndModify: false})
+					} catch(err) {
+						res.status(404).send("Entrenamiento no encontrado");
+					}
+					if(deletedTraining) {
+						await resRoutine.entrenamientosRutina.pull(mongoose.Types.ObjectId(req.params.trainingid));
+						const savedRoutine = await resRoutine.save();
+						res.json(savedRoutine)
+					}
 				}
 				else {
-					const routine = await RoutineModel.findByIdAndUpdate(req.params.routineid, {$pull: {entrenamientosRutina: id} }, {useFindAndModify: false} );
-					if(!routine) {
-						res.status(404).send("Rutina no encontrada");
-					}
-					else {
-						res.json(routine);
-					}
-				} 
+					res.status(401).send("Usuario no autorizado");
+				}
 			} catch(err_routine) {
 				next(err_routine);
 			}
@@ -155,7 +208,7 @@ router.delete("/training/:routineid/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.get("/training/:id", async (req, res, next) => {
+router.get("/training/:id/:trainingid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -165,53 +218,28 @@ router.get("/training/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await TrainingModel.findById(id).populate("trabajoEntrenamiento").exec((err, training) => {	// Se busca el entrenamiento cuya id coincida
-				if(err) {
-					next(err);
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
 				}
-				else if(!training) {
-					res.status(404).send("Entrenamiento no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				else if(permissionsResData && resPermission.includes("read")) {
+					const training = await TrainingModel.findById(req.params.trainingid).populate("trabajoEntrenamiento")
+					res.json(training);
 				}
 				else {
-					res.json(training);		// Se manda como respuesta el entrenamiento encontrado
-				}
-			});
+					res.status(401).send("Usuario no autorizado");
+				}	
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
-router.get("/workout/list/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			await TrainingModel.findById(id)
-				.populate({
-					path: "trabajoEntrenamiento",
-					populate: {path: "ejercicioEntrenamiento"}
-				})
-				.exec((err, training) => {	// Buscamos en el modelo todos los ejercicios del entrenamiento
-				if(err) {
-					next(err);	
-				} 
-				else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
-					res.json(training.trabajoEntrenamiento);	
-				}
-			});
-			
-		}
-	})(req,res,next);
-});
-
-router.post("/associate/training/workout/:id", async (req, res, next) => {
+router.post("/associate/training/workout/:id/:trainingid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -221,101 +249,86 @@ router.post("/associate/training/workout/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const Workout = new WorkoutModel({
-				ejercicioEntrenamiento: req.body.trainingexercise,
-				numSeries: req.body.numberofseries,
-				numRepeticiones: req.body.numberofreps,
-				pesosUtilizados: req.body.weightsused
-			});
-			
-			Workout
-				.save()
-				.then((Workout) => {
-					return TrainingModel.findByIdAndUpdate(
-						req.params.id,
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					const Workout = new WorkoutModel({
+						ejercicioEntrenamiento: req.body.trainingexercise,
+						numSeries: req.body.numberofseries,
+						numRepeticiones: req.body.numberofreps,
+						pesosUtilizados: req.body.weightsused
+					});			
+					const savedWorkout = await Workout.save();
+					const savedTraining = await TrainingModel.findByIdAndUpdate(
+						req.params.trainingid,
 						{
 							$push: {
-								trabajoEntrenamiento: mongoose.Types.ObjectId(Workout._id)
+								trabajoEntrenamiento: mongoose.Types.ObjectId(savedWorkout._id)
 							}
 						},
 						{useFindAndModify: false}
-					)
-				})
-				.then((Training) => {
-					if(!Training) {
-						res.status(404).send("Entrenamiento no encontrado");
-					}
-					else {
-						res.json(Training)
-					}
-				})
-				.catch((err) => {
-					next(err);
-				})
-		}
-	})(req,res,next);
-});
-
-router.delete("/workout/:trainingid/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const trainingid = req.params.trainingid;
-			const id = req.params.id;
-			try {
-				const workout = await WorkoutModel.findByIdAndDelete(id, {useFindAndModify: false})	// Se busca el ejercicio cuya id coincida
-				if(!workout) {
-					res.status(404).send("Trabajo no encontrado");
-				}
-				else {
-					const training = await TrainingModel.findByIdAndUpdate(
-						trainingid,
-						{$pull: {trabajoEntrenamiento: id } },
-						{useFindAndModify: false}
 					);
-					if(!training) {
-						res.status(404).send("Entrenamiento no encontrado");
-					}
-					else {
-						res.json(training);
-					}
+					res.json(savedTraining);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
 				}
 			} catch(err) {
 				next(err);
 			}
 		}
-		/*else {
-			const trainingid = req.params.trainingid;
-			const id = req.params.id;
+	})(req,res,next);
+});
+
+router.delete("/workout/:trainingid/:id/:workoutid", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
 			try {
-				const training = await TrainingModel.findByIdAndUpdate(
-					trainingid,
-					{$pull: {trabajoEntrenamiento: {_id: id} } },//{ $elemMatch: {ejercicioEntrenamiento: id} } } },
-					{useFindAndModify: false}
-				);
-				if(!training) {
-					res.status(404).send("Entrenamiento no encontrado");
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					var deletedWorkout;
+					try {
+						deletedWorkout = await WorkoutModel.findByIdAndDelete(req.params.workoutid, {useFindAndModify: false})
+					} catch(err) {
+						res.status(404).send("Serie no encontrada")
+					}
+					if(deletedWorkout) {
+						const savedTraining = await TrainingModel.findByIdAndUpdate(
+							req.params.trainingid,
+							{$pull: {trabajoEntrenamiento: req.params.workoutid } },
+							{useFindAndModify: false}
+						);
+						res.json(savedTraining);
+					}
 				}
 				else {
-					res.json(training);
-				} 
+					res.status(401).send("Usuario no autorizado");
+				}
 			} catch(err) {
 				next(err);
 			}
-			
 		}
-		*/
 	})(req,res,next);
 });
 
-// Consulta del ejercicio con la id correspondiente
-router.get("/workout/:id", async (req, res, next) => {
+router.get("/workout/:id/:workoutid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -325,23 +338,28 @@ router.get("/workout/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await WorkoutModel.findById(id).populate("ejercicioEntrenamiento").exec((err, workout) => {	// Se busca el ejercicio cuya id coincida
-				if(err) {
-					next(err);
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
 				}
-				else if(!workout) {
-					res.status(404).send("Trabajo no encontrado");	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				else if(permissionsResData && resPermission.includes("read")) {
+					const workout = await WorkoutModel.findById(req.params.workoutid).populate("ejercicioEntrenamiento");
+					res.json(workout);
 				}
 				else {
-					res.json(workout);		// Se manda como respuesta el ejercicio encontrado
+					res.status(401).send("Usuario no autorizado");
 				}
-			});
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
-router.post("/workout/:id", async (req, res, next) => {
+router.post("/workout/:id/:workoutid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -351,32 +369,33 @@ router.post("/workout/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await WorkoutModel.findById(id, (err, workout) => {
-				if(err || !workout) {
-					res.status(404).send("Trabajo no encontrado");
-				} 
-				else {
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					var workout = await WorkoutModel.findById(req.params.workoutid);
 					workout.ejercicioEntrenamiento = req.body.trainingexercise;
 					workout.numSeries = req.body.numberofseries;
 					workout.numRepeticiones = req.body.numberofreps;
 					workout.pesosUtilizados = req.body.weightsused;
-
-					workout
-						.save()
-						.then(workout => {
-							res.json(workout)
-						})
-						.catch((err) => {
-							next(err);
-						});
+					const savedWorkout = await workout.save();
+					res.json(savedWorkout);
 				}
-			});
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
-router.post("/training/:id", async (req, res, next) => {
+router.post("/training/:id/:trainingid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -386,24 +405,26 @@ router.post("/training/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await TrainingModel.findById(id, (err, training) => {
-				if(err || !training) {
-					res.status(404).send("Entrenamiento no encontrado");
-				} 
-				else {
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					var training = await TrainingModel.findById(req.params.trainingid);
 					training.nombreEntrenamiento = req.body.trainingname;
 					training.diaEntrenamiento = req.body.trainingday;
-					training
-						.save()
-						.then(training => {
-							res.json(training)
-						})
-						.catch((err) => {
-							next(err);
-						});
+					const savedTraining = await training.save();
+					res.json(savedTraining)
 				}
-			});
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });

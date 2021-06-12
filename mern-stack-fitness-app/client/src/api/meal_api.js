@@ -5,7 +5,7 @@ export const addMeal = (meal, id) => axios.post(`http://localhost:4000/admin/ass
 })
 	.then(res => res.data)
 
-export const updateMeal = (meal,id) => axios.post(`http://localhost:4000/admin/meal/${id}`, meal, {
+export const updateMeal = (id, mealid, meal) => axios.post(`http://localhost:4000/admin/meal/${id}/${mealid}`, meal, {
 	data: meal
 });
 
@@ -20,22 +20,19 @@ export const getMealsForDate = (id, date) => axios.get(`http://localhost:4000/ad
 export const getMealsForMonth = (id, date) => axios.get(`http://localhost:4000/admin/meal/list/month/${id}/${date}`) // id = id diet
 	.then(res => res.data)
 
-export const getMeal = (id) => axios.get(`http://localhost:4000/admin/meal/${id}`) // id = id meal
+export const getMeal = (id, mealid) => axios.get(`http://localhost:4000/admin/meal/${id}/${mealid}`) // id = id diet
 	.then(res => res.data)
 
-export const addRation = (ration, id) => axios.post(`http://localhost:4000/admin/associate/meal/ration/${id}`, ration, { // id = id meal
+export const addRation = (id, mealid, ration) => axios.post(`http://localhost:4000/admin/associate/meal/ration/${id}/${mealid}`, ration, { // id = id meal
 	data: ration
 })
 	.then(res => res.data)
 
-export const getRations = (id) => axios.get(`http://localhost:4000/admin/ration/list/${id}`) // id = id meal
+export const getRation = (id, rationid) => axios.get(`http://localhost:4000/admin/ration/${id}/${rationid}`) // id = id diet
 	.then(res => res.data)
 
-export const getRation = (id) => axios.get(`http://localhost:4000/admin/ration/${id}`) // id = id ration
-	.then(res => res.data)
-
-export const updateRation = (ration,id) => axios.post(`http://localhost:4000/admin/ration/${id}`, ration, {
+export const updateRation = (id, rationid, ration) => axios.post(`http://localhost:4000/admin/ration/${id}/${rationid}`, ration, {
 	data: ration
 });
 
-export const deleteRation = (mealid, id) => axios.delete(`http://localhost:4000/admin/ration/${mealid}/${id}`);
+export const deleteRation = (id, mealid, rationid) => axios.delete(`http://localhost:4000/admin/ration/${id}/${mealid}/${rationid}`);

@@ -43,6 +43,8 @@ passport.use("register",
 						});
 					}
 					else if(req.body.role === "Entrenador") {
+						console.log("CREANDO USUARIO:")
+						console.log(email)
 						user = await TrainerModel.create({
 							emailUsuario: email,
 							passwordUsuario: password,
@@ -56,8 +58,10 @@ passport.use("register",
 							},
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias,
-							cuentaActivada: false
+							cuentaActivada: false,
+							tieneEntrenador: false,
 						});
+						console.log("CREADO")
 					}
 					else if(req.body.role === "Monitor") {
 						user = await MonitorModel.create({
@@ -74,7 +78,8 @@ passport.use("register",
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias,
 							especialidadesMonitor: req.body.specialty,
-							cuentaActivada: false
+							cuentaActivada: false,
+							tieneEntrenador: false,
 						});
 					}
 					else if(req.body.role === "Administrador") {
@@ -91,7 +96,8 @@ passport.use("register",
 							},
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias,
-							cuentaActivada: false
+							cuentaActivada: false,
+							tieneEntrenador: false,
 						});
 					}
 					return done(null, user, { message: "Se ha registrado satisfactoriamente" });

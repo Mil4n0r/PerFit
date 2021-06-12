@@ -13,6 +13,8 @@ const endOfMonth = require('date-fns/endOfMonth');
 
 const mongoose = require('mongoose');
 
+const { checkPermissionsPlan } = require('../../auth/checkPermissions');
+
 router.post("/associate/diet/meal/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
@@ -23,15 +25,20 @@ router.post("/associate/diet/meal/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const Meal = new MealModel({
-				nombreComida: req.body.mealname,
-				diaComida: req.body.mealday
-			});
-
-			Meal
-				.save()
-				.then((Meal) => {
-					return DietModel.findByIdAndUpdate(
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					const Meal = new MealModel({
+						nombreComida: req.body.mealname,
+						diaComida: req.body.mealday
+					});
+					const savedMeal = await Meal.save();
+					const savedDiet = await DietModel.findByIdAndUpdate(
 						req.params.id,
 						{
 							$push: {
@@ -39,24 +46,20 @@ router.post("/associate/diet/meal/:id", async (req, res, next) => {
 							}
 						},
 						{useFindAndModify: false}
-					)
-				})
-				.then((Diet) => {
-					if(!Diet) {
-						res.status(404).send("Dieta no encontrada");
-					}
-					else {
-						res.json(Meal)
-					}
-				})
-				.catch((err) => {
-					next(err);
-				})
+					);
+					res.json(savedMeal);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err)
+			}
 		}
 	})(req,res,next);
 });
 
-router.get("/meal/list/:id", async (req, res, next) => {
+router.get("/meal/list/:id/:date?", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -66,107 +69,53 @@ router.get("/meal/list/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await DietModel.findById(id)
-				.populate({
-					path: "comidasDieta",
-					populate: {
-						path: "racionesComida",
-						populate: {
-							path: "alimentoComida"
-						}
+			try {	
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("read")) {	
+					if(req.params.date) {
+						const diet = await DietModel.findById(req.params.id)
+							.populate({
+								path: "comidasDieta",
+								populate: {
+									path: "racionesComida",
+									populate: {
+										path: "alimentoComida"
+									}
+								},
+								match: {
+									diaComida: {
+										$gte: startOfDay(new Date(req.params.date)),
+										$lte: endOfDay(new Date(req.params.date)),
+									}
+								}
+							});
+						res.json(diet.comidasDieta);
 					}
-				})
-				.exec((err, meals) => {
-					if(err) {
-						next(err);	
-					} 
 					else {
-						res.json(meals.comidasDieta);	
+						const diet = await DietModel.findById(req.params.id)
+							.populate({
+								path: "comidasDieta",
+								populate: {
+									path: "racionesComida",
+									populate: {
+										path: "alimentoComida"
+									}
+								}
+							});
+						res.json(diet.comidasDieta);
 					}
-			});
-			
-		}
-	})(req,res,next);
-});
-/*
-router.get("/meal/list/:id/:date", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			await DietModel.findById(id)
-				.populate({
-					path: "comidasDieta",
-					populate: {
-						path: "racionesComida",
-						populate: {
-							path: "alimentoComida"
-						}
-					}
-				})
-				.exec((err, diet) => {
-					if(err) {
-						next(err);	
-					} 
-					else {
-						const date = new Date(req.params.date).toISOString();
-						const dateMeals = diet.comidasDieta.filter(m => {
-							return m.diaComida.toISOString() === date
-						});
-						res.json(dateMeals);	
-					}
-			});
-			
-		}
-	})(req,res,next);
-});
-*/
-
-router.get("/meal/list/:id/:date", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			const dateStart = startOfDay(new Date(req.params.date));
-			const dateEnd = endOfDay(new Date(req.params.date));
-
-			await DietModel.findById(id)
-				.populate({
-					path: "comidasDieta",
-					populate: {
-						path: "racionesComida",
-						populate: {
-							path: "alimentoComida"
-						}
-					},
-					match: {
-						diaComida: {
-							$gte: dateStart,
-							$lte: dateEnd
-						}
-					}
-				})
-				.exec((err, diet) => {
-					if(err) {
-						next(err);	
-					} 
-					else {
-						res.json(diet.comidasDieta);	
-					}
-			});
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -181,40 +130,44 @@ router.get("/meal/list/month/:id/:date", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			const dateMonthStart = startOfMonth(new Date(req.params.date));
-			const dateMonthEnd = endOfMonth(new Date(req.params.date));
-
-			await DietModel.findById(id)
-				.populate({
-					path: "comidasDieta",
-					populate: {
-						path: "racionesComida",
-						populate: {
-							path: "alimentoComida"
-						}
-					},
-					match: {
-						diaComida: {
-							$gte: dateMonthStart,
-							$lte: dateMonthEnd
-						}
-					}
-				})
-				.exec((err, diet) => {
-					if(err) {
-						next(err);	
-					} 
-					else {
-						res.json(diet.comidasDieta);	
-					}
-			});
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("read")) {
+					const diets = await DietModel.findById(req.params.id)
+						.populate({
+							path: "comidasDieta",
+							populate: {
+								path: "racionesComida",
+								populate: {
+									path: "alimentoComida"
+								}
+							},
+							match: {
+								diaComida: {
+									$gte: startOfMonth(new Date(req.params.date)),
+									$lte: endOfMonth(new Date(req.params.date))
+								}
+							}
+						});
+					res.json(diets.comidasDieta);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
 // Eliminación de la comida con la id correspondiente
-router.delete("/meal/:dietid/:id", async (req, res, next) => {
+router.delete("/meal/:id/:mealid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -224,21 +177,30 @@ router.delete("/meal/:dietid/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
 			try {
-				const meal = await MealModel.findByIdAndDelete(id, {useFindAndModify: false})	// Se busca la comida cuya id coincida
-				if(!meal) {
-					res.status(404).send("Comida no encontrada");
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resDiet = permissionsResData.plan;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					var deletedMeal;
+					try {
+						deletedMeal = await MealModel.findByIdAndDelete(req.params.mealid, {useFindAndModify: false})	
+					} catch(err) {
+						res.status(404).send("Comida no encontrada");
+					}
+					if(deletedMeal) {
+						await resDiet.comidasDieta.pull(mongoose.Types.ObjectId(req.params.mealid));
+						const savedDiet = await resDiet.save();
+						res.json(savedDiet)
+					}
 				}
 				else {
-					const diet = await DietModel.findByIdAndUpdate(req.params.dietid, {$pull: {comidasDieta: id} }, {useFindAndModify: false} );
-					if(!diet) {
-						res.status(404).send("Dieta no encontrada");
-					}
-					else {
-						res.json(diet);
-					}
-				} 
+					res.status(401).send("Usuario no autorizado");
+				}
 			} catch(err_diet) {
 				next(err_diet);
 			}
@@ -246,7 +208,7 @@ router.delete("/meal/:dietid/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.get("/meal/:id", async (req, res, next) => {
+router.get("/meal/:id/:mealid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -256,52 +218,28 @@ router.get("/meal/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await MealModel.findById(id).populate("racionesComida").exec((err, meal) => {
-				if(err) {
-					next(err);
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
 				}
-				else if(!meal) {
-					res.status(404).send("Comida no encontrada");
-				}
-				else {
+				else if(permissionsResData && resPermission.includes("read")) {
+					const meal = await MealModel.findById(req.params.mealid).populate("racionesComida");
 					res.json(meal);
-				}
-			});
-		}
-	})(req,res,next);
-});
-
-router.get("/ration/list/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {	
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const id = req.params.id;
-			await MealModel.findById(id)
-				.populate({
-					path: "racionesComida",
-					populate: {path: "alimentoComida"}
-				})
-				.exec((err, meal) => {
-				if(err) {
-					next(err);	
 				} 
 				else {
-					res.json(meal.racionesComida);	
-				}
-			});
-			
+					res.status(401).send("Usuario no autorizado");
+				}	
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
-router.post("/associate/meal/ration/:id", async (req, res, next) => {
+router.post("/associate/meal/ration/:id/:mealid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -311,40 +249,41 @@ router.post("/associate/meal/ration/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const Ration = new RationModel({
-				alimentoComida: req.body.mealfood,
-				numRaciones: req.body.numberofrations
-			});
-			
-			Ration
-				.save()
-				.then((Ration) => {
-					return MealModel.findByIdAndUpdate(
-						req.params.id,
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					const Ration = new RationModel({
+						alimentoComida: req.body.mealfood,
+						numRaciones: req.body.numberofrations
+					});				
+					const savedRation = await Ration.save();
+					const savedMeal = await MealModel.findByIdAndUpdate(
+						req.params.mealid,
 						{
 							$push: {
-								racionesComida: mongoose.Types.ObjectId(Ration._id)
+								racionesComida: mongoose.Types.ObjectId(savedRation._id)
 							}
 						},
 						{useFindAndModify: false}
-					)
-				})
-				.then((Meal) => {
-					if(!Meal) {
-						res.status(404).send("Comida no encontrada");
-					}
-					else {
-						res.json(Meal)
-					}
-				})
-				.catch((err) => {
-					next(err);
-				})
+					);
+					res.json(savedMeal);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
-router.delete("/ration/:mealid/:id", async (req, res, next) => {
+router.delete("/ration/:id/:mealid/:rationid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -354,25 +293,31 @@ router.delete("/ration/:mealid/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const mealid = req.params.mealid;
-			const id = req.params.id;
 			try {
-				const ration = await RationModel.findByIdAndDelete(id, {useFindAndModify: false})
-				if(!ration) {
-					res.status(404).send("Ración no encontrada");
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					var deletedRation;
+					try {
+						deletedRation = await RationModel.findByIdAndDelete(req.params.rationid, {useFindAndModify: false});
+					} catch(err) {
+						res.status(404).send("Ración no encontrada")
+					}
+					if(deletedRation) {
+						const savedMeal = await MealModel.findByIdAndUpdate(
+							req.params.mealid,
+							{$pull: {racionesComida: req.params.rationid } },
+							{useFindAndModify: false}
+						)
+						res.json(savedMeal);
+					}
 				}
 				else {
-					const meal = await MealModel.findByIdAndUpdate(
-						mealid,
-						{$pull: {racionesComida: id } },
-						{useFindAndModify: false}
-					);
-					if(!meal) {
-						res.status(404).send("Comida no encontrada");
-					}
-					else {
-						res.json(meal);
-					}
+					res.status(401).send("Usuario no autorizado");
 				}
 			} catch(err) {
 				next(err);
@@ -382,7 +327,7 @@ router.delete("/ration/:mealid/:id", async (req, res, next) => {
 });
 
 // Consulta del ejercicio con la id correspondiente
-router.get("/ration/:id", async (req, res, next) => {
+router.get("/ration/:id/:rationid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -392,23 +337,28 @@ router.get("/ration/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await RationModel.findById(id).populate("alimentoComida").exec((err, ration) => {	// Se busca el ejercicio cuya id coincida
-				if(err) {
-					next(err);
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
 				}
-				else if(!ration) {
-					res.status(404).send("Ración no encontrada");
-				}
-				else {
+				else if(permissionsResData && resPermission.includes("read")) {
+					const ration = await RationModel.findById(req.params.rationid).populate("alimentoComida")
 					res.json(ration);
 				}
-			});
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
-router.post("/ration/:id", async (req, res, next) => {
+router.post("/ration/:id/:rationid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -418,30 +368,31 @@ router.post("/ration/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await RationModel.findById(id, (err, ration) => {
-				if(err || !ration) {
-					res.status(404).send("Ración no encontrada");
-				} 
-				else {
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					var ration = await RationModel.findById(req.params.rationid);
 					ration.alimentoComida = req.body.mealfood;
 					ration.numRaciones = req.body.numberofrations;
-
-					ration
-						.save()
-						.then(ration => {
-							res.json(ration)
-						})
-						.catch((err) => {
-							next(err);
-						});
+					const savedRation = await ration.save();
+					res.json(savedRation);
 				}
-			});
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
 
-router.post("/meal/:id", async (req, res, next) => {
+router.post("/meal/:id/:mealid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -451,24 +402,26 @@ router.post("/meal/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await MealModel.findById(id, (err, meal) => {
-				if(err || !meal) {
-					res.status(404).send("Comida no encontrada");
-				} 
-				else {
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					var meal = await MealModel.findById(req.params.mealid);
 					meal.nombreComida = req.body.mealname;
 					meal.diaComida = req.body.mealday;
-					meal
-						.save()
-						.then(meal => {
-							res.json(meal)
-						})
-						.catch((err) => {
-							next(err);
-						});
+					const savedMeal = await meal.save();
+					res.json(savedMeal)
 				}
-			});
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });

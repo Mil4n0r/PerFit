@@ -10,8 +10,9 @@ export const acceptFriendRequest = (id) => axios.post(`http://localhost:4000/adm
 
 export const rejectFriendRequest = (id) => axios.post(`http://localhost:4000/admin/reject/friend/request/${id}`);
 
-export const sendTrainingRequest = (id) => axios.post(`http://localhost:4000/admin/training/request/${id}`);
+export const sendTrainingRequest = (id) => axios.post(`http://localhost:4000/admin/train/request/${id}`)
+	.then(res => res.data);
 
-export const acceptTrainingRequest = (id) => axios.post(`http://localhost:4000/admin/accept/training/request/${id}`);
+export const acceptTrainingRequest = (id) => axios.post(`http://localhost:4000/admin/accept/train/request/${id}`);
 
-export const rejectTrainingRequest = (id) => axios.post(`http://localhost:4000/admin/reject/training/request/${id}`);
+export const rejectTrainingRequest = (id) => axios.post(`http://localhost:4000/admin/reject/train/request/${id}`);

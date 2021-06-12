@@ -9,7 +9,7 @@ const { checkPermissionsClass } = require('../../auth/checkPermissions');
 const mongoose = require('mongoose');
 
 router.post("/create/class", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
 		}
@@ -18,28 +18,42 @@ router.post("/create/class", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const Class = new ClassModel({
-				diaClase: req.body.classday,
-				monitorClase: req.body.classmonitor,
-				//asistentesClase se asigna posteriormente
-				actividadClase: req.body.classactivity,
-				salaClase: req.body.classroom
-			});
-			Class
-				.save()
-				.then((Class) => {
-					res.json(Class);
-				})
-				.catch((err) => {
-					next(err);
-				});
+			if(user.role !== "Administrador") {
+				res.status(401).send("No tiene permisos suficientes");
+			}
+			else {
+				const permissionsResData = await checkPermissionsClass(user, req);	// Se busca el usuario cuya id coincida
+				const resError = permissionsResData.error;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					try {
+						const Class = new ClassModel({
+							diaClase: req.body.classday,
+							monitorClase: req.body.classmonitor,
+							//asistentesClase se asigna posteriormente
+							actividadClase: req.body.classactivity,
+							salaClase: req.body.classroom
+						});
+						const savedClass = await Class.save()
+						res.json(savedClass);
+					} catch(err) {
+						next(err);
+					}
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			}
 		}
 	})(req,res,next);
 });
 
 // Lista de clases
 router.get("/class/list", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
 		}
@@ -48,33 +62,16 @@ router.get("/class/list", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			
-			ClassModel
-			.find({})
-			.populate("monitorClase")
-			.populate("asistentesClase")
-			.populate("actividadClase")
-			.populate("salaClase")
-			.exec((err,classes) => {
-				
-				if(err) {
-					next(err);	
-				} 
-				else {
-					res.json(classes);	
-				}
-			})
-			
-			/*
-			ClassModel.find((err, classes) => {
-				if(err) {
-					next(err);	
-				} 
-				else {
-					res.json(classes);	
-				}
-			});
-			*/
+			try {
+				const classes = await ClassModel.find({})
+					.populate("monitorClase", "aliasUsuario")
+					.populate("asistentesClase", "aliasUsuario")
+					.populate("actividadClase")
+					.populate("salaClase");
+				res.json(classes);
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -89,19 +86,27 @@ router.get("/class/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsRes = await checkPermissionsClass(user, req);
-			const resError = permissionsRes.error;
-			const resClass = permissionsRes.class;
-			const resPermission = permissionsRes.permission;
-			if(resError || !resClass) {
-				res.status(resError.code).send(resError.message);
+			try {
+				const permissionsRes = await checkPermissionsClass(user, req);
+				const resError = permissionsRes.error;
+				const resClass = permissionsRes.class;
+				const resPermission = permissionsRes.permission;
+				if(resError || !resClass) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(resClass) {
+					res.json({
+						classInfo: resClass,
+						permission: resPermission
+					});
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
-			else if(resClass) {
-				res.json({
-					classInfo: resClass,
-					permission: resPermission
-				});
-			}
+			
 		}
 	})(req,res,next);
 });
@@ -117,28 +122,29 @@ router.post("/class/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsClass(user, req);
-			const resError = permissionsResData.error;
-			const resClass = permissionsResData.class;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("write")) {				
-				resClass.diaClase = req.body.classday;
-				resClass.monitorClase = req.body.classmonitor;
-				//resClass.asistentesClase se edita aparte (lista)
-				resClass.actividadClase = req.body.classactivity;
-				resClass.salaClase = req.body.classroom;
-				
-				resClass
-					.save()		// Se almacena la clase
-					.then(classData => {
-						res.json(classData)	// Se manda como respuesta la clase modificada
-					})
-					.catch((err) => {
-						next(err);
-					});
+			try {
+				const permissionsResData = await checkPermissionsClass(user, req);
+				const resError = permissionsResData.error;
+				const resClass = permissionsResData.class;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {				
+					resClass.diaClase = req.body.classday;
+					resClass.monitorClase = req.body.classmonitor;
+					//resClass.asistentesClase se edita aparte (lista)
+					resClass.actividadClase = req.body.classactivity;
+					resClass.salaClase = req.body.classroom;
+					
+					const savedClass = await resClass.save();
+					res.json(savedClass);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -155,22 +161,23 @@ router.delete("/class/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsClass(user, req);
-			const resError = permissionsResData.error;
-			const resClass = permissionsResData.class;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("delete")) {
-				resClass
-					.remove()	// Se elimina la clase
-					.then(classData => {
-						res.json(classData);	// Se manda como respuesta la clase eliminada
-					})
-					.catch((err) => {
-						next(err);
-					});
+			try {
+				const permissionsResData = await checkPermissionsClass(user, req);
+				const resError = permissionsResData.error;
+				const resClass = permissionsResData.class;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					const removedClass = await resClass.remove();	// Se elimina la clase
+					res.json(removedClass);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -186,22 +193,24 @@ router.post("/join/class/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsClass(user, req);
-			const resError = permissionsResData.error;
-			const resClass = permissionsResData.class;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("join")) {
-				resClass
-					.update({$push: {asistentesClase: mongoose.Types.ObjectId(user._id)} })
-					.then(classData => {
-						res.json(classData);	// Se manda como respuesta la clase eliminada
-					})
-					.catch((err) => {
-						next(err);
-					});
+			try {
+				const permissionsResData = await checkPermissionsClass(user, req);
+				const resError = permissionsResData.error;
+				const resClass = permissionsResData.class;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("join")) {
+					await resClass.asistentesClase.push(mongoose.Types.ObjectId(user._id))
+					const savedClass = await resClass.save();
+					res.json(savedClass)
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -217,22 +226,24 @@ router.post("/leave/class/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsClass(user, req);
-			const resError = permissionsResData.error;
-			const resClass = permissionsResData.class;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("leave")) {
-				resClass
-					.update({$pull: {asistentesClase: mongoose.Types.ObjectId(user._id)} })
-					.then(classData => {
-						res.json(classData);	// Se manda como respuesta la clase eliminada
-					})
-					.catch((err) => {
-						next(err);
-					});
+			try {
+				const permissionsResData = await checkPermissionsClass(user, req);
+				const resError = permissionsResData.error;
+				const resClass = permissionsResData.class;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("leave")) {
+					await resClass.asistentesClase.pull(mongoose.Types.ObjectId(user._id))
+					const savedClass = await resClass.save();
+					res.json(savedClass);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);

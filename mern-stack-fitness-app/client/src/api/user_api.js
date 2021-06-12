@@ -14,9 +14,6 @@ export const getUsersMatching = (inactive, search) => axios.get(`http://localhos
 export const getUser = (id) => axios.get(`http://localhost:4000/admin/user/${id}`)
 	.then(res => res.data);
 
-export const profile = () => axios.get("http://localhost:4000/user/profile")
-	.then(res => res.data)
-
 export const logIn = (email, password,rememberme) => axios.post(`http://localhost:4000/login/${rememberme}`, {email,password}, {	// Por defecto se le aplica JSON.stringify al segundo argumento
 	data: {email,password,rememberme}
 })

@@ -63,7 +63,6 @@ function NavigationBar() {
 	}, [loggedIn]);
 
 	const getTabs = () => {
-		console.log("LOGGED", loggedIn)
 		if(loggedIn) {
 			setTabs([
 				<NavTab icon={<HomeOutlinedIcon/>} key="home" label = "INICIO" to= "/" component = {NavLink} value = {0} wrapped/>,

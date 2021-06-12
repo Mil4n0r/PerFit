@@ -6,13 +6,11 @@ const ExerciseModel = require('../../models/ExerciseSchema');
 
 const { checkPermissionsExercise } = require('../../auth/checkPermissions');
 
-const mongoose = require('mongoose');
-
 // EJERCICIOS
 
 // Creación de ejercicio
 router.post("/create/exercise", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, (err, user, info) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
 		}
@@ -21,20 +19,18 @@ router.post("/create/exercise", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			// Creación del ejercicio
-			const Exercise = new ExerciseModel({
-				nombreEjercicio: req.body.exercisename,
-				tipoEjercicio: req.body.exercisetype,
-				creadoPor: user._id
-			});
-			Exercise
-				.save()		// Se almacena el ejercicio
-				.then((Exercise) => {
-					res.json(Exercise);		// Se manda como respuesta el ejercicio
-				})
-				.catch((err) => {
-					next(err);
+			try {
+				const Exercise = new ExerciseModel({
+					nombreEjercicio: req.body.exercisename,
+					tipoEjercicio: req.body.exercisetype,
+					creadoPor: user._id
 				});
+				const savedExercise = await Exercise.save()
+				res.json(savedExercise);
+			} catch(err) {
+				next(err);
+			}
+			
 		}
 	})(req,res,next);
 });
@@ -49,31 +45,22 @@ router.get("/exercise/list/:search?", async (req,res,next) => {
 			next(error);
 		}
 		else {
-			if(req.params.search) {
-				await ExerciseModel.find(
-					req.params.search !== "undefined" ?
-						{nombreEjercicio: new RegExp(req.params.search, 'i')} 
-					:
-						{}
-					,
-					(err, exercises) => {	// Buscamos en el modelo todos los ejercicios registrados
-					if(err) {
-						next(err);	
-					} 
-					else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
-						res.json(exercises);	
-					}
-				});
-			}
-			else {
-				await ExerciseModel.find((err, exercises) => {	// Buscamos en el modelo todos los ejercicios registrados
-					if(err) {
-						next(err);	
-					} 
-					else {	// Se manda como respuesta el contenido de la lista de ejercicios (en JSON)
-						res.json(exercises);	
-					}
-				});
+			try {
+				if(req.params.search) {
+					const exercises = await ExerciseModel.find(
+						req.params.search !== "undefined" ?
+							{nombreEjercicio: new RegExp(req.params.search, 'i')} 
+						:
+							{}
+					);
+					res.json(exercises);
+				}
+				else {
+					const exercises = await ExerciseModel.find({});
+					res.json(exercises);
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -90,18 +77,25 @@ router.get("/exercise/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsRes = await checkPermissionsExercise(user, req);	// Se busca el usuario cuya id coincida
-			const resError = permissionsRes.error;
-			const resExercise = permissionsRes.exercise;
-			const resPermission = permissionsRes.permission;
-			if(resError || !resExercise) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-			}
-			else if(resExercise) {
-				res.json({
-					exerciseInfo: resExercise,
-					permission: resPermission
-				});
+			try {
+				const permissionsRes = await checkPermissionsExercise(user, req);	// Se busca el usuario cuya id coincida
+				const resError = permissionsRes.error;
+				const resExercise = permissionsRes.exercise;
+				const resPermission = permissionsRes.permission;
+				if(resError || !resExercise) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(resExercise) {
+					res.json({
+						exerciseInfo: resExercise,
+						permission: resPermission
+					});
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -118,26 +112,26 @@ router.post("/exercise/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsExercise(user, req);
-			const resError = permissionsResData.error;
-			const resExercise = permissionsResData.exercise;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("write")) {
-				resExercise.nombreEjercicio = req.body.exercisename
-				resExercise.tipoEjercicio = req.body.exercisetype
-				// resExercise.creadoPor se queda igual
+			try {
+				const permissionsResData = await checkPermissionsExercise(user, req);
+				const resError = permissionsResData.error;
+				const resExercise = permissionsResData.exercise;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("write")) {
+					resExercise.nombreEjercicio = req.body.exercisename
+					resExercise.tipoEjercicio = req.body.exercisetype
 
-				resExercise
-					.save()		// Se almacena el alimento
-					.then(exerciseData => {
-						res.json(exerciseData)	// Se manda como respuesta el alimento modificado
-					})
-					.catch((err) => {
-						next(err);
-					});
+					const savedExercise = await resExercise.save();
+					res.json(savedExercise);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);
@@ -154,22 +148,23 @@ router.delete("/exercise/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const permissionsResData = await checkPermissionsExercise(user, req);
-			const resError = permissionsResData.error;
-			const resExercise = permissionsResData.exercise;
-			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
-			}
-			else if(permissionsResData && resPermission.includes("delete")) {
-				resExercise
-					.remove()	// Se elimina el alimento
-					.then(exerciseData => {
-						res.json(exerciseData);	// Se manda como respuesta el alimento eliminado
-					})
-					.catch((err) => {
-						next(err);
-					});
+			try {
+				const permissionsResData = await checkPermissionsExercise(user, req);
+				const resError = permissionsResData.error;
+				const resExercise = permissionsResData.exercise;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					const removedExercise = await resExercise.remove();
+					res.json(removedExercise);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
 			}
 		}
 	})(req,res,next);

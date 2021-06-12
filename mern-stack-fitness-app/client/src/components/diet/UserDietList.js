@@ -123,7 +123,7 @@ export const UserDietList = () => {
 							<TableHeaderCell>Nombre de la dieta</TableHeaderCell>
 							<TableHeaderCell>Objetivo diario</TableHeaderCell>
 							{
-								loggedIn && loggedIn.role === "Administrador" ? (
+								loggedIn && user && (loggedIn._id === user.userInfo._id || loggedIn.alumnosEntrenados?.includes(user.userInfo._id)) ? (
 									<TableHeaderCell align='center'><Link to={`/associate/diet/${match.params.id}`}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
 								) :
 									<TableHeaderCell align='center'>Acción</TableHeaderCell>
@@ -136,12 +136,6 @@ export const UserDietList = () => {
 								<TableCell component="th" scope="row">{diet.nombrePlan}</TableCell>
 								<TableCell>{objectivesFormat(diet.objetivoDiario)}</TableCell>
 								<TableCell align='center'><Link to={`/diet/info/${diet._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
-								{
-									/*
-									<Link to={`/edit/diet/${match.params.id}/${diet._id}`}>Editar</Link>
-									<Link to={`/delete/diet/${match.params.id}/${diet._id}`}>Eliminar</Link>
-									*/
-								}
 							</TableRow>
 						))}
 					</TableBody>

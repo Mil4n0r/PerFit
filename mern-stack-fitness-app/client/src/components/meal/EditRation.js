@@ -9,10 +9,9 @@ export const EditRation = () => {
 	const match = useRouteMatch();
 	const [ration, setRation] = useState();
 	const history = useHistory();
-
 	useEffect(() => {
 		const fetchRation = async() => {
-			const ration = await getRation(match.params.id);
+			const ration = await getRation(match.params.dietid, match.params.id);
 			setRation(ration);
 		}
 		fetchRation();
@@ -21,8 +20,8 @@ export const EditRation = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateRation(data, match.params.id);
-		history.push(`/associate/diet/meal/${match.params.mealid}`);
+		await updateRation(match.params.dietid, match.params.id, data);
+		history.push(`/associate/diet/meal/${match.params.dietid}`);
 	};
 
 	return ration ? (

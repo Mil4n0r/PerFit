@@ -2,12 +2,13 @@ const express = require('express');
 const passport = require('passport');
 const router = express.Router();
 
+const { checkPermissionsUser, checkPermissionsPlan } = require('../../auth/checkPermissions');
+
 const RoutineModel = require('../../models/RoutineSchema');
 const TrainingModel = require('../../models/TrainingSchema');
 const mongoose = require('mongoose');
 
-// Creación de rutina
-router.post("/create/routine", async (req, res, next) => {
+router.post("/associate/routine/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -17,45 +18,29 @@ router.post("/create/routine", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			// Creación de la rutina
-			const Routine = new RoutineModel({
-				tiempoRutina: req.body.routinetime,
-				//entrenamientosRutina: req.body.routinetrainings
-				nombrePlan: req.body.routinename
-			});
-			Routine
-				.save()		// Se almacena la rutina
-				.then((Routine) => {
-					res.json(Routine);		// Se manda como respuesta la rutina
-				})
-				.catch((err) => {
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);
+			}
+			else if(permissionsResData && resPermission.includes("checkplans")) {
+				try {
+					const Routine = new RoutineModel({
+						tiempoRutina: req.body.routinetime,
+						//entrenamientosRutina: req.body.routinetrainings
+						nombrePlan: req.body.routinename,
+						usuarioPlan: req.params.id
+					});
+					const savedRoutine = await Routine.save();
+					res.json(savedRoutine);
+				} catch(err) {
 					next(err);
-				});
-		}
-	})(req,res,next);
-});
-
-router.get("/routine/list", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			await RoutineModel
-			.find({})
-			.populate("usuarioPlan")
-			.exec((err,routines) => {	// Buscamos en el modelo todas las rutinas registradas
-				if(err) {
-					next(err);	
-				} 
-				else {	// Se manda como respuesta el contenido de la lista de rutinas (en JSON)
-					res.json(routines);	
 				}
-			});
+			}
+			else {
+				res.status(401).send("Usuario no autorizado");
+			}	
 		}
 	})(req,res,next);
 });
@@ -70,15 +55,23 @@ router.get("/routine/list/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const userid = req.params.id;
-			await RoutineModel.find({usuarioPlan: userid},(err, routines) => {	// Buscamos en el modelo todas las rutinas registradas
-				if(err) {
-					next(err);	
-				} 
-				else {	// Se manda como respuesta el contenido de la lista de rutinas (en JSON)
-					res.json(routines);	
+			const permissionsResData = await checkPermissionsUser(user, req);	// Se busca el usuario cuya id coincida
+			const resError = permissionsResData.error;
+			const resPermission = permissionsResData.permission;
+			if(resError) {
+				res.status(resError.code).send(resError.message);
+			}
+			else if(permissionsResData && resPermission.includes("checkplans")) {
+				try {
+					const routines = await RoutineModel.find({usuarioPlan: req.params.id});
+					res.json(routines);
+				} catch(err) {
+					next(err);
 				}
-			});
+			}
+			else {
+				res.status(401).send("Usuario no autorizado");
+			}
 		}
 	})(req,res,next);
 });
@@ -94,18 +87,22 @@ router.get("/routine/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await RoutineModel.findById(id, (err, routine) => {	// Se busca la rutina cuya id coincida
-				if(err) {
-					next(err);
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resRoutine = permissionsResData.plan;
+				if(resError || !resRoutine) {
+					res.status(resError.code).send(resError.message);
 				}
-				else if(!routine) {
-					res.status(404).send("Rutina no encontrado");	// En caso de no encontrarla se lanza el mensaje 404 Not Found
+				else if(resRoutine) {
+					res.json(resRoutine);
 				}
 				else {
-					res.json(routine);		// Se manda como respuesta la rutina encontrada
+					res.status(401).send("Usuario no autorizado");
 				}
-			});
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
@@ -121,24 +118,24 @@ router.post("/routine/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await RoutineModel.findById(id, (err, routine) => {	// Se busca la rutina cuya id coincida
-				if(err || !routine) {
-					res.status(404).send("Rutina no encontrada");	// En caso de no encontrarla se lanza el mensaje 404 Not Found
-				} 
-				else {
-					routine.nombrePlan = req.body.routinename;
-					routine.tiempoRutina = req.body.routinetime;
-					routine
-						.save()		// Se almacena la rutina
-						.then(routine => {
-							res.json(routine)	// Se manda como respuesta la rutina modificada
-						})
-						.catch((err) => {
-							next(err);
-						});
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);	// Se busca el usuario cuya id coincida
+				const resError = permissionsResData.error;
+				const resRoutine = permissionsResData.plan;
+				const resPermission = permissionsResData.permission;
+				if(resError || !resRoutine) {
+					res.status(resError.code).send(resError.message);
 				}
-			});
+				else if(permissionsResData && resPermission.includes("write")) {
+					resRoutine.nombrePlan = req.body.routinename;
+					resRoutine.tiempoRutina = req.body.routinetime;
+					const savedRoutine = await resRoutine.save();
+					res.json(savedRoutine);
+				}
+			} catch(err) {
+				next(err);
+			}
+			
 		}
 	})(req,res,next);
 });
@@ -154,94 +151,24 @@ router.delete("/routine/:id", async (req, res, next) => {
 			next(error);
 		}
 		else {
-			const id = req.params.id;
-			await RoutineModel.findById(id, (err, routine) => {	// Se busca la rutina cuya id coincida
-				if(err || !routine) {
-					res.status(404).send("Rutina no encontrada");
+			try {
+				const permissionsResData = await checkPermissionsPlan(user, req);
+				const resError = permissionsResData.error;
+				const resRoutine = permissionsResData.plan;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("delete")) {
+					const removedRoutine = await resRoutine.remove();
+					res.json(removedRoutine);
 				}
 				else {
-					routine
-						.remove()	// Se elimina la rutina
-						.then(routine => {
-							res.json(routine);	// Se manda como respuesta la rutina eliminada
-						})
-						.catch((err) => {
-							next(err);
-						});
+					res.status(401).send("Usuario no autorizado");
 				}
-			});
-		}
-	})(req,res,next);
-});
-
-router.post("/associate/routine/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			// Creación de la rutina
-			const Routine = new RoutineModel({
-				tiempoRutina: req.body.routinetime,
-				//entrenamientosRutina: req.body.routinetrainings
-				nombrePlan: req.body.routinename,
-				usuarioPlan: req.params.id
-			});
-			Routine
-				.save()		// Se almacena la rutina
-				.then((Routine) => {
-					res.json(Routine);		// Se manda como respuesta la rutina
-				})
-				.catch((err) => {
-					next(err);
-				});
-		}
-	})(req,res,next);
-});
-
-router.post("/associate/routine/training/:id", async (req, res, next) => {
-	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
-		if(err) {
-			next(err);
-		}
-		else if(!user) {
-			const error = new Error(info.message)
-			next(error);
-		}
-		else {
-			const Training = new TrainingModel({
-				nombreEntrenamiento: req.body.trainingname,
-				diaEntrenamiento: req.body.trainingday
-			});
-			
-			Training
-				.save()
-				.then((Training) => {
-					return RoutineModel.findByIdAndUpdate(
-						req.params.id,
-						{
-							$push: {
-								entrenamientosRutina: mongoose.Types.ObjectId(Training._id)
-							}
-						},
-						{useFindAndModify: false}
-					)
-				})
-				.then((Routine) => {
-					if(!Routine) {
-						res.status(404).send("Rutina no encontrada");
-					}
-					else {
-						res.json(Training)
-					}
-				})
-				.catch((err) => {
-					next(err);
-				})
+			} catch(err) {
+				next(err);
+			}
 		}
 	})(req,res,next);
 });
