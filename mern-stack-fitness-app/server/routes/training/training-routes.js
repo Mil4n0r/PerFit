@@ -45,7 +45,8 @@ router.post("/associate/routine/training/:id", async (req, res, next) => {
 								entrenamientosRutina: mongoose.Types.ObjectId(Training._id)
 							}
 						},
-						{useFindAndModify: false}
+						{useFindAndModify: false},
+						{ runValidators: true }
 					);
 					res.json(savedTraining);
 				}
@@ -271,7 +272,8 @@ router.post("/associate/training/workout/:id/:trainingid", async (req, res, next
 								trabajoEntrenamiento: mongoose.Types.ObjectId(savedWorkout._id)
 							}
 						},
-						{useFindAndModify: false}
+						{useFindAndModify: false},
+						{ runValidators: true }
 					);
 					res.json(savedTraining);
 				}
@@ -313,7 +315,8 @@ router.delete("/workout/:trainingid/:id/:workoutid", async (req, res, next) => {
 						const savedTraining = await TrainingModel.findByIdAndUpdate(
 							req.params.trainingid,
 							{$pull: {trabajoEntrenamiento: req.params.workoutid } },
-							{useFindAndModify: false}
+							{useFindAndModify: false},
+							{ runValidators: true }
 						);
 						res.json(savedTraining);
 					}

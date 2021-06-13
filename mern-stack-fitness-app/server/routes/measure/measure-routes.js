@@ -139,7 +139,8 @@ router.delete("/measure/:trackingid/:id", async (req, res, next) => {
 					const removedMeasure = await resMeasure.remove();
 					var tracking;
 					try {
-						tracking = await TrackingModel.findByIdAndUpdate(req.params.trackingid, {$pull: {medidasSeguidas: req.params.id} }, {useFindAndModify: false} );
+						tracking = await TrackingModel.findByIdAndUpdate(req.params.trackingid, {$pull: {medidasSeguidas: req.params.id} }, {useFindAndModify: false},
+							{ runValidators: true } );
 					} catch(err) {
 						res.status(404).send("Seguimiento no encontrado");
 					}
@@ -183,7 +184,8 @@ router.post("/associate/tracking/measure/:id", async (req, res, next) => {
 								medidasSeguidas: mongoose.Types.ObjectId(savedMeasure._id)
 							}
 						},
-						{useFindAndModify: false}
+						{useFindAndModify: false},
+						{ runValidators: true }
 					)
 				} catch(err) {
 					res.status(404).send("Seguimiento no encontrado");

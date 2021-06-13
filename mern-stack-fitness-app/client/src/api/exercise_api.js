@@ -5,7 +5,7 @@ export const createExercise = (exercise) => axios.post("http://localhost:4000/us
 })
 	.then(res => res.data);
 
-export const getExercises = () => axios.get("http://localhost:4000/user/exercise/list")
+export const getExercisesCreated = (creator) => axios.get(`http://localhost:4000/user/exercises/created/${creator}`)
 	.then(res => res.data)
 
 export const getExercisesMatching = (search) => axios.get(`http://localhost:4000/user/exercise/list/${search}`)

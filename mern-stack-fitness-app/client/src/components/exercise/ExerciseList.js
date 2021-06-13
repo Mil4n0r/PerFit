@@ -63,13 +63,24 @@ export const ExerciseList = (props) => {
 							<TableRow key={exercise._id}>
 								<TableCell component="th" scope="row">{exercise.nombreEjercicio}</TableCell>
 								<TableCell>{exercise.tipoEjercicio}</TableCell>
-								{ 
-									props && props.training ? (
-										<TableCell align="center"><Link to={`/create/workout/${props.routine}/${props.training}/${exercise._id}`}><ArrowForwardOutlinedIcon/></Link></TableCell>
-									) :
-										<TableCell align='center'><Link to={`/exercise/info/${exercise._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
-								}
-								
+								<TableCell>
+									<HorizontalGrid container spacing={1}>
+										<HorizontalGrid item xs>
+											<Link to={`/exercise/info/${exercise._id}`}>
+												<VisibilityOutlinedIcon color='primary'/>
+											</Link>
+										</HorizontalGrid>
+										{
+											props && props.training && (
+												<HorizontalGrid item xs>
+													<Link to={`/create/workout/${props.routine}/${props.training}/${exercise._id}`}>
+														<ArrowForwardOutlinedIcon color='secondary'/>
+													</Link>
+												</HorizontalGrid>
+											)
+										}
+									</HorizontalGrid>
+								</TableCell>
 							</TableRow>
 						))}
 					</TableBody>

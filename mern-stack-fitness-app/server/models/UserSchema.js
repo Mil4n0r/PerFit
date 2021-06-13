@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const mongooseTypePhone = require('mongoose-type-phone');
+const idvalidator = require('mongoose-id-validator');
+
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
 
@@ -19,31 +22,126 @@ const UserSchema = mongoose.Schema({
 		required: true,
 		trim: true,
 		unique: true,
+		validate: {
+			validator: function(v) {
+				return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(v);
+			},
+			message: "El email no tiene un formato válido",
+		}
 	},
-	passwordUsuario: { type: String, required: true },
-	
-	datosPersonales: { // FALTA VALIDACIÓN DE LOS DATOS (EMAIL, TLFN, FECHA...)
-		nombreUsuario: { type: String, required: true, trim: true },
-		apellidosUsuario: { type: String, required: true, trim: true },
-		dniUsuario: { type: String, required: true, trim: true },
-		direccionUsuario: { type: String, trim: true },
-		telefonoUsuario: { type: String, trim: true },
-		fechaNacUsuario: { type: Date, required: true }		
+	passwordUsuario: { 
+		type: String, 
+		required: true 
+	},
+	datosPersonales: {
+		nombreUsuario: {
+			type: String,
+			required: true, 
+			trim: true,
+			validate: {
+				validator: function(v) {
+					return /^[a-zA-Z\'\- À-ú]+$/.test(v);
+				},
+				message: "El nombre debe contener sólo caracteres alfabéticos",
+			}
+		},
+		apellidosUsuario: { 
+			type: String, 
+			required: true, 
+			trim: true,
+			validate: {
+				validator: function(v) {
+					return /^[a-zA-Z\'\- À-ú]+$/.test(v);
+				},
+				message: "El apellido debe contener sólo caracteres alfabéticos",
+			}
+		},
+		dniUsuario: { 
+			type: String, 
+			required: true, 
+			trim: true,
+			validate: [{
+				validator: function(v) {
+					return /^[a-zA-Z\'\- À-ú]+$/.test(v);
+				},
+				message: "El apellido debe contener sólo caracteres alfabéticos",
+				validator: function(val) {
+					const number = val.substr(0,val.length-1) % 23;
+					const letter = val.substr(val.length-1,1);
+					const checkletter = 'TRWAGMYFPDXBNJZSQVHLCKET'.substring(number,number+1);
+					return (checkletter === letter.toUpperCase())
+				},
+				message: "El nombre de usuario debe ocupar entre 3 y 16 caracteres"
+			}]
+		},
+		direccionUsuario: { 
+			type: String, 
+			trim: true,
+			validate: [{
+				validator: function(v) {
+					return /^[a-zA-Z\'\/\-\.\, À-ú\º0-9]+$/.test(v);
+				},
+				message: "La dirección no tiene un formato válido",
+				validator: function(v) {
+					return /^.{4,80}$/.test(v);
+				},
+				message: "La dirección debe tener entre 4 y 80 caracteres"
+			}]
+		},
+		telefonoUsuario: { 
+			type: mongoose.SchemaTypes.Phone, 
+			required: true,
+			allowedNumberTypes: [mongooseTypePhone.PhoneNumberType.MOBILE, mongooseTypePhone.PhoneNumberType.FIXED_LINE_OR_MOBILE],
+			phoneNumberFormat: mongooseTypePhone.PhoneNumberFormat.INTERNATIONAL,
+			defaultRegion: 'ES',
+		},
+		fechaNacUsuario: { 
+			type: Date, 
+			required: true 
+		}		
 	},
 	privacidadUsuario: { 
 		type: String,
 		default: 'Público',
-		enum: ['Público', 'Sólo amigos', 'Privado']
+		enum: ['Público', 'Sólo amigos', 'Privado'],
+		required: true
 	},
 	
-	aliasUsuario: { type: String, required: true, unique: true, trim: true },
+	aliasUsuario: { 
+		type: String, 
+		required: true, 
+		trim: true,
+		unique: true, 
+		validate: [{
+			validator: function(v) {
+				return /^([a-zA-Z0-9\-\_\.]+)$/.test(v);
+			},
+			message: "El nombre de usuario debe constar únicamente de caracteres alfanuméricos, guiones (-), guiones bajos (_) y puntos (.)",
+			validator: function(v) {
+				return /^.{3,16}$/.test(v);
+			},
+			message: "El nombre de usuario debe ocupar entre 3 y 16 caracteres"
+		}],  
+	},
 
-	amigosUsuario: [ { type: mongoose.Schema.Types.ObjectId, ref: "Usuario"} ],
-	peticionesPendientes: [ { type: mongoose.Schema.Types.ObjectId, ref: "Solicitud"} ],
+	amigosUsuario: [ { 
+		type: mongoose.Schema.Types.ObjectId, 
+		ref: "Usuario"
+	} ],
+	peticionesPendientes: [ { 
+		type: mongoose.Schema.Types.ObjectId, 
+		ref: "Solicitud"
+	} ],
 
-	cuentaActivada: { type: Boolean, required: true },
+	cuentaActivada: { 
+		type: Boolean, 
+		required: true 
+	},
 
-	tieneEntrenador: { type: Boolean, required: true }
+	tieneEntrenador: { 
+		type: Boolean, 
+		required: true 
+	}
 
 	/*
 	// Componentes de seguridad
@@ -84,4 +182,5 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB =
 	return bcrypt.compare(candidatePassword, this.passwordUsuario);
 };
 
+UserSchema.plugin(idvalidator);
 module.exports = mongoose.model("Usuario", UserSchema);

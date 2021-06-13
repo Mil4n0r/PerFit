@@ -4,12 +4,12 @@ export const WorkoutSchema = yup.object().shape({
 	numberofseries: yup.number()
 		.typeError("Introduzca el número de series")
 		.required("Introduzca el número de series")
-		.positive("El número introducido debe ser positivo"),
+		.positive("El número introducido debe ser mayor que 0"),
 	numberofreps: yup.array()
 		.of(yup.number()
 			.typeError("Introduzca el número de repeticiones")
 			.required("Introduzca el número de repeticiones")
-			.positive("El número de repeticiones introducido debe ser positivo")
+			.min(0, "El número de repeticiones introducido debe ser positivo"),
 		),
 	weightsused: yup.array()
 		.of(yup.number()

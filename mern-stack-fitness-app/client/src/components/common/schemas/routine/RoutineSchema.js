@@ -7,5 +7,5 @@ export const RoutineSchema = yup.object().shape({
 	routinetime: yup.number()
 		.typeError("Introduzca el tiempo medio por sesión de la rutina")
 		.required("Introduzca el tiempo medio por sesión de la rutina")
-		.positive("El número introducido debe ser positivo")
+		.min(30, "El número introducido debe ser igual o superior a 30"),
 });

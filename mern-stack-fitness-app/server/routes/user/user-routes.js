@@ -268,7 +268,8 @@ router.delete("/friend/:id/:id2", async (req, res, next) => {
 								amigosUsuario: mongoose.Types.ObjectId(req.params.id)
 							}
 						},
-						{useFindAndModify: false}
+						{useFindAndModify: false},
+						{ runValidators: true }
 					)
 					res.json(savedUser);
 				}
@@ -306,7 +307,8 @@ router.delete("/client/:id/:id2", async (req, res, next) => {
 						{
 							tieneEntrenador: false
 						},
-						{useFindAndModify: false}
+						{useFindAndModify: false},
+						{ runValidators: true }
 					)
 					res.json(savedUser);
 				}

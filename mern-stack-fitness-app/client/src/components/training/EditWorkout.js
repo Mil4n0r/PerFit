@@ -13,7 +13,6 @@ export const EditWorkout = () => {
 	useEffect(() => {
 		const fetchWorkout = async() => {
 			const workout = await getWorkout(match.params.routineid, match.params.id);
-			console.log("WORKOUT!!!", workout)
 			setWorkout(workout);
 		}
 		fetchWorkout();
@@ -22,7 +21,6 @@ export const EditWorkout = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		console.log(match.params)
 		await updateWorkout(match.params.routineid, match.params.id, data);
 		history.push(`/associate/routine/training/${match.params.routineid}`);
 	};

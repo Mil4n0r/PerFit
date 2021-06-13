@@ -4,11 +4,8 @@ export const createFood = (food) => axios.post("http://localhost:4000/user/creat
 	data: food
 })
 	.then(res => res.data);
-	/*.catch((err) => {
-		console.log("ERROR HANDLING: ", err.response.data)
-	})*/
 
-export const getFoods = () => axios.get("http://localhost:4000/user/food/list")
+export const getFoodsCreated = (creator) => axios.get(`http://localhost:4000/user/foods/created/${creator}`)
 	.then(res => res.data)
 
 export const getFoodsMatching = (search) => axios.get(`http://localhost:4000/user/food/list/${search}`)

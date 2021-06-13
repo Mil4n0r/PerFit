@@ -223,50 +223,6 @@ export const Profile = () => {
 											)
 										}
 									</ContainerWithPadding>
-									<ContainerWithPadding>
-										{
-											user.permission.includes('checkplans') && (
-												<Grid container spacing={3}>
-													<Grid item xs>
-														<PrimaryLink to={`/routine/list/${user.userInfo._id}`}>
-															<FullWidthPaper>
-																<VerticalGrid item xs className="zoom">
-																	<ButtonAvatar><FitnessCenterOutlinedIcon /></ButtonAvatar>
-																	<Typography color='primary' className="caps">
-																		Rutinas
-																	</Typography>
-																</VerticalGrid>
-															</FullWidthPaper>
-														</PrimaryLink>
-													</Grid>
-													<Grid item xs>
-														<PrimaryLink to={`/diet/list/${user.userInfo._id}`}>
-															<FullWidthPaper>
-																<VerticalGrid item xs className="zoom">
-																	<ButtonAvatar><RestaurantMenuOutlinedIcon /></ButtonAvatar>
-																	<Typography color='primary' className="caps">
-																		Dietas
-																	</Typography>
-																</VerticalGrid>
-															</FullWidthPaper>
-														</PrimaryLink>
-													</Grid>
-													<Grid item xs>
-														<PrimaryLink to={`/tracking/list/${user.userInfo._id}`}>
-															<FullWidthPaper>
-																<VerticalGrid item xs className="zoom">
-																	<ButtonAvatar><TrendingUpOutlinedIcon /></ButtonAvatar>
-																	<Typography color='primary' className="caps">
-																		Seguimientos
-																	</Typography>
-																</VerticalGrid>
-															</FullWidthPaper>
-														</PrimaryLink>
-													</Grid>
-												</Grid>
-											)
-										}
-									</ContainerWithPadding>
 								</>
 							)
 						}

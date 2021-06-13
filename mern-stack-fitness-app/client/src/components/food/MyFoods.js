@@ -1,46 +1,32 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import { getFoods, getFoodsMatching } from '../../api';
+import { getFoodsCreated } from '../../api';
 
 import { Table, TableBody, TableCell, Paper, TextField, InputAdornment } from '@material-ui/core';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
-import ArrowForwardOutlinedIcon from '@material-ui/icons/ArrowForwardOutlined';
-import { VerticalDivider, ContainerWithPadding, HorizontalGrid, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
+import { HorizontalGrid, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography, TableContainerWithMargin as TableContainer } from '../../style/style';
 
-import SearchOutlinedIcon from '@material-ui/icons/SearchOutlined';
+import AuthContext from '../../context/AuthContext';
 
-export const FoodList = (props) => {
+export const MyFoods = (props) => {
 	const [foods, setFoods] = useState([])	// Creamos una variable de estado para almacenar la información del alimentos y una función para actualizarla
-	const [search, setSearch] = useState();
 
+	const { loggedIn } = useContext(AuthContext);
+	
 	useEffect(() => {
 		const fetchFoods = async () => {
-			const foods = await getFoodsMatching(search);	// Llamamos a la API para obtener la información de los alimentos
+			const foods = await getFoodsCreated(loggedIn._id);	// Llamamos a la API para obtener la información de los alimentos
 			setFoods(foods);	// Actualizamos la información de nuestra variable de estado para que contenga la información del alimento
 		}
 		fetchFoods();	// Llamamos aparte a fetchFoods para no hacer el useEffect completo asíncrono (práctica no recomendada)
-	}, [search]);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
+	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	return (
 		<BodyContainer>
 			<CustomTypography component="h2" variant="h5">
-				Listado de alimentos
+				Listado de alimentos creados por mi
 			</CustomTypography>
-			<ContainerWithPadding>
-				<HorizontalGrid container spacing={1}>
-					<HorizontalGrid item xs={6}>
-						<TextField
-							variant="outlined"
-							fullWidth
-							type="text"
-							onChange={(e)=>setSearch(e.target.value)}
-							placeholder="Buscar alimentos"
-							InputProps={{endAdornment: <InputAdornment position="end"><SearchOutlinedIcon /></InputAdornment>}}
-						/>
-					</HorizontalGrid>					
-				</HorizontalGrid>
-			</ContainerWithPadding>
 			<TableContainer component={Paper}>
 				<Table size="medium">
 					<TableHead>
@@ -52,12 +38,7 @@ export const FoodList = (props) => {
 							<TableHeaderCell>Proteinas (g)</TableHeaderCell>
 							<TableHeaderCell>Grasas (g)</TableHeaderCell>
 							<TableHeaderCell align="center">
-								{
-									props && props.meal ? (
-										<Link to={`/create/food/${props.diet}/${props.meal}`}><AddCircleOutlinedIcon color='secondary'/></Link>
-									) : 
-										<Link to={'/create/food'}><AddCircleOutlinedIcon color='secondary'/></Link>
-								}
+								<Link to={'/create/food'}><AddCircleOutlinedIcon color='secondary'/></Link>
 							</TableHeaderCell>
 						</TableRow>
 					</TableHead>
@@ -77,15 +58,6 @@ export const FoodList = (props) => {
 												<VisibilityOutlinedIcon color='primary'/>
 											</Link>
 										</HorizontalGrid>
-										{
-											props && props.meal && (
-												<HorizontalGrid item xs>
-													<Link to={`/create/ration/${props.diet}/${props.meal}/${food._id}`}>
-														<ArrowForwardOutlinedIcon color='secondary'/>
-													</Link>
-												</HorizontalGrid>
-											)
-										}
 									</HorizontalGrid>
 								</TableCell>
 							</TableRow>

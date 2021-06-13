@@ -7,7 +7,7 @@ import AuthContext from '../../context/AuthContext';
 import { Table, TableBody, TableCell, Paper } from '@material-ui/core';
 import VisibilityOutlinedIcon from '@material-ui/icons/VisibilityOutlined';
 import AddCircleOutlinedIcon from '@material-ui/icons/AddCircleOutlined';
-import { CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography as Typography, TableContainerWithMargin as TableContainer } from '../../style/style';
+import { HorizontalGrid, CustomTableHead as TableHead, BodyContainer, CustomTableRow as TableRow, TableHeaderCell, CustomTypography as Typography, TableContainerWithMargin as TableContainer } from '../../style/style';
 
 export const UserRoutineList = () => {
 	const match = useRouteMatch();
@@ -61,6 +61,11 @@ export const UserRoutineList = () => {
 					</TableBody>
 				</Table>
 			</TableContainer>
+			<HorizontalGrid container>
+				<HorizontalGrid item xs>
+					<Link to={`/my/exercises`}>Ver mis ejercicios</Link>
+				</HorizontalGrid>
+			</HorizontalGrid>
 		</BodyContainer>
 	);
 }

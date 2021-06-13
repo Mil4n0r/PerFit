@@ -141,6 +141,11 @@ export const UserDietList = () => {
 					</TableBody>
 				</Table>
 			</TableContainer>
+			<HorizontalGrid container>
+				<HorizontalGrid item xs>
+					<Link to={`/my/foods`}>Ver mis alimentos</Link>
+				</HorizontalGrid>
+			</HorizontalGrid>
 		</BodyContainer>
 	);
 }

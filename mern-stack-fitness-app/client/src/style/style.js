@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import {FormControlLabel, Tooltip, Stepper, Divider, Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress, List, ListItem, ListItemText, LinearProgress } from '@material-ui/core';
+import {Menu, FormControlLabel, Tooltip, Stepper, Divider, Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress, List, ListItem, ListItemText, LinearProgress, Drawer } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import {green, red, orange, lightGreen} from '@material-ui/core/colors'
 import { ErrorMessage } from '@hookform/error-message';
@@ -23,7 +23,6 @@ const HeaderContainer = styled.div`
 `;
 
 const NavLink = styled(Link)`
-	color: ${props => props.theme.palette.secondary.main};
 	text-decoration: none;
 `
 
@@ -53,6 +52,9 @@ const NavTab = styled(Tab)`
 	}
 	&:hover {
 		color: ${props => props.theme.palette.secondary.main};
+	}
+	&.highlight {
+		color: ${props => props.theme.palette.secondary.light};
 	}
 `
 
@@ -405,4 +407,24 @@ const NoMarginFormControlLabel = styled(FormControlLabel)`
 	}
 `
 
-export {ButtonAvatarSecondary, NoMarginFormControlLabel, CustomToolTip, HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}
+const ErrorDrawer = styled(Drawer)`
+	& .MuiPaper-root {
+		background-color: ${props => props.theme.palette.secondary.main};
+		padding: ${props => props.theme.spacing(1)}
+	}
+	& .MuiPaper-root .MuiGrid-root, & .MuiPaper-root .MuiButton-label {
+		color: white;
+	}
+	& p {
+		font-weight: bold;
+	}
+`
+
+const AuxMenu = styled(Menu)`
+	& .MuiPaper-root {
+		background: ${props => props.theme.palette.primary.dark};
+		border-radius: 0px 0px 20px 20px;
+	}
+`
+
+export {AuxMenu, ErrorDrawer, ButtonAvatarSecondary, NoMarginFormControlLabel, CustomToolTip, HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}

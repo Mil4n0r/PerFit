@@ -9,6 +9,6 @@ export const ActivitySchema = yup.object().shape({
 	activityequipment: yup.array()
 		.of(
 			yup.string()
-			.required("El equipamiento seleccionado no es válido")
+			.oneOf(['Bicicletas', 'Peso libre', 'Piscina', 'Esterillas', 'Cintas de correr'])
 		)
 });

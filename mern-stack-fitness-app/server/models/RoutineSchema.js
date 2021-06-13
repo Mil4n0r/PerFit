@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const idvalidator = require('mongoose-id-validator');
 
 const PlanModel = require('./PlanSchema');
 
@@ -11,8 +12,15 @@ const options = {
 
 const RoutineSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
-	tiempoRutina: { type: Number, required: true },
-	entrenamientosRutina: [{ type: mongoose.Schema.Types.ObjectId, ref: "Entrenamiento" }]
+	tiempoRutina: { 
+		type: Number, 
+		required: true,
+		min: [30, "El número introducido debe ser igual o superior a 30"]
+	},
+	entrenamientosRutina: [{ 
+		type: mongoose.Schema.Types.ObjectId, 
+		ref: "Entrenamiento" 
+	}]
 }, options);
 
 RoutineSchema.post('remove', async function() {
@@ -21,5 +29,5 @@ RoutineSchema.post('remove', async function() {
 	await TrainingModel.deleteMany({_id: {$in: this.entrenamientosRutina} })
 });
 
-//module.exports = mongoose.model("Rutina", RoutineSchema);
+RoutineSchema.plugin(idvalidator);
 module.exports = PlanModel.discriminator("Rutina", RoutineSchema);

@@ -4,6 +4,7 @@ export const registerUser = (user) => axios.post("http://localhost:4000/register
 	data: user
 })
 	.then(res => res.data)
+	.catch(err => err);
 
 export const getUsers = () => axios.get("http://localhost:4000/admin/user/list")
 	.then(res => res.data)

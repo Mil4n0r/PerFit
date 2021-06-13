@@ -7,9 +7,11 @@ import { Step3 } from '../common/forms/user/register/Step3';
 import { StepConfirm } from '../common/forms/user/register/StepConfirm';
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
+import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
+import ErrorOutlineOutlinedIcon from '@material-ui/icons/ErrorOutlineOutlined';
 
-import { Modal } from '@material-ui/core';
-import {BodyContainer, RegisterAvatar, CustomTypography as Typography, CenterPaper} from '../../style/style'
+import { Modal, Button } from '@material-ui/core';
+import {HorizontalGrid, BodyContainer, RegisterAvatar, CustomTypography as Typography, CenterPaper, ErrorDrawer, CustomErrorOutlineOutlinedIcon} from '../../style/style'
 
 import { RegisteredMessage } from './RegisteredMessage';
 import Confetti from 'react-confetti';
@@ -19,11 +21,21 @@ export const Register = () => {
 	const history = useHistory();
 
 	const [open, setOpen] = useState();
+	const [error, setError] = useState();
 
 	const onSubmit = async (data) => {
-		await registerUser(data);	// Llamamos a la API para registrar al usuario
-		setOpen(true);
+		const savedUser = await registerUser(data);	// Llamamos a la API para registrar al usuario
+		if(savedUser.response) {
+			setError(savedUser.response);
+		}
+		else {
+			setOpen(true);
+		}
 		//history.push("/");	// Redireccionamos al listado de usuarios
+	};
+
+	const closeError = () => {
+		setError();
 	};
 
 	const selectStep = (step) => {
@@ -64,6 +76,28 @@ export const Register = () => {
 							<CenterPaper><RegisteredMessage/></CenterPaper>
 						</Modal>
 					</>
+				)
+			}
+			{
+				error && (
+					<ErrorDrawer
+						color='secondary'
+						anchor="top"
+						open={error}
+						onClose={closeError}
+					>
+						<HorizontalGrid container spacing={1}>
+							<HorizontalGrid item xs={3}>
+								<ErrorOutlineOutlinedIcon/>
+							</HorizontalGrid>
+							<HorizontalGrid item xs={6}>
+								<Typography>{error.data}</Typography>
+							</HorizontalGrid>
+							<HorizontalGrid item xs={3}>
+								<Button onClick={closeError}><CloseOutlinedIcon	/></Button>
+							</HorizontalGrid>
+						</HorizontalGrid>
+					</ErrorDrawer>
 				)
 			}
 		</BodyContainer>

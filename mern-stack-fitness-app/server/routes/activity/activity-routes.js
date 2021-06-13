@@ -19,10 +19,7 @@ router.post("/create/activity", async (req, res, next) => {
 			const permissionsResData = await checkPermissionsActivity(user, req);	// Se busca el usuario cuya id coincida
 			const resError = permissionsResData.error;
 			const resPermission = permissionsResData.permission;
-			if(resError) {
-				res.status(resError.code).send(resError.message);
-			}
-			else if(permissionsResData && resPermission.includes("write")) {
+			if(permissionsResData && resPermission.includes("write")) {
 				try {
 					const Activity = new ActivityModel({
 						nombreActividad: req.body.activityname,

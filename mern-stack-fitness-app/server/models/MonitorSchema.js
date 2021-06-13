@@ -10,7 +10,8 @@ const MonitorSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
 	especialidadesMonitor: [{ 
 		type: String,
-		enum: ['Bicicletas', 'Peso libre', 'Piscina', 'Esterillas', 'Cintas de correr']
+		enum: ['Bicicletas', 'Peso libre', 'Piscina', 'Esterillas', 'Cintas de correr'],
+		required: true
 	}]
 }, options);
 

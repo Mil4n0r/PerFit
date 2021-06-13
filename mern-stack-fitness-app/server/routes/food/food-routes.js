@@ -71,6 +71,37 @@ router.get("/food/list/:search?", async (req,res,next) => {
 	})(req,res,next);
 });
 
+router.get("/foods/created/:creator?", async (req,res,next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			try {
+				if(req.params.creator) {
+					const foods = await FoodModel.find(
+						req.params.creator !== "undefined" ?
+							{creadoPor: req.params.creator} 
+						:
+							{}
+					)
+					res.json(foods);
+				}
+				else {
+					const foods = await FoodModel.find({});
+					res.json(foods);
+				}
+			} catch(err) {
+				next(err);
+			}
+		}
+	})(req,res,next);
+});
+
 // Consulta del alimento con la id correspondiente
 router.get("/food/:id", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {

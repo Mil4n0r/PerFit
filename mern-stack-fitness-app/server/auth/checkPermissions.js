@@ -256,7 +256,7 @@ const checkPermissionsClass = async (activeUser, req) => {
 			.populate("actividadClase")
 			.populate("salaClase");
 		if(activeUser.role === "Administrador") {
-			if(checkedClass.asistentesClase.some(a => a._id.equals(activeUser._id))) {
+			if(checkedClass && checkedClass.asistentesClase.some(a => a._id.equals(activeUser._id))) {
 				return {
 					error: null,
 					class: checkedClass,
@@ -273,7 +273,6 @@ const checkPermissionsClass = async (activeUser, req) => {
 		}
 		else if(activeUser)//.suscripcionUsuario.permisosSuscripcion.includes("Clases Dirigidas")) { // AÑADIR SUSCRIPCIONES
 		{
-			console.log(checkedClass)
 			if(checkedClass.asistentesClase.some(a => a._id.equals(activeUser._id))) {
 				return {
 					error: null,

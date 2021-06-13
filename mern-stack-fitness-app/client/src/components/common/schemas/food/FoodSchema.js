@@ -7,8 +7,7 @@ export const FoodSchema = yup.object().shape({
 	foodsize: yup.number()
 		.typeError("Introduzca el tamaño de la ración")
 		.required("Introduzca el tamaño de la ración")
-		.min(0, "El número introducido debe ser positivo")
-		.integer("El dato introducido debe ser un entero"),
+		.min(0, "El número introducido debe ser positivo"),
 	calories: yup.number()
 		.typeError("Introduzca el número de calorías por ración")
 		.required("Introduzca el número de calorías por ración")
