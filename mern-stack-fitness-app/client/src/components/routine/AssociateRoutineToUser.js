@@ -16,7 +16,7 @@ export const AssociateRoutineToUser = () => {
 
 	return (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Crear rutina
 			</CustomTypography>
 			<RoutineForm onSubmit={onSubmit} />

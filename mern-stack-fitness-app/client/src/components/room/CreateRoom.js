@@ -14,7 +14,7 @@ export const CreateRoom = () => {
 
 	return (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Crear sala
 			</CustomTypography>
 			<RoomForm onSubmit={onSubmit} />

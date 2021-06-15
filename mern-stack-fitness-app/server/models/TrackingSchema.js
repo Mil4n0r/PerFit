@@ -29,7 +29,8 @@ const TrackingSchema = mongoose.Schema({
 	},
 	medidasSeguidas: [{ 
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "Medida" 
+		ref: "Medida",
+		autopopulate: true
 	}]
 }, options);
 
@@ -38,4 +39,5 @@ TrackingSchema.post('remove', async function() {
 });
 
 TrackingSchema.plugin(idvalidator);
+
 module.exports = PlanModel.discriminator("Seguimiento", TrackingSchema);

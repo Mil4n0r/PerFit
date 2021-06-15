@@ -22,7 +22,7 @@ export const JoinClass = (props) => {
 
 	return (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Unirse a la clase
 			</CustomTypography>
 			<Typography>

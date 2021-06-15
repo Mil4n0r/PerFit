@@ -45,8 +45,7 @@ router.post("/associate/diet/meal/:id", async (req, res, next) => {
 								comidasDieta: mongoose.Types.ObjectId(Meal._id)
 							}
 						},
-						{useFindAndModify: false},
-						{ runValidators: true }
+						{useFindAndModify: false, runValidators: true }
 					);
 					res.json(savedMeal);
 				}
@@ -270,8 +269,7 @@ router.post("/associate/meal/ration/:id/:mealid", async (req, res, next) => {
 								racionesComida: mongoose.Types.ObjectId(savedRation._id)
 							}
 						},
-						{useFindAndModify: false},
-						{ runValidators: true }
+						{useFindAndModify: false, runValidators: true}
 					);
 					res.json(savedMeal);
 				}
@@ -313,8 +311,7 @@ router.delete("/ration/:id/:mealid/:rationid", async (req, res, next) => {
 						const savedMeal = await MealModel.findByIdAndUpdate(
 							req.params.mealid,
 							{$pull: {racionesComida: req.params.rationid } },
-							{useFindAndModify: false},
-							{ runValidators: true }
+							{useFindAndModify: false, runValidators: true}
 						)
 						res.json(savedMeal);
 					}

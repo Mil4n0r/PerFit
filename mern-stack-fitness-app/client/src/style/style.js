@@ -9,8 +9,7 @@ import { KeyboardDatePicker } from "@material-ui/pickers";
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 
-const HeaderContainer = styled.div`
-	background: ${props => props.theme.palette.primary.dark};
+const HeaderContainer = styled(Container)`
 	background-size: 100%;
 	display: flex;
 	justify-content:center;
@@ -20,6 +19,37 @@ const HeaderContainer = styled.div`
 	& img {
 		max-width: 100%;
 	}
+`;
+
+const HeaderGrid = styled(Grid)`
+	&& {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		height: 80px;
+	}
+	& .logo {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+	}
+	& .logo img {
+		height: 100%;
+		padding: ${props => props.theme.spacing(1)};
+	}
+	& .bar {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+	}
+`
+
+const FooterContainer = styled(Container)`
+	display: flex;
+	justify-content:center;
+	align-items:center;
+	border-top: 1px solid ${props => props.theme.palette.primary.dark};
 `;
 
 const NavLink = styled(Link)`
@@ -40,8 +70,10 @@ const NavBar = styled(AppBar)`
 		padding: 0;
 		margin: 0;
 		background: ${props => props.theme.palette.primary.dark};
+		background-size: 100%;
 		align-items: center;
 		justify-content: center;
+		height: 72px;
 	}
 `
 
@@ -49,6 +81,12 @@ const NavTab = styled(Tab)`
 	&& { 
 		text-decoration: none;
 		color: white;
+		padding-right: 0;
+		padding-left: 0;
+		min-width: 85px;
+	}
+	& span {
+		width: 100%;
 	}
 	&:hover {
 		color: ${props => props.theme.palette.secondary.main};
@@ -61,6 +99,13 @@ const NavTab = styled(Tab)`
 const NavTabs = styled(Tabs)`
 	&& {
 		width: 100%;
+		display: flex;
+	}
+	& .MuiTabs-scroller .MuiTabs-flexContainer {
+		justify-content: flex-end;
+	} 
+	& a {
+		display: flex;
 	}
 `
 
@@ -256,6 +301,21 @@ const PrimaryLink = styled(Link)`
 	}
 `
 
+const FooterLink = styled(Link)`
+	&& {
+		color: ${props => props.theme.palette.primary.main};
+		text-decoration: none;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		flex-direction: column;
+		text-align: center;
+	}
+	&:hover {
+		color: ${props => props.theme.palette.secondary.main};
+	}
+`
+
 const TableContainerWithMargin = styled(TableContainer)`
 	&& {
 		margin: ${props => props.theme.spacing(2)}
@@ -425,6 +485,10 @@ const AuxMenu = styled(Menu)`
 		background: ${props => props.theme.palette.primary.dark};
 		border-radius: 0px 0px 20px 20px;
 	}
+	& li {
+		justify-content: center;
+		align-items: center;
+	}
 `
 
-export {AuxMenu, ErrorDrawer, ButtonAvatarSecondary, NoMarginFormControlLabel, CustomToolTip, HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}
+export {HeaderGrid, FooterLink, FooterContainer, AuxMenu, ErrorDrawer, ButtonAvatarSecondary, NoMarginFormControlLabel, CustomToolTip, HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}

@@ -34,7 +34,7 @@ export const EditMeasure = () => {
 
 	return measure ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Editar medida
 			</CustomTypography>
 			<MeasureForm measure={measure} unit={trackingUnit} onSubmit={onSubmit} />

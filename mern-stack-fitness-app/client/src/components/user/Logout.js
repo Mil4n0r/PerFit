@@ -27,7 +27,7 @@ export const Logout = () => {
 			<LoginAvatar>
 				<LockOutlinedIcon />
 			</LoginAvatar>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Cierre de sesión
 			</CustomTypography>
 			<Typography>

@@ -14,7 +14,7 @@ export const CreateSubscription = () => {
 
 	return (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Crear suscripción
 			</CustomTypography>
 			<SubscriptionForm onSubmit={onSubmit} />

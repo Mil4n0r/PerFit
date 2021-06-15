@@ -27,7 +27,7 @@ export const CreateMeasure = () => {
 
 	return (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Crear medida
 			</CustomTypography>
 			<MeasureForm unit={trackingUnit} onSubmit={onSubmit} />

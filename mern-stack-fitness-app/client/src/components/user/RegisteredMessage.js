@@ -15,7 +15,7 @@ export const RegisteredMessage = () => {
 			<LoginAvatar>
 				<CheckOutlinedIcon />
 			</LoginAvatar>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h3" variant="h6">
 				Los datos del registro son válidos
 			</CustomTypography>
 			<Typography>

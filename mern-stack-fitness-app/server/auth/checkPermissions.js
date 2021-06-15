@@ -342,7 +342,10 @@ const checkPermissionsSubscription = async (activeUser, req) => {
 const checkPermissionsPlan = async (activeUser, req) => {
 	try {
 		const id = req.params.id;
-		const checkedPlan = await PlanModel.findById(id);
+		var checkedPlan = await PlanModel.findById(id)
+		if(checkedPlan.kind === "Seguimiento") {
+			await PlanModel.populate(checkedPlan, "medidasSeguidas")
+		}
 		if(activeUser.role === "Administrador" || activeUser._id.equals(checkedPlan.usuarioPlan) ||
 		  (activeUser.role === "Entrenador" && activeUser.alumnosEntrenados.includes(checkedPlan.usuarioPlan))) {
 			return {

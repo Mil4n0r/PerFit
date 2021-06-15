@@ -23,8 +23,6 @@ passport.use("register",
 				if(!userExists) {
 					var user;
 					if(req.body.role === "Miembro") {
-						console.log("AQUI")
-						console.log(req.body.subscription)
 						user = await MemberModel.create({
 							emailUsuario: email,
 							passwordUsuario: password,

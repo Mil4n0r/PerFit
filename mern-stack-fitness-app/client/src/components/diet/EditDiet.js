@@ -27,7 +27,7 @@ export const EditDiet = () => {
 
 	return diet ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Editar dieta
 			</CustomTypography>
 			<DietForm diet={diet} onSubmit={onSubmit} />

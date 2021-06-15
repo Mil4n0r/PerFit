@@ -27,7 +27,7 @@ export const EditUser = () => {
 
 	return user ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Editar usuario
 			</CustomTypography>
 			<UserForm user={user} onSubmit={onSubmit} />

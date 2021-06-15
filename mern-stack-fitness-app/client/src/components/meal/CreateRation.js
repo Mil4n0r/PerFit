@@ -27,7 +27,7 @@ export const CreateRation = () => {
 
 	return food ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Crear ración
 			</CustomTypography>
 			<RationForm food={food} onSubmit={onSubmit} />

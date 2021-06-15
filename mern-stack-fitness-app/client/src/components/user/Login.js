@@ -25,7 +25,7 @@ export const Login = () => {
 			<LoginAvatar>
 				<LockOutlinedIcon />
 			</LoginAvatar>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Inicio de sesión
 			</CustomTypography>
 			<LoginForm onSubmit={onSubmit} />

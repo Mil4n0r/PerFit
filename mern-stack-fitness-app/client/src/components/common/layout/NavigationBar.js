@@ -5,7 +5,7 @@ import AuthContext from '../../../context/AuthContext';
 import logo from '../../../images/Logo.png'
 
 import {Grid, Menu, MenuItem, Typography} from '@material-ui/core';
-import { NavLink, NavBar, NavTab, NavTabs, NavProgress, HeaderContainer, AuxMenu } from '../../../style/style';
+import { NavLink, NavBar, NavTab, NavTabs, NavProgress, HeaderContainer, AuxMenu, HorizontalGrid, HeaderGrid } from '../../../style/style';
 
 import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
 import PermIdentityOutlinedIcon from '@material-ui/icons/PermIdentityOutlined';
@@ -60,9 +60,9 @@ function NavigationBar() {
 				tabIndex = tab.props.value;
 			} else {
 				if(hash === "#control") {
-					tabIndex = 6;
+					tabIndex = 5;
 				} else if(hash === "#panel") {
-					tabIndex = 9;
+					tabIndex = 8;
 				}
 			}
 		})
@@ -96,21 +96,20 @@ function NavigationBar() {
 		var tabs;
 		if(loggedIn) {
 			tabs = [
-				<NavTab icon={<HomeOutlinedIcon/>} key="home" label = "INICIO" to= "/" component = {NavLink} value = {0} wrapped/>,
+				<NavTab icon={<HomeOutlinedIcon/>} key="home" label = {"INICIO"} to= "/" component = {NavLink} value = {0} wrapped/>,
 				<NavTab icon={<DirectionsBikeOutlinedIcon/>} key="classlist" label = "CLASES" to = "/class/list" component = {NavLink} value = {3} wrapped/>,
-				<NavTab icon={<StarBorderOutlinedIcon/>} key="subscriptionlist" label = "SUSCRIPCIONES" to = "/subscription/list" component = {NavLink} value = {4} wrapped/>,
-				<NavTab icon={<AccountBalanceWalletOutlinedIcon/>} key="myplans" label = "MIS PLANES" to = {`/user/plans/${loggedIn._id}`} component = {NavLink} value = {5} wrapped/>,
+				<NavTab icon={<AccountBalanceWalletOutlinedIcon/>} key="myplans" label = "PLANES" to = {`/user/plans/${loggedIn._id}`} component = {NavLink} value = {4} wrapped/>,
 			]
 			if(loggedIn.role === "Administrador") {
-				tabs.push(<NavTab className="highlight" icon={<AirplayOutlinedIcon/>} key="control" label="CONTROL" to = "#control" onClick={handleClickControlMenu} component = {NavLink} value = {6} wrapped/>);
+				tabs.push(<NavTab className="highlight" icon={<AirplayOutlinedIcon/>} key="control" label="CONTROL" to = "#control" onClick={handleClickControlMenu} component = {NavLink} value = {5} wrapped/>);
 			}
 			else if(loggedIn.role === "Entrenador") {
-				tabs.push(<NavTab key="clientlist" label = "ALUMNOS" to = {`/client/list/${loggedIn._id}`} component = {NavLink} value = {7} wrapped/>);
+				tabs.push(<NavTab key="clientlist" label = "ALUMNOS" to = {`/client/list/${loggedIn._id}`} component = {NavLink} value = {6} wrapped/>);
 			}
 			else if(loggedIn.role === "Monitor") {
 				// METER GESTIÓN DE CLASES DIRIGIDAS
 			}
-			tabs.push(<NavTab className="highlight" icon={<PermIdentityOutlinedIcon/>} key="panel" label = "PANEL" to = "#panel" onClick={handleClickMenu} component = {NavLink} value = {9} wrapped/>);
+			tabs.push(<NavTab className="highlight" icon={<PermIdentityOutlinedIcon/>} key="panel" label = "PANEL" to = "#panel" onClick={handleClickMenu} component = {NavLink} value = {8} wrapped/>);
 		}
 		else if(loggedIn === false) { // Evita problemas cuando loggedIn está sin definir
 			tabs = [
@@ -124,6 +123,92 @@ function NavigationBar() {
 
 	return (
 		<NavBar position="static">
+			<HeaderGrid container spacing={1}>
+				<HeaderGrid className="logo" item xs={3}>
+					<img src={logo} alt="Logo" />
+				</HeaderGrid>
+				<HeaderGrid className="bar" item xs={9}>
+					{
+						loggedIn !== undefined && (
+							<NavTabs indicatorColor='secondary' value={value} onClick={handleChange} variant='fullWidth' >
+								{tabs}
+							</NavTabs>
+						)
+					}
+					<AuxMenu 
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'center',
+						}}
+						transformOrigin={{
+							vertical: 'top',
+							horizontal: 'center',
+						}}
+						open={Boolean(openMenu)}
+						onClose={handleCloseMenu}
+						getContentAnchorEl={null}
+						anchorEl={openMenu}
+					>
+						{
+							loggedIn && 
+							[
+								<MenuItem>
+									<NavTab icon={<AccountBoxOutlinedIcon/>} key="myprofile" label = "PERFIL" to = {`/user/profile/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {9} wrapped/>
+								</MenuItem>,
+								<MenuItem>
+									<NavTab icon={<StarBorderOutlinedIcon/>} key="subscriptionlist" label = "SUSCRIPCIONES" to = "/subscription/list" component = {NavLink} value = {9} wrapped/>
+								</MenuItem>,
+								<MenuItem>
+									<NavTab icon={loggedIn.peticionesPendientes.length > 0 ? <NotificationsActiveOutlinedIcon color='secondary'/> : <NotificationsOutlinedIcon/>} key="requestlist" label = "SOLICITUDES" to = {`/request/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {11} wrapped/>,
+								</MenuItem>,
+								<MenuItem>
+									<NavTab icon={<GroupOutlinedIcon/>} key="friendlist" label = "AMIGOS" to = {`/friend/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {12} wrapped/>,
+								</MenuItem>,
+								<MenuItem>
+									<NavTab icon={<ExitToAppOutlinedIcon/>} key="logout" label = "CERRAR SESIÓN" to = "/logout" onClick={handleCloseMenu} component = {NavLink} value = {13} wrapped/>,
+								</MenuItem>,
+							]
+						}
+					</AuxMenu>
+					<AuxMenu 
+						anchorOrigin={{
+							vertical: 'bottom',
+							horizontal: 'center',
+						}}
+						transformOrigin={{
+							vertical: 'top',
+							horizontal: 'center',
+						}}
+						open={Boolean(openControlMenu)}
+						onClose={handleCloseControlMenu}
+						getContentAnchorEl={null}
+						anchorEl={openControlMenu}
+					>
+						{
+							loggedIn && 
+							[
+								<MenuItem>
+									<NavTab icon={<GroupOutlinedIcon/>} key="userlist" label = "USUARIOS" to = "/user/list" onClick={handleCloseControlMenu} component = {NavLink} value = {14} wrapped/>
+								</MenuItem>,
+								<MenuItem>
+									<NavTab icon={<MeetingRoomOutlinedIcon/>} key="roomlist" label = "SALAS" to = "/room/list" onClick={handleCloseControlMenu} component = {NavLink} value = {15} wrapped/>
+								</MenuItem>,
+								<MenuItem>
+									<NavTab icon={<SportsTennisOutlinedIcon/>} key="activitylist" label = "ACTIVIDADES" to = "/activity/list" onClick={handleCloseControlMenu} component = {NavLink} value = {16} wrapped/>
+								</MenuItem>
+							]
+						}
+					</AuxMenu>
+				</HeaderGrid>
+			</HeaderGrid>
+		</NavBar>
+	);
+}
+
+export default NavigationBar;
+
+/*
+<NavBar position="static">
 			<HeaderContainer>
 				<img src={logo} alt="Logo" />
 			</HeaderContainer>
@@ -196,11 +281,4 @@ function NavigationBar() {
 				}
 			</AuxMenu>
 		</NavBar>
-	);
-}
-
-export default NavigationBar;
-
-/*
-			
 */

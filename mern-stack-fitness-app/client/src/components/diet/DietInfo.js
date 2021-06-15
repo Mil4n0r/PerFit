@@ -75,68 +75,66 @@ export const DietInfo = () => {
 									)
 								}
 							</ContainerWithPadding>
-							{//AQUÍ METERÍAMOS EL REGISTRO DE COMIDAS (O UN BOTÓN PARA ACCEDER A ESTE)
+							{
+								user && user.permission.includes('checkplans') && (
+									<>
+										<Typography component="h3" variant="h6">Opciones</Typography>
+										<ContainerWithPadding>
+											<Grid container spacing={3}>
+												{
+													<Grid item xs>
+														<PrimaryLink to={`/associate/diet/meal/${diet._id}`}>
+															<FullWidthPaper>
+																<VerticalGrid item xs className="zoom">
+																	<ButtonAvatar><FastfoodOutlinedIcon /></ButtonAvatar>
+																	<Typography color='primary' className="caps">
+																		Comidas
+																	</Typography>
+																</VerticalGrid>
+															</FullWidthPaper>
+														</PrimaryLink>
+													</Grid>
+												}
+												{
+													<Grid item xs>
+														<PrimaryLink to={`/edit/diet/${user.userInfo._id}/${match.params.id}`}>
+															<FullWidthPaper>
+																<VerticalGrid item xs className="zoom">
+																	<ButtonAvatar><EditOutlinedIcon /></ButtonAvatar>
+																	<Typography color='primary' className="caps">
+																		Editar
+																	</Typography>
+																</VerticalGrid>
+															</FullWidthPaper>
+														</PrimaryLink>
+													</Grid>
+												}
+												{
+													<Grid item xs>
+														<PrimaryLink to={"#"} onClick={handleOpen}>
+															<FullWidthPaper>												
+																<VerticalGrid item xs className="zoom">
+																	<ButtonAvatar><DeleteForeverOutlinedIcon /></ButtonAvatar>
+																	<Typography color='primary' className="caps">
+																		Eliminar
+																	</Typography>
+																</VerticalGrid>
+															</FullWidthPaper>
+														</PrimaryLink>
+													</Grid>
+												}
+												<Modal
+													open={open}
+													onClose={handleClose}
+												>
+													<CenterPaper><DeleteDiet setOpen={setOpen} userId={user.userInfo._id}/></CenterPaper>
+												</Modal>
+											</Grid>
+										</ContainerWithPadding>
+									</>
+								)
 							}
 						</VerticalGrid>
-						{
-							user && user.permission.includes('checkplans') && (
-								<>
-									<Typography component="h3" variant="h6">Opciones</Typography>
-									<ContainerWithPadding>
-										<Grid container spacing={3}>
-											{
-												<Grid item xs>
-													<PrimaryLink to={`/associate/diet/meal/${diet._id}`}>
-														<FullWidthPaper>
-															<VerticalGrid item xs className="zoom">
-																<ButtonAvatar><FastfoodOutlinedIcon /></ButtonAvatar>
-																<Typography color='primary' className="caps">
-																	Comidas
-																</Typography>
-															</VerticalGrid>
-														</FullWidthPaper>
-													</PrimaryLink>
-												</Grid>
-											}
-											{
-												<Grid item xs>
-													<PrimaryLink to={`/edit/diet/${user.userInfo._id}/${match.params.id}`}>
-														<FullWidthPaper>
-															<VerticalGrid item xs className="zoom">
-																<ButtonAvatar><EditOutlinedIcon /></ButtonAvatar>
-																<Typography color='primary' className="caps">
-																	Editar
-																</Typography>
-															</VerticalGrid>
-														</FullWidthPaper>
-													</PrimaryLink>
-												</Grid>
-											}
-											{
-												<Grid item xs>
-													<PrimaryLink to={"#"} onClick={handleOpen}>
-														<FullWidthPaper>												
-															<VerticalGrid item xs className="zoom">
-																<ButtonAvatar><DeleteForeverOutlinedIcon /></ButtonAvatar>
-																<Typography color='primary' className="caps">
-																	Eliminar
-																</Typography>
-															</VerticalGrid>
-														</FullWidthPaper>
-													</PrimaryLink>
-												</Grid>
-											}
-											<Modal
-												open={open}
-												onClose={handleClose}
-											>
-												<CenterPaper><DeleteDiet setOpen={setOpen} userId={user.userInfo._id}/></CenterPaper>
-											</Modal>
-										</Grid>
-									</ContainerWithPadding>
-								</>
-							)
-						}
 					</>
 				)
 			}

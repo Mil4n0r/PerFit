@@ -80,8 +80,6 @@ export const RoutineInfo = () => {
 									/>
 								</Grid>
 							</HorizontalGrid>
-							{//AQUÍ METERÍAMOS EL REGISTRO DE COMIDAS (O UN BOTÓN PARA ACCEDER A ESTE)
-							}
 						</VerticalGrid>
 						{
 							user && user.permission.includes('checkplans') && (

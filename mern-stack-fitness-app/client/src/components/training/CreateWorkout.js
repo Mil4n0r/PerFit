@@ -28,7 +28,7 @@ export const CreateWorkout = () => {
 
 	return exercise ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Crear series de ejercicios
 			</CustomTypography>
 			<WorkoutForm exercise={exercise} onSubmit={onSubmit} />

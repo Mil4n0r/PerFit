@@ -23,7 +23,7 @@ export const DeleteClient = (props) => {
 
 	return (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Eliminar cliente
 			</CustomTypography>
 			<Typography>

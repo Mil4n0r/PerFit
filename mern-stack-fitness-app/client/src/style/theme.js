@@ -17,6 +17,33 @@ let theme = createMuiTheme({
 			contrastText: '#fff',
 		}
 	},
+	typography: {
+		body1: {
+			'@media (max-width:600px)': {
+				fontSize: '0.75rem',
+			},
+		},
+		body2: {
+			'@media (max-width:600px)': {
+				fontSize: '0.75rem',
+			},
+		},
+		subtitle1: {
+			'@media (max-width:600px)': {
+				fontSize: '0.75rem',
+			},
+		},
+		subtitle2: {
+			'@media (max-width:600px)': {
+				fontSize: '0.75rem',
+			},
+		},
+		caption: {
+			'@media (max-width:600px)': {
+				fontSize: '0.75rem',
+			},
+		},
+	}
 });
 
 theme = responsiveFontSizes(theme);

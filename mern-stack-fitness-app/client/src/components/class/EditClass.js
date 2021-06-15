@@ -27,7 +27,7 @@ export const EditClass = () => {
 
 	return sclass ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Editar clase
 			</CustomTypography>
 			<ClassForm sclass={sclass} onSubmit={onSubmit} />

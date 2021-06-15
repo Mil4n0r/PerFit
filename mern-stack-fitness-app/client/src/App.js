@@ -1,12 +1,13 @@
 import React from 'react';
 import NavigationBar from './components/common/layout/NavigationBar';
 import Router from './Router';
+import Footer from './components/common/layout/Footer';
 import { AuthContextProvider } from './context/AuthContext';
 import { FormContextProvider } from './context/FormContext';
 
 import theme from './style/theme';
 import { ThemeProvider } from 'styled-components';
-import { ThemeProvider as MuiThemeProvider } from '@material-ui/core';
+import { Divider, ThemeProvider as MuiThemeProvider } from '@material-ui/core';
 import { CssBaseline } from '@material-ui/core';
 
 import { MuiPickersUtilsProvider } from "@material-ui/pickers";
@@ -24,6 +25,7 @@ function App() {
 							<CssBaseline />
 							<NavigationBar />
 							<Router />
+							<Footer />
 						</MuiPickersUtilsProvider>
 					</ThemeProvider>
 				</MuiThemeProvider>

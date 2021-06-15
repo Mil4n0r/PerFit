@@ -27,7 +27,7 @@ export const EditSubscription = () => {
 
 	return subscription ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Editar suscripción
 			</CustomTypography>
 			<SubscriptionForm subscription={subscription} onSubmit={onSubmit} />

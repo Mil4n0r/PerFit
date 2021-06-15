@@ -27,7 +27,7 @@ export const EditTraining = () => {
 
 	return training ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Editar entrenamiento
 			</CustomTypography>
 			<TrainingForm training={training} onSubmit={onSubmit} />

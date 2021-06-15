@@ -26,7 +26,7 @@ export const EditRation = () => {
 
 	return ration ? (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Editar ración
 			</CustomTypography>
 			<RationForm ration={ration} onSubmit={onSubmit} />

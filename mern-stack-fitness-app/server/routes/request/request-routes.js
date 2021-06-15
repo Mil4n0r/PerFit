@@ -61,8 +61,7 @@ router.post("/accept/friend/request/:id", async (req, res, next) => {
 								amigosUsuario: mongoose.Types.ObjectId(user._id)
 							}
 						},
-						{useFindAndModify: false},
-						{ runValidators: true }
+						{useFindAndModify: false, runValidators: true}
 					)
 					await user.amigosUsuario.push(mongoose.Types.ObjectId(request.usuarioSolicitante));
 					await user.peticionesPendientes.pull(mongoose.Types.ObjectId(req.params.id));
@@ -147,8 +146,7 @@ router.post("/accept/train/request/:id", async (req, res, next) => {
 						{
 							tieneEntrenador: true
 						},
-						{useFindAndModify: false},
-						{ runValidators: true }
+						{useFindAndModify: false, runValidators: true}
 					)
 					await user.alumnosEntrenados.push(mongoose.Types.ObjectId(request.usuarioSolicitante));
 					await user.peticionesPendientes.pull(mongoose.Types.ObjectId(req.params.id));

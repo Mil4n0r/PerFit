@@ -16,7 +16,7 @@ export const CreateMeal = () => {
 
 	return (
 		<BodyContainer>
-			<CustomTypography component="h3" variant="h5">
+			<CustomTypography component="h2" variant="h5">
 				Crear comida
 			</CustomTypography>
 			<MealForm onSubmit={onSubmit} />
