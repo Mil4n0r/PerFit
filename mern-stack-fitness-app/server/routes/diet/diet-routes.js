@@ -90,7 +90,7 @@ router.get("/diet/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);	// Se busca el usuario cuya id coincida
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);	// Se busca el usuario cuya id coincida
 				const resError = permissionsResData.error;
 				const resDiet = permissionsResData.plan;
 				if(resError || !resDiet) {
@@ -121,7 +121,7 @@ router.post("/diet/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);	// Se busca el usuario cuya id coincida
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);	// Se busca el usuario cuya id coincida
 				const resError = permissionsResData.error;
 				const resDiet = permissionsResData.plan;
 				const resPermission = permissionsResData.permission;
@@ -161,7 +161,7 @@ router.delete("/diet/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resDiet = permissionsResData.plan;
 				const resPermission = permissionsResData.permission;
@@ -169,7 +169,7 @@ router.delete("/diet/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedDiet = await resDiet.remove();
+					const removedDiet = await resDiet.deleteOne();
 					res.json(removedDiet);
 				}
 				else {

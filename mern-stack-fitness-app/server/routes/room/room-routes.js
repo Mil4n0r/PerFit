@@ -154,7 +154,7 @@ router.delete("/room/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedRoom = await resRoom.remove();
+					const removedRoom = await resRoom.deleteOne();
 					res.json(removedRoom);
 				}
 				else {

@@ -54,12 +54,6 @@ export const SubscriptionList = () => {
 								<TableCell>{subscription.costeSuscripcion}</TableCell>
 								<TableCell>{format(parseISO(subscription.vencimientoSuscripcion), 'dd/MM/yyyy', {locale: es})}</TableCell>
 								<TableCell align='center'><Link to={`/subscription/info/${subscription._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
-								{
-									console.log(format(parseISO(subscription.vencimientoSuscripcion), 'dd/MM/yyyy', {locale:es }))
-								}
-								{
-									console.log(subscription.vencimientoSuscripcion)
-								}
 							</TableRow>
 						))}
 					</TableBody>

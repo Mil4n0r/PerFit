@@ -3,11 +3,12 @@ const FoodModel = require('../models/FoodSchema');
 const ExerciseModel = require('../models/ExerciseSchema');
 const ActivityModel = require('../models/ActivitySchema');
 const MeasureModel = require('../models/MeasureSchema');
-const TrackingModel = require('../models/TrackingSchema');
 const RoomModel = require('../models/RoomSchema');
 const ClassModel = require('../models/ClassSchema');
 const SubscriptionModel = require('../models/SubscriptionSchema');
-const PlanModel = require('../models/PlanSchema');
+const DietModel = require('../models/DietSchema');
+const RoutineModel = require('../models/RoutineSchema');
+const TrackingModel = require('../models/TrackingSchema');
 
 const checkPermissionsUser = async (activeUser, req) => {
 	try {
@@ -26,24 +27,24 @@ const checkPermissionsUser = async (activeUser, req) => {
 				if(!checkedUser.cuentaActivada) {
 					error = null;
 					user = checkedUser;
-					permission = ["read", "write", "delete", "checkplans", "allowfriends", "activateaccount", "readrequests"];
+					permission = ["read", "write", "delete", "checkplans", "activateaccount", "readrequests"];
 				}
 				else {
 					error = null;
 					user = checkedUser;
-					permission = ["read", "write", "delete", "checkplans", "allowfriends"];
+					permission = ["read", "write", "delete", "checkplans"];
 				}
 			}
 			else if(activeUser.role === "Entrenador") {
 				if(activeUser.alumnosEntrenados.includes(checkedUser._id)) {
 					error = null;
 					user = checkedUser;
-					permission = ["read", "checkplans", "allowfriends"];
+					permission = ["read", "checkplans"];
 				}
 				else {
 					error = null;
 					user = checkedUser;
-					permission = ["read", "allowfriends"];
+					permission = ["read"];
 				}
 			}
 			else if(checkedUser.privacidadUsuario === "Público") {
@@ -57,23 +58,21 @@ const checkPermissionsUser = async (activeUser, req) => {
 					user = checkedUser;
 					permission = ["read"];
 				}
-				else {
-					error = null;
-					user = checkedUser;
-					permission = ["allowfriends"];
-				}
 			}
 			else {
 				error = {
 					code: 401,
 					message: "Usuario no autorizado"
 				};
-				user = checkedUser;
+				user = false;
 				permission = [];
 			}
 		}
 		if(checkedUser.role === "Entrenador" && !checkedUser.tieneEntrenador && !checkedUser._id.equals(activeUser._id)) {// && activeUser.suscripcionUsuario.permisosSuscripcion.includes("Entrenador Personal"))) 
 			permission.push("allowtraining");
+		}
+		if(!activeUser.amigosUsuario.includes(checkedUser._id)) {
+			permission.push("allowfriends")
 		}
 		return {
 			error: error,
@@ -339,13 +338,31 @@ const checkPermissionsSubscription = async (activeUser, req) => {
 	
 };
 
-const checkPermissionsPlan = async (activeUser, req) => {
+const checkPermissionsPlan = async (activeUser, kind, req) => {
 	try {
 		const id = req.params.id;
+		var checkedPlan;
+		switch(kind) {
+			case "Seguimiento":
+				checkedPlan = await TrackingModel.findById(id);
+				await TrackingModel.populate(checkedPlan, "medidasSeguidas")
+				break;
+			case "Dieta":
+				checkedPlan = await DietModel.findById(id)
+				break;
+			case "Rutina":
+				checkedPlan = await RoutineModel.findById(id)
+				break;
+		}
+		/*
+		if(kind === "Seguimiento") {
+			checkedPlan = await TrackingModel.findById(id);
+			await TrackingModel.populate(checkedPlan, "medidasSeguidas")
+		}
 		var checkedPlan = await PlanModel.findById(id)
 		if(checkedPlan.kind === "Seguimiento") {
 			await PlanModel.populate(checkedPlan, "medidasSeguidas")
-		}
+		}*/
 		if(activeUser.role === "Administrador" || activeUser._id.equals(checkedPlan.usuarioPlan) ||
 		  (activeUser.role === "Entrenador" && activeUser.alumnosEntrenados.includes(checkedPlan.usuarioPlan))) {
 			return {

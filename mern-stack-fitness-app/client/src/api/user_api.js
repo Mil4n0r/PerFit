@@ -8,7 +8,10 @@ export const registerUser = (user) => axios.post("http://localhost:4000/register
 
 export const getUsers = () => axios.get("http://localhost:4000/admin/user/list")
 	.then(res => res.data)
-	
+
+export const getMonitors = () => axios.get("http://localhost:4000/admin/monitor/list")
+	.then(res => res.data)
+
 export const getUsersMatching = (inactive, search) => axios.get(`http://localhost:4000/admin/user/list/${inactive}/${search}`)
 	.then(res => res.data)
 

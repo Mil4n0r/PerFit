@@ -148,7 +148,7 @@ router.delete("/activity/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedActivity = await resActivity.remove();	// Se elimina la actividad
+					const removedActivity = await resActivity.deleteOne();	// Se elimina la actividad
 					res.json(removedActivity);	// Se manda como respuesta la actividad eliminada
 				}
 				else {

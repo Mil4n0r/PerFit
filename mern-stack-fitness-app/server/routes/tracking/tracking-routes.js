@@ -84,7 +84,7 @@ router.get("/tracking/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);	// Se busca el usuario cuya id coincida
+				const permissionsResData = await checkPermissionsPlan(user, "Seguimiento", req);	// Se busca el usuario cuya id coincida
 				const resError = permissionsResData.error;
 				const resTracking = permissionsResData.plan;
 				if(resError || !resTracking) {
@@ -115,7 +115,7 @@ router.post("/tracking/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);	// Se busca el usuario cuya id coincida
+				const permissionsResData = await checkPermissionsPlan(user, "Seguimiento", req);	// Se busca el usuario cuya id coincida
 				const resError = permissionsResData.error;
 				const resTracking = permissionsResData.plan;
 				const resPermission = permissionsResData.permission;
@@ -151,7 +151,7 @@ router.delete("/tracking/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Seguimiento", req);
 				const resError = permissionsResData.error;
 				const resTracking = permissionsResData.plan;
 				const resPermission = permissionsResData.permission;
@@ -159,7 +159,7 @@ router.delete("/tracking/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedTracking = await resTracking.remove();
+					const removedTracking = await resTracking.deleteOne();
 					res.json(removedTracking);
 				}
 				else {

@@ -156,7 +156,7 @@ router.delete("/subscription/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedSubscription = await resSubscription.remove();
+					const removedSubscription = await resSubscription.deleteOne();
 					res.json(removedSubscription);
 				}
 				else {

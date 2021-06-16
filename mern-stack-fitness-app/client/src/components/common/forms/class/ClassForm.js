@@ -12,11 +12,13 @@ import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Sel
 import { KeyboardDateTimePicker } from '@material-ui/pickers';
 
 import { ClassSchema } from '../../schemas/class/ClassSchema'
+import { getMonitors } from '../../../../api/user_api';
 
 export const ClassForm = ({ sclass, onSubmit }) => {
 
 	const [activities, setActivities] = useState([])	// Creamos una variable de estado para almacenar la información de las actividades y una función para actualizarlas
 	const [users, setUsers] = useState([])
+	const [monitors, setMonitors] = useState([])
 	const [rooms, setRooms] = useState([])
 	const [selectedDate, handleDateChange] = useState(new Date(localStorage.getItem('currentDate')) || new Date() );
 
@@ -34,6 +36,10 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 			const activities = await getActivities();	// Llamamos a la API para obtener la información de las actividades
 			setActivities(activities);	// Actualizamos la información de nuestra variable de estado para que contenga la información de las actividades
 		}
+		const fetchMonitors = async () => {
+			const monitors = await getMonitors();	// Llamamos a la API para obtener la información de los usuarios
+			setMonitors(monitors);	// Actualizamos la información de nuestra variable de estado para que contenga la información de los usuarios
+		}
 		const fetchUsers = async () => {
 			const users = await getUsers();	// Llamamos a la API para obtener la información de los usuarios
 			setUsers(users);	// Actualizamos la información de nuestra variable de estado para que contenga la información de los usuarios
@@ -44,6 +50,7 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 		}
 		fetchActivities();	// Llamamos aparte a fetchActivities para no hacer el useEffect completo asíncrono (práctica no recomendada)
 		fetchUsers();	// Llamamos aparte a fetchActivities para no hacer el useEffect completo asíncrono (práctica no recomendada)
+		fetchMonitors();
 		fetchRooms();
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
@@ -122,9 +129,9 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 							fullWidth
 						>
 							{
-								users && ( 
-									users.map(user => (
-										<MenuItem key={user._id} value={user._id}>{user.aliasUsuario}</MenuItem>
+								monitors && ( 
+									monitors.map(monitor => (
+										<MenuItem key={monitor._id} value={monitor._id}>{monitor.aliasUsuario}</MenuItem>
 									))
 								)
 							}

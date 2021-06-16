@@ -23,7 +23,7 @@ router.get("/measure/list/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Seguimiento", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -136,7 +136,7 @@ router.delete("/measure/:trackingid/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarla se lanza el mensaje 404 Not Found
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedMeasure = await resMeasure.remove();
+					const removedMeasure = await resMeasure.deleteOne();
 					var tracking;
 					try {
 						tracking = await TrackingModel.findByIdAndUpdate(req.params.trackingid, 

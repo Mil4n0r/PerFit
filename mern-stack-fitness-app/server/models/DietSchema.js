@@ -3,7 +3,6 @@ const idvalidator = require('mongoose-id-validator');
 const PlanModel = require('./PlanSchema');
 
 const MealModel = require('./MealSchema');
-const RationModel = require('./RationSchema');
 
 const options = {
 	discriminatorKey: "kind", // El nombre de nuestra clave de discriminación
@@ -45,11 +44,22 @@ const DietSchema = mongoose.Schema({
 	}]
 }, options);
 
-DietSchema.post('remove', async function() {
-	const meals = await MealModel.find({_id: {$in: this.comidasDieta} })
-	await RationModel.deleteMany({_id: {$in: meals.map(m => m.racionesComida)} });
-	await MealModel.deleteMany({_id: {$in: this.comidasDieta} })
+DietSchema.pre('findOneAndDelete', async (data) => {
+	await MealModel.deleteMany({_id: {$in: data.comidasDieta} })
+});
+
+DietSchema.pre('deleteOne',{document:true, query: true}, async (data) => {
+	await MealModel.deleteMany({_id: {$in: data.comidasDieta} })
+});
+
+DietSchema.pre('deleteMany', async function() {
+	console.log("DIETA")
+	const condition = this._conditions;
+	const deletedDiets = await Diet.find(condition);
+	const mealsToDelete = deletedDiets.map(d => d.comidasDieta);
+	await MealModel.deleteMany({_id: {$in: mealsToDelete} });
 });
 
 DietSchema.plugin(idvalidator);
-module.exports = PlanModel.discriminator("Dieta", DietSchema);
+const Diet = PlanModel.discriminator("Dieta", DietSchema);
+module.exports = Diet;

@@ -3,6 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 
 const UserModel = require('../../models/UserSchema');
+const MonitorModel = require('../../models/MonitorSchema');
 const TrainerModel = require('../../models/TrainerSchema');
 const { checkPermissionsUser } = require('../../auth/checkPermissions');
 
@@ -35,6 +36,29 @@ router.get("/user/list/:inactive?/:search?", async (req,res,next) => {
 					);
 					res.json(users);
 				}
+			} catch(err) {
+				next(err);
+			}
+		}
+	})(req,res,next);
+});
+
+router.get("/monitor/list", async (req,res,next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			try {
+				const monitors = await MonitorModel.find(
+					{cuentaActivada: true},
+					"aliasUsuario emailUsuario privacidadUsuario cuentaActivada"
+				)
+				res.json(monitors);
 			} catch(err) {
 				next(err);
 			}
@@ -162,7 +186,7 @@ router.delete("/user/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const deletedUser = await resUser.remove();
+					const deletedUser = await resUser.deleteOne();
 					res.json(deletedUser);
 				}
 				else

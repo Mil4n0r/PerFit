@@ -3,7 +3,7 @@ import { getActivity } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 
-import {Grid, Paper, Modal, Button} from '@material-ui/core';
+import {Grid, Paper, Modal, Button, Card, CardActionArea} from '@material-ui/core';
 
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -103,6 +103,22 @@ export const ActivityInfo = () => {
 						}
 						<ContainerWithPadding>
 							<Grid container spacing={3}>
+								{
+									activity.permission.includes('write') && (
+										<Grid item xs>
+											<Card >
+												<CardActionArea>
+													<VerticalGrid item xs className="zoom">
+														<ButtonAvatar><EditOutlinedIcon /></ButtonAvatar>
+														<Typography color='primary' className="caps">
+															Editar
+														</Typography>
+													</VerticalGrid>
+												</CardActionArea>
+											</Card>
+										</Grid>
+									)
+								}
 								{
 									activity.permission.includes('write') && (
 										<Grid item xs>

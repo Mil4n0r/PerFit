@@ -10,7 +10,6 @@ router.post("/register", async (req, res,next) => {
 			next(err);
 		} 
 		else if(!user) {
-			console.log("REGISTRANDO")
 			const error = new Error(info.message);
 			next(error);
 		}

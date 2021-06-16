@@ -43,7 +43,7 @@ export const UserTrackingList = () => {
 							<TableHeaderCell>Valor objetivo</TableHeaderCell>
 							{}
 							{
-								loggedIn && loggedIn.role === "Administrador" ? (
+								loggedIn && user && (loggedIn._id === user.userInfo._id || loggedIn.alumnosEntrenados?.includes(user.userInfo._id)) ? (
 									<TableHeaderCell align='center'><Link to={`/associate/tracking/${user?.userInfo?._id}`}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
 								) :
 									<TableHeaderCell align='center'>Acción</TableHeaderCell>

@@ -26,7 +26,7 @@ router.post("/associate/routine/training/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -70,7 +70,7 @@ router.get("/training/list/:id/:date?", async (req, res, next) => {
 		}
 		else {
 			try {	
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -131,7 +131,7 @@ router.get("/training/list/month/:id/:date", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -178,7 +178,7 @@ router.delete("/training/:id/:trainingid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resRoutine = permissionsResData.plan;
 				const resPermission = permissionsResData.permission;
@@ -219,7 +219,7 @@ router.get("/training/:id/:trainingid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -250,7 +250,7 @@ router.post("/associate/training/workout/:id/:trainingid", async (req, res, next
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -285,7 +285,7 @@ router.post("/associate/training/workout/:id/:trainingid", async (req, res, next
 	})(req,res,next);
 });
 
-router.delete("/workout/:trainingid/:id/:workoutid", async (req, res, next) => {
+router.delete("/workout/:id/:trainingid/:workoutid", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -296,7 +296,7 @@ router.delete("/workout/:trainingid/:id/:workoutid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -339,7 +339,7 @@ router.get("/workout/:id/:workoutid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -370,7 +370,7 @@ router.post("/workout/:id/:workoutid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -406,7 +406,7 @@ router.post("/training/:id/:trainingid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {

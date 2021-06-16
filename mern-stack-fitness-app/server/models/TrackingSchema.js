@@ -30,14 +30,24 @@ const TrackingSchema = mongoose.Schema({
 	medidasSeguidas: [{ 
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "Medida",
-		autopopulate: true
 	}]
 }, options);
 
-TrackingSchema.post('remove', async function() {
-	await MeasureModel.deleteMany({_id: {$in: this.medidasSeguidas} }).exec();
+TrackingSchema.pre('deleteOne',{document:true, query: true}, async (data) => {
+	await MeasureModel.deleteMany({_id: {$in: data.medidasSeguidas} });
+});
+
+TrackingSchema.pre('findOneAndDelete', async (data) => {
+	await MeasureModel.deleteMany({_id: {$in: data.medidasSeguidas} });
+});
+
+TrackingSchema.pre('deleteMany', async function() {
+	const condition = this._conditions;
+	const deletedTrackings = await Tracking.find(condition);
+	const measuresToDelete = deletedTrackings.map(m => m.medidasSeguidas);
+	await MeasureModel.deleteMany({_id: {$in: measuresToDelete} });
 });
 
 TrackingSchema.plugin(idvalidator);
-
-module.exports = PlanModel.discriminator("Seguimiento", TrackingSchema);
+const Tracking = PlanModel.discriminator("Seguimiento", TrackingSchema);
+module.exports = Tracking;

@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import {Menu, FormControlLabel, Tooltip, Stepper, Divider, Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress, List, ListItem, ListItemText, LinearProgress, Drawer } from '@material-ui/core';
+import {Card, Menu, FormControlLabel, Tooltip, Stepper, Divider, Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress, List, ListItem, ListItemText, LinearProgress, Drawer, CardContent } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 import {green, red, orange, lightGreen} from '@material-ui/core/colors'
 import { ErrorMessage } from '@hookform/error-message';
@@ -36,7 +36,7 @@ const HeaderGrid = styled(Grid)`
 	}
 	& .logo img {
 		height: 100%;
-		padding: ${props => props.theme.spacing(1)};
+		padding: ${props => props.theme.spacing(1.2)};
 	}
 	& .bar {
 		display: flex;
@@ -53,7 +53,34 @@ const FooterContainer = styled(Container)`
 `;
 
 const NavLink = styled(Link)`
-	text-decoration: none;
+	&& {
+		text-decoration: none;
+	}
+`
+
+const CustomCardContent = styled(CardContent)`
+	& {
+		background-image: -webkit-linear-gradient(45deg, #FFFFFF 50%, ${props => props.theme.palette.primary.dark} 50%);
+		transition: width 2s;
+	}
+	&.secondary {
+		background-image: -webkit-linear-gradient(45deg, #FFFFFF 50%, ${props => props.theme.palette.secondary.dark} 50%);
+		transition: width 2s;
+	}
+	&.secondary .MuiAvatar-root {
+		background: ${props => props.theme.palette.secondary.main}
+	}
+	&:hover {
+		background-image: -webkit-linear-gradient(45deg, #FFFFFF 50%, ${props => props.theme.palette.primary.main} 50%);
+	}
+	&.secondary:hover {
+		background-image: -webkit-linear-gradient(45deg, #FFFFFF 50%, ${props => props.theme.palette.secondary.main} 50%);
+	}
+	&:hover .MuiGrid-root .logo {
+		{
+			transform: scale(1.2)
+		}
+	}
 `
 
 const NavProgress = styled(CircularProgress)`
@@ -83,7 +110,7 @@ const NavTab = styled(Tab)`
 		color: white;
 		padding-right: 0;
 		padding-left: 0;
-		min-width: 85px;
+		min-width: 80px;
 	}
 	& span {
 		width: 100%;
@@ -227,6 +254,9 @@ const CustomTypography = styled(Typography)`
 	&.center {
 		text-align: center;
 	}
+	&.white {
+		color: white;
+	}
 `
 
 const ButtonsContainer = styled(Container)`
@@ -269,6 +299,9 @@ const VerticalGrid = styled(Grid)`
 		transform: scale(1.2);
 		overflow: hidden;
 	}
+	&.fullWidth {
+		width: 100%;
+	}
 `
 
 const InputLabelWithoutMargin = styled(InputLabel)`
@@ -287,6 +320,9 @@ const HorizontalGrid = styled(Grid)`
 	}
 	&.centerText {
 		text-align:center;
+	}
+	&.fullWidth {
+		width: 100%;
 	}
 `
 
@@ -489,6 +525,27 @@ const AuxMenu = styled(Menu)`
 		justify-content: center;
 		align-items: center;
 	}
+	& li {
+		justify-content: center;
+		align-items: center;
+	}
+	& .MuiBadge-root {
+		justify-content: center;
+		align-items: center;
+		width: 20px;
+	}
+	& .MuiBadge-root span {
+		transform: translate(90%, -50%);
+	}
 `
 
-export {HeaderGrid, FooterLink, FooterContainer, AuxMenu, ErrorDrawer, ButtonAvatarSecondary, NoMarginFormControlLabel, CustomToolTip, HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}
+const FullWidthCard = styled(Card)`
+	&& {
+		width: 100%;
+	}
+	& .hometab * {
+		width: 100%;
+	}
+`
+
+export {FullWidthCard, CustomCardContent, HeaderGrid, FooterLink, FooterContainer, AuxMenu, ErrorDrawer, ButtonAvatarSecondary, NoMarginFormControlLabel, CustomToolTip, HiddenTextField, CircleLink, TableBottomRow, WhiteKeyboardDatePicker, NoBackgroundStepper, CustomTableCell, CustomDeleteForeverOutlinedIcon, CustomEditOutlinedIcon, NutrientBar, VerticalDivider, CustomListItem, ContainerWithPadding, HorizontalList, HeaderContainer, NavTab, NavProgress, NavLink, NavTabs, NavBar, LogOutButton, CustomTableHead, CustomTableRow, BodyContainer, FormContainer, TableHeaderCell, LoginButton, LoginAvatar, RegisterAvatar, ButtonAvatar, FullWidthForm, CustomTypography, ButtonsContainer, TextFieldWithMargin, SelectWithMargin, InputLabelWithMargin, InputLabelWithoutMargin, VerticalGrid, HorizontalGrid, PrimaryLink, TableContainerWithMargin, CenterPaper, CapacityInputLabel, FullWidthPaper, CustomListItemText}

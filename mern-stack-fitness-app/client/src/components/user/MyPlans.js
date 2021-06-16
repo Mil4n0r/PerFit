@@ -2,13 +2,13 @@ import React, {useState, useEffect} from 'react';
 import { getUser } from '../../api';
 import { useRouteMatch } from "react-router-dom";
 
-import {CircularProgress, Grid } from '@material-ui/core';
+import {CircularProgress, Grid, Card, CardActionArea } from '@material-ui/core';
 
 import FitnessCenterOutlinedIcon from '@material-ui/icons/FitnessCenterOutlined';
 import RestaurantMenuOutlinedIcon from '@material-ui/icons/RestaurantMenuOutlined';
 import TrendingUpOutlinedIcon from '@material-ui/icons/TrendingUpOutlined';
 
-import {ContainerWithPadding, FullWidthPaper, BodyContainer, CustomTypography as Typography, VerticalGrid, ButtonAvatar, PrimaryLink } from '../../style/style'
+import {FullWidthCard, ContainerWithPadding, FullWidthPaper, BodyContainer, CustomTypography as Typography, VerticalGrid, ButtonAvatar, PrimaryLink, NavLink, HorizontalGrid, CustomCardContent } from '../../style/style'
 
 
 export const MyPlans = () => {
@@ -35,44 +35,62 @@ export const MyPlans = () => {
 			<ContainerWithPadding>
 				{
 					user && user.permission.includes('checkplans') ? (
-						<Grid container spacing={3}>
-							<Grid item xs>
-								<PrimaryLink to={`/routine/list/${user.userInfo._id}`}>
-									<FullWidthPaper>
-										<VerticalGrid item xs className="zoom">
-											<ButtonAvatar><FitnessCenterOutlinedIcon /></ButtonAvatar>
-											<Typography color='primary' className="caps">
-												Rutinas
-											</Typography>
-										</VerticalGrid>
-									</FullWidthPaper>
-								</PrimaryLink>
-							</Grid>
-							<Grid item xs>
-								<PrimaryLink to={`/diet/list/${user.userInfo._id}`}>
-									<FullWidthPaper>
-										<VerticalGrid item xs className="zoom">
-											<ButtonAvatar><RestaurantMenuOutlinedIcon /></ButtonAvatar>
-											<Typography color='primary' className="caps">
-												Dietas
-											</Typography>
-										</VerticalGrid>
-									</FullWidthPaper>
-								</PrimaryLink>
-							</Grid>
-							<Grid item xs>
-								<PrimaryLink to={`/tracking/list/${user.userInfo._id}`}>
-									<FullWidthPaper>
-										<VerticalGrid item xs className="zoom">
-											<ButtonAvatar><TrendingUpOutlinedIcon /></ButtonAvatar>
-											<Typography color='primary' className="caps">
-												Seguimientos
-											</Typography>
-										</VerticalGrid>
-									</FullWidthPaper>
-								</PrimaryLink>
-							</Grid>
-						</Grid>
+						<VerticalGrid container spacing={3}>
+							<VerticalGrid className="fullWidth" item>
+								<FullWidthCard className="card">
+									<CardActionArea component={NavLink} to={`/routine/list/${user.userInfo._id}`}>
+										<CustomCardContent>
+											<HorizontalGrid container spacing={4}>
+												<HorizontalGrid className="logo" item xs>
+													<ButtonAvatar><FitnessCenterOutlinedIcon /></ButtonAvatar>
+												</HorizontalGrid>
+												<HorizontalGrid item xs>
+													<Typography className="white caps" component="h2" variant="h5">
+														Rutinas
+													</Typography>
+												</HorizontalGrid>
+											</HorizontalGrid>
+										</CustomCardContent>
+									</CardActionArea>
+								</FullWidthCard>
+							</VerticalGrid>
+							<VerticalGrid className="fullWidth" item>
+								<FullWidthCard className="card">
+									<CardActionArea component={NavLink} to={`/diet/list/${user.userInfo._id}`}>
+										<CustomCardContent>
+											<HorizontalGrid container spacing={4}>
+												<HorizontalGrid className="logo" item xs>
+													<ButtonAvatar><RestaurantMenuOutlinedIcon /></ButtonAvatar>
+												</HorizontalGrid>
+												<HorizontalGrid item xs>
+													<Typography className="white caps" component="h2" variant="h5">
+														Dietas
+													</Typography>
+												</HorizontalGrid>
+											</HorizontalGrid>
+										</CustomCardContent>
+									</CardActionArea>
+								</FullWidthCard>
+							</VerticalGrid>
+							<VerticalGrid className="fullWidth" item>
+								<FullWidthCard className="card">
+									<CardActionArea component={NavLink} to={`/tracking/list/${user.userInfo._id}`}>
+										<CustomCardContent>
+											<HorizontalGrid container spacing={4}>
+												<HorizontalGrid className="logo" item xs>
+													<ButtonAvatar><TrendingUpOutlinedIcon /></ButtonAvatar>
+												</HorizontalGrid>
+												<HorizontalGrid item xs>
+													<Typography className="white caps" component="h2" variant="h5">
+													Seguimientos
+													</Typography>
+												</HorizontalGrid>
+											</HorizontalGrid>
+										</CustomCardContent>
+									</CardActionArea>
+								</FullWidthCard>
+							</VerticalGrid>
+						</VerticalGrid>
 					) : <CircularProgress/>
 				}
 			</ContainerWithPadding>

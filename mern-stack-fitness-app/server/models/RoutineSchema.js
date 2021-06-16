@@ -4,7 +4,6 @@ const idvalidator = require('mongoose-id-validator');
 const PlanModel = require('./PlanSchema');
 
 const TrainingModel = require('./TrainingSchema');
-const WorkoutModel = require('./WorkoutSchema');
 
 const options = {
 	discriminatorKey: "kind", // El nombre de nuestra clave de discriminación
@@ -23,11 +22,21 @@ const RoutineSchema = mongoose.Schema({
 	}]
 }, options);
 
-RoutineSchema.post('remove', async function() {
-	const trainings = await TrainingModel.find({_id: {$in: this.entrenamientosRutina} })
-	await WorkoutModel.deleteMany({_id: {$in: trainings.map(t => t.trabajoEntrenamiento)} });
-	await TrainingModel.deleteMany({_id: {$in: this.entrenamientosRutina} })
+RoutineSchema.pre('findOneAndDelete', async (data) => {
+	await TrainingModel.deleteMany({_id: {$in: data.entrenamientosRutina} })
+});
+
+RoutineSchema.pre('deleteOne',{document:true, query: true}, async (data) => {
+	await TrainingModel.deleteMany({_id: {$in: data.entrenamientosRutina} })
+});
+
+RoutineSchema.pre('deleteMany', async function() {
+	const condition = this._conditions;
+	const deletedRoutines = await Routine.find(condition);
+	const trainingsToDelete = deletedRoutines.map(d => d.entrenamientosRutina);
+	await TrainingModel.deleteMany({_id: {$in: trainingsToDelete} });
 });
 
 RoutineSchema.plugin(idvalidator);
-module.exports = PlanModel.discriminator("Rutina", RoutineSchema);
+const Routine = PlanModel.discriminator("Rutina", RoutineSchema);
+module.exports = Routine;

@@ -26,9 +26,21 @@ const MealSchema = mongoose.Schema({
 	}]
 });
 
-MealSchema.post('remove', async function() {
-	await RationModel.deleteMany({_id: {$in: this.racionesComida} }).exec();
+MealSchema.pre('findOneAndDelete', async (data) => {
+	await RationModel.deleteMany({_id: {$in: data.racionesComida} });
+});
+
+MealSchema.pre('deleteOne',{document:true, query: true}, async (data) => {
+	await RationModel.deleteMany({_id: {$in: data.racionesComida} });
+});
+
+MealSchema.pre('deleteMany', async function() {
+	const condition = this._conditions;
+	const deletedMeals = await Meal.find(condition);
+	const rationsToDelete = deletedMeals.map(m => m.racionesComida);
+	await RationModel.deleteMany({_id: {$in: rationsToDelete} });
 });
 
 MealSchema.plugin(idvalidator);
-module.exports = mongoose.model("Comida", MealSchema);
+const Meal = mongoose.model("Comida", MealSchema);
+module.exports = Meal;

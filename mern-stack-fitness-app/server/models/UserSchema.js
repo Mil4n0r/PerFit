@@ -10,11 +10,10 @@ const options = {
 	timestamps: true
 };
 
-const PlanModel = require('./PlanSchema');
-/*
+const TrackingModel = require('./TrackingSchema');
 const RoutineModel = require('./RoutineSchema');
 const DietModel = require('./DietSchema');
-*/
+
 const UserSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
 	emailUsuario: {
@@ -171,11 +170,11 @@ UserSchema.pre('save', async function(next) {
 	next();
 });
 
-UserSchema.post('remove', async function() {
-	await PlanModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
-	//await RoutineModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
-	//await DietModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
-	//await TrackingModel.deleteMany({usuarioPlan: {$in: this._id} }).exec();
+UserSchema.pre('deleteOne',{document:true, query: true}, async function() {
+	//await PlanModel.deleteMany({usuarioPlan: this._id });
+	await RoutineModel.deleteMany({usuarioPlan: {$in: this._id} });
+	await DietModel.deleteMany({usuarioPlan: {$in: this._id} });
+	await TrackingModel.deleteMany({usuarioPlan: {$in: this._id} });
 });
 
 UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB = Callback para recoger los errores

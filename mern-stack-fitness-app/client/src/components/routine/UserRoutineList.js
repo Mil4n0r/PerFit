@@ -41,7 +41,7 @@ export const UserRoutineList = () => {
 							<TableHeaderCell>Nombre de la rutina</TableHeaderCell>
 							<TableHeaderCell>Tiempo de la rutina</TableHeaderCell>
 							{
-								loggedIn && loggedIn.role === "Administrador" ? (
+								loggedIn && user && (loggedIn._id === user.userInfo._id || loggedIn.alumnosEntrenados?.includes(user.userInfo._id)) ? (
 									<TableHeaderCell align='center'><Link to={`/associate/routine/${match.params.id}`}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
 								) :
 									<TableHeaderCell align='center'>Acción</TableHeaderCell>

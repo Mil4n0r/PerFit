@@ -170,7 +170,7 @@ router.delete("/class/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedClass = await resClass.remove();	// Se elimina la clase
+					const removedClass = await resClass.deleteOne();	// Se elimina la clase
 					res.json(removedClass);
 				}
 				else {

@@ -188,7 +188,7 @@ router.delete("/exercise/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedExercise = await resExercise.remove();
+					const removedExercise = await resExercise.deleteOne();
 					res.json(removedExercise);
 				}
 				else {

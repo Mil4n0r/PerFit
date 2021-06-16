@@ -26,7 +26,7 @@ router.post("/associate/diet/meal/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -70,7 +70,7 @@ router.get("/meal/list/:id/:date?", async (req, res, next) => {
 		}
 		else {
 			try {	
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -131,7 +131,7 @@ router.get("/meal/list/month/:id/:date", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -178,7 +178,7 @@ router.delete("/meal/:id/:mealid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resDiet = permissionsResData.plan;
 				const resPermission = permissionsResData.permission;
@@ -219,7 +219,7 @@ router.get("/meal/:id/:mealid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -250,7 +250,7 @@ router.post("/associate/meal/ration/:id/:mealid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -294,7 +294,7 @@ router.delete("/ration/:id/:mealid/:rationid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -338,7 +338,7 @@ router.get("/ration/:id/:rationid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -369,7 +369,7 @@ router.post("/ration/:id/:rationid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {
@@ -403,7 +403,7 @@ router.post("/meal/:id/:mealid", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Dieta", req);
 				const resError = permissionsResData.error;
 				const resPermission = permissionsResData.permission;
 				if(resError) {

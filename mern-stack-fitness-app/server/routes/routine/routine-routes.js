@@ -88,7 +88,7 @@ router.get("/routine/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resRoutine = permissionsResData.plan;
 				if(resError || !resRoutine) {
@@ -119,7 +119,7 @@ router.post("/routine/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);	// Se busca el usuario cuya id coincida
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);	// Se busca el usuario cuya id coincida
 				const resError = permissionsResData.error;
 				const resRoutine = permissionsResData.plan;
 				const resPermission = permissionsResData.permission;
@@ -152,7 +152,7 @@ router.delete("/routine/:id", async (req, res, next) => {
 		}
 		else {
 			try {
-				const permissionsResData = await checkPermissionsPlan(user, req);
+				const permissionsResData = await checkPermissionsPlan(user, "Rutina", req);
 				const resError = permissionsResData.error;
 				const resRoutine = permissionsResData.plan;
 				const resPermission = permissionsResData.permission;
@@ -160,7 +160,7 @@ router.delete("/routine/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedRoutine = await resRoutine.remove();
+					const removedRoutine = await resRoutine.deleteOne();
 					res.json(removedRoutine);
 				}
 				else {

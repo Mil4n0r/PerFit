@@ -79,6 +79,11 @@ export const FriendList = () => {
 					</TableBody>
 				</Table>
 			</TableContainer>
+			<HorizontalGrid container>
+				<HorizontalGrid item xs>
+					<Link to={`/user/list`}>Buscar amigos</Link>
+				</HorizontalGrid>
+			</HorizontalGrid>
 			<Modal
 				open={open}
 				onClose={handleClose}

@@ -25,9 +25,21 @@ const TrainingSchema = mongoose.Schema({
 	}]
 });
 
-TrainingSchema.post('remove', async function() {
-	await WorkoutModel.deleteMany({_id: {$in: this.trabajoEntrenamiento} }).exec();
+TrainingSchema.pre('findOneAndDelete', async (data) => {
+	await WorkoutModel.deleteMany({_id: {$in: data.trabajoEntrenamiento} });
+});
+
+TrainingSchema.pre('deleteOne',{document:true, query: true}, async (data) => {
+	await WorkoutModel.deleteMany({_id: {$in: data.trabajoEntrenamiento} });
+});
+
+TrainingSchema.pre('deleteMany', async function() {
+	const condition = this._conditions;
+	const deletedTrainings = await Training.find(condition);
+	const workoutsToDelete = deletedTrainings.map(m => m.trabajoEntrenamiento);
+	await WorkoutModel.deleteMany({_id: {$in: workoutsToDelete} });
 });
 
 TrainingSchema.plugin(idvalidator);
-module.exports = mongoose.model("Entrenamiento", TrainingSchema);
+const Training = mongoose.model("Entrenamiento", TrainingSchema);
+module.exports = Training;

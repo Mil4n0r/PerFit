@@ -22,11 +22,7 @@ const PlanSchema = mongoose.Schema({
 		required: true
 	}
 }, options);
-/*
-PlanSchema.post('save', async function() {
-	await UserModel.findByIdAndUpdate(this.usuarioPlan, { $push: { planesUsuario: mongoose.Types.ObjectId(this._id) } }, {useFindAndModify: false} );
-});
-*/
+
 PlanSchema.plugin(idvalidator);
 
 module.exports = mongoose.model("Plan", PlanSchema);

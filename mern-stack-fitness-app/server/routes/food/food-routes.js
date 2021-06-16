@@ -200,7 +200,7 @@ router.delete("/food/:id", async (req, res, next) => {
 					res.status(resError.code).send(resError.message);
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
-					const removedFood = await resFood.remove();
+					const removedFood = await resFood.deleteOne();
 					res.json(removedFood);
 				}
 				else {
