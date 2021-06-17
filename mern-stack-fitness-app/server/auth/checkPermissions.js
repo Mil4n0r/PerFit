@@ -6,6 +6,7 @@ const MeasureModel = require('../models/MeasureSchema');
 const RoomModel = require('../models/RoomSchema');
 const ClassModel = require('../models/ClassSchema');
 const SubscriptionModel = require('../models/SubscriptionSchema');
+const RequestModel = require('../models/RequestSchema');
 const DietModel = require('../models/DietSchema');
 const RoutineModel = require('../models/RoutineSchema');
 const TrackingModel = require('../models/TrackingSchema');
@@ -68,11 +69,32 @@ const checkPermissionsUser = async (activeUser, req) => {
 				permission = [];
 			}
 		}
-		if(checkedUser.role === "Entrenador" && !checkedUser.tieneEntrenador && !checkedUser._id.equals(activeUser._id)) {// && activeUser.suscripcionUsuario.permisosSuscripcion.includes("Entrenador Personal"))) 
-			permission.push("allowtraining");
+		if(checkedUser.role === "Entrenador" && !checkedUser.tieneEntrenador &&
+		  !checkedUser._id.equals(activeUser._id) ) {// && activeUser.suscripcionUsuario.permisosSuscripcion.includes("Entrenador Personal")))
+			const pendingRequests = await RequestModel.find(
+				{_id: {$in: checkedUser.peticionesPendientes}}
+			)	
+			const trainingRequests = pendingRequests.filter(
+				record => (
+					record.usuarioSolicitante.equals(activeUser._id) && 
+					record.tipoPeticion === 'Entrenamiento'
+				)
+			)	
+			if(trainingRequests.length === 0)
+				permission.push("allowtraining");
 		}
 		if(!activeUser.amigosUsuario.includes(checkedUser._id)) {
-			permission.push("allowfriends")
+			const pendingRequests = await RequestModel.find(
+				{_id: {$in: checkedUser.peticionesPendientes}}
+			)	
+			const friendRequests = pendingRequests.filter(
+				record => (
+					record.usuarioSolicitante.equals(activeUser._id) && 
+					record.tipoPeticion === 'Amistad'
+				)
+			)	
+			if(friendRequests.length === 0)
+				permission.push("allowfriends")
 		}
 		return {
 			error: error,

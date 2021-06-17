@@ -162,3 +162,29 @@ passport.use("jwt",
 		}
 	)
 );
+
+
+// Estrategia JWT para resetear la contraseña
+passport.use("reset",
+	new JWTstrategy( 
+		{
+			secretOrKey: process.env.RESET_PASSWORD_SECRET,
+			jwtFromRequest: req => req.params.token,
+		},
+		(token, done) => {
+			const email = token.body.email;
+			console.log(token)
+			UserModel.findOne({emailUsuario: email}, (err, user) => {
+				if(err) {
+					return done(err)
+				}
+				else if(!user) {
+					return done(null, false, { message: "Usuario no encontrado"});
+				}
+				else {
+					return done(null, user, { message: "Ha sido validado satisfactoriamente"});
+				}
+			})			
+		}
+	)
+);

@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import FormContext from '../../../../../context/FormContext';
 import { RegisterSchema1 } from '../../../schemas/user/register/RegisterSchema1';
 
-import { Step, StepLabel, Button, Grid, Typography, Container } from '@material-ui/core';
+import { Step, StepLabel, Button, Grid, Typography, Box } from '@material-ui/core';
 import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField } from '../../../../../style/style';
 
 export const Step1 = () => {
@@ -60,11 +60,11 @@ export const Step1 = () => {
 						({ messages }) =>
 							messages &&
 								Object.entries(messages).map(([typeArray, messageArray]) => (
-									<Container key={"alias " + typeArray}>
+									<Box key={"alias " + typeArray}>
 										{Array.isArray(messageArray) ? (
-											messageArray.map((message, id) => <Typography key={"alias" + id}>{message}</Typography>)
+											messageArray.map((message, id) => <Typography className="error" key={"alias" + id}>{message}</Typography>)
 										) : <Typography>{messageArray}</Typography>}
-									</Container>
+									</Box>
 								))
 					}
 				/>
@@ -92,11 +92,11 @@ export const Step1 = () => {
 						({ messages }) =>
 							messages &&
 								Object.entries(messages).map(([typeArray, messageArray]) => (
-									<Container key={"password " + typeArray}>
+									<Box key={"password " + typeArray}>
 										{Array.isArray(messageArray) ? (
-											messageArray.map((message,id) => <Typography key={"password" + id}>{message}</Typography>)
+											messageArray.map((message,id) => <Typography className="error" key={"password" + id}>{message}</Typography>)
 										) : <Typography>{messageArray}</Typography>}
-									</Container>
+									</Box>
 								))
 					}
 				/>

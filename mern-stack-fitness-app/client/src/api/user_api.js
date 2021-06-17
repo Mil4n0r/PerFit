@@ -20,9 +20,17 @@ export const getUser = (id) => axios.get(`http://localhost:4000/admin/user/${id}
 
 export const logIn = (email, password,rememberme) => axios.post(`http://localhost:4000/login/${rememberme}`, {email,password}, {	// Por defecto se le aplica JSON.stringify al segundo argumento
 	data: {email,password,rememberme}
-})
+});
 
 export const logOut = () => axios.get("http://localhost:4000/user/logout")
+
+export const forgotPassword = (email) => axios.post("http://localhost:4000/forgot/password", {email}, {
+	data: {email}
+}) ;
+
+export const resetPassword = (token, newpassword) => axios.post(`http://localhost:4000/reset/password/${token}`, {newpassword}, {
+	data: {newpassword}
+});
 
 export const updateUser = (user,id) => axios.post(`http://localhost:4000/admin/user/${id}`, user, {
 	data: user

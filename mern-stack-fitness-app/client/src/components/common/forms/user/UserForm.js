@@ -58,7 +58,7 @@ export const UserForm = ({ user, onSubmit }) => {
 								Object.entries(messages).map(([typeArray, messageArray]) => (
 									<Box className="error" key={"alias " + typeArray}>
 										{Array.isArray(messageArray) ? (
-											messageArray.map((message, id) => <Typography key={"alias" + id}>{message}</Typography>)
+											messageArray.map((message, id) => <Typography className="error" key={"alias" + id}>{message}</Typography>)
 										) : <Typography>{messageArray}</Typography>}
 									</Box>
 								))

@@ -53,7 +53,6 @@ DietSchema.pre('deleteOne',{document:true, query: true}, async (data) => {
 });
 
 DietSchema.pre('deleteMany', async function() {
-	console.log("DIETA")
 	const condition = this._conditions;
 	const deletedDiets = await Diet.find(condition);
 	const mealsToDelete = deletedDiets.map(d => d.comidasDieta);

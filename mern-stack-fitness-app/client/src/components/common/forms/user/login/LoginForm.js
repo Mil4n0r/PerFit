@@ -25,7 +25,7 @@ export const LoginForm = ({ onSubmit }) => {
 		<FormContainer>
 			<FullWidthForm onSubmit={(event) => {
 				event.preventDefault();
-				submitHandler(event.target.name, event.target.password)
+				submitHandler();
 			}}
 			>
 				<TextField
@@ -64,7 +64,7 @@ export const LoginForm = ({ onSubmit }) => {
 				</LoginButton>
 				<Grid container>
 					<Grid item xs>
-						<Link href="#" color="primary">
+						<Link href="./forgot/password" color="primary">
 							He olvidado mi contraseña
 						</Link>
 					</Grid>

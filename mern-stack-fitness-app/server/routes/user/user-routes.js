@@ -1,7 +1,7 @@
 const express = require('express');
 const passport = require('passport');
 const router = express.Router();
-
+const mailer = require('nodemailer');
 const UserModel = require('../../models/UserSchema');
 const MonitorModel = require('../../models/MonitorSchema');
 const TrainerModel = require('../../models/TrainerSchema');
@@ -157,6 +157,25 @@ router.post("/user/activate/:id", async (req, res, next) => {
 				else if(permissionsResData && resPermission.includes("write")) {	// Se reasignan los campos del usuario
 					resUser.cuentaActivada = true;
 					const savedUser = await resUser.save();
+					try {
+						const transporter = mailer.createTransport({
+							service: 'gmail',
+							auth: {
+								user: process.env.MAIL,
+								pass: process.env.MAIL_PASSWORD, 
+							},
+						});
+						const mailinfo = await transporter.sendMail({
+							from: process.env.MAIL,
+							to: `${resUser.emailUsuario}`,
+							subject: "Aprobado su registro en PerFit",
+							html: '<h1>Bienvenido a PerFit</h1>' +
+							`<p>Hola ${resUser.aliasUsuario}, su solicitud de registro en PerFit ha sido validada por un administrador.</p>` +
+							'<p>Pulse <a href="http://localhost:3000/login">AQUÍ</a> para iniciar sesión:</p>'
+						});
+					} catch(err) {
+						next(err);
+					}
 					res.json(savedUser);
 				}
 				else {
@@ -187,6 +206,24 @@ router.delete("/user/:id", async (req, res, next) => {
 				}
 				else if(permissionsResData && resPermission.includes("delete")) {
 					const deletedUser = await resUser.deleteOne();
+					try {
+						const transporter = mailer.createTransport({
+							service: 'gmail',
+							auth: {
+								user: process.env.MAIL,
+								pass: process.env.MAIL_PASSWORD, 
+							},
+						});
+						const mailinfo = await transporter.sendMail({
+							from: process.env.MAIL,
+							to: `${deletedUser.emailUsuario}`,
+							subject: "Cuenta de PerFit eliminada",
+							html: `<p>Hola ${deletedUser.aliasUsuario}, lo lamentamos pero su cuenta en PerFit ha sido eliminada por un administrador.</p>` +
+							'<p>Si desconoce el motivo no dude en ponerse en contacto con nostros.</p>'
+						});
+					} catch(err) {
+						next(err);
+					}
 					res.json(deletedUser);
 				}
 				else
