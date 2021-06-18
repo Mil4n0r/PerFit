@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const mongooseTypePhone = require('mongoose-type-phone');
 const idvalidator = require('mongoose-id-validator');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const bcrypt = require('bcrypt');
 const SALT_WORK_FACTOR = 10;
@@ -21,6 +22,7 @@ const UserSchema = mongoose.Schema({
 		required: true,
 		trim: true,
 		unique: true,
+		uniqueCaseInsensitive: true,
 		validate: {
 			validator: function(v) {
 				return /^([\w-\.]+@([\w-]+\.)+[\w-]{2,4})?$/.test(v);
@@ -182,4 +184,5 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB =
 };
 
 UserSchema.plugin(idvalidator);
+UserSchema.plugin(uniqueValidator, { message: 'Ya existe un usuario con ese alias'});
 module.exports = mongoose.model("Usuario", UserSchema);

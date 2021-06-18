@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 import { deleteDiet } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
 
@@ -8,13 +9,19 @@ import { Button, Typography, Grid } from '@material-ui/core';
 export const DeleteDiet = (props) => {
 	const match = useRouteMatch();
 	const history = useHistory();
+	const [error, setError] = useState();
 
 	const setOpen = props.setOpen;
 	const userId = props.userId;
 
 	const onClick = async () => {
-		await deleteDiet(match.params.id);	// Llamamos a la API para crear el ejercicio
-		history.push(`/diet/list/${userId}`);	// Redireccionamos al listado de ejercicios
+		const deletedDiet = await deleteDiet(match.params.id);	// Llamamos a la API para crear el ejercicio
+		if(deletedDiet.response) {
+			setError(deletedDiet.response);
+		}
+		else {
+			history.push(`/diet/list/${userId}`);	// Redireccionamos al listado de ejercicios
+		}
 	}
 
 	const onClose = async () => {
@@ -53,6 +60,9 @@ export const DeleteDiet = (props) => {
 					</Grid>
 				</Grid>
 			</ButtonsContainer>	
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 };

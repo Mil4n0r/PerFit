@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 import { deleteSubscription } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
 
@@ -8,12 +9,18 @@ import { Button, Typography, Grid } from '@material-ui/core';
 export const DeleteSubscription = (props) => {
 	const match = useRouteMatch();
 	const history = useHistory();
+	const [error, setError] = useState();
 
 	const setOpen = props.setOpen;
 
 	const onClick = async () => {
-		await deleteSubscription(match.params.id);
-		history.push("/subscription/list");
+		const deletedSubscription = await deleteSubscription(match.params.id);
+		if(deletedSubscription.response) {
+			setError(deletedSubscription.response);
+		}
+		else {
+			history.push("/subscription/list");
+		}
 	}
 
 	const onClose = async () => {
@@ -52,6 +59,9 @@ export const DeleteSubscription = (props) => {
 					</Grid>
 				</Grid>
 			</ButtonsContainer>	
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 };

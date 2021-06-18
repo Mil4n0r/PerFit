@@ -4,10 +4,12 @@ import { addRation, getFood } from '../../api';
 import { RationForm } from '../common/forms/meal/RationForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const CreateRation = () => {
 	const match = useRouteMatch();
-	const [food, setFood] = useState();	
+	const [food, setFood] = useState();
+	const [error, setError] = useState();	
 	const history = useHistory();
 	
 	useEffect(() => {
@@ -21,8 +23,14 @@ export const CreateRation = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		const meal = await addRation(match.params.dietid, match.params.mealid, data);
-		history.push(`/associate/diet/meal/${match.params.dietid}`);
+		const createdMeal = await addRation(match.params.dietid, match.params.mealid, data);
+		if(createdMeal.response) {
+			setError(createdMeal.response);
+		}
+		else {
+			history.push(`/associate/diet/meal/${match.params.dietid}`);
+		}
+		
 	};
 
 	return food ? (
@@ -31,6 +39,9 @@ export const CreateRation = () => {
 				Crear ración
 			</CustomTypography>
 			<RationForm food={food} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

@@ -2,6 +2,7 @@ import React from 'react';
 import NavigationBar from './components/common/layout/NavigationBar';
 import Router from './Router';
 import Footer from './components/common/layout/Footer';
+import ErrorDisplayer from './components/common/layout/ErrorDisplayer';
 import { AuthContextProvider } from './context/AuthContext';
 import { FormContextProvider } from './context/FormContext';
 

@@ -1,19 +1,26 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { deleteClass } from '../../api'; 
 import { useRouteMatch, useHistory } from 'react-router-dom';
 
 import { BodyContainer, ButtonsContainer, CustomTypography } from '../../style/style';
 import { Button, Typography, Grid } from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const DeleteClass = (props) => {
 	const match = useRouteMatch();
 	const history = useHistory();
+	const [error, setError] = useState();
 
 	const setOpen = props.setOpen;
 
 	const onClick = async () => {
-		await deleteClass(match.params.id);	// Llamamos a la API para crear el ejercicio
-		history.push("/class/list");	// Redireccionamos al listado de ejercicios
+		const deletedClass = await deleteClass(match.params.id);	// Llamamos a la API para crear la clase
+		if(deletedClass.response) {
+			setError(deletedClass.response);
+		}
+		else {
+			history.push("/class/list");	// Redireccionamos al listado de clases
+		}
 	}
 
 	const onClose = async () => {
@@ -52,6 +59,9 @@ export const DeleteClass = (props) => {
 					</Grid>
 				</Grid>
 			</ButtonsContainer>
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 };

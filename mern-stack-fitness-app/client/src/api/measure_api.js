@@ -4,15 +4,20 @@ export const addMeasure = (measure, id) => axios.post(`http://localhost:4000/use
 	data: measure
 })
 	.then(res => res.data)
+	.catch(err => err);
 
 export const getMeasures = (id) => axios.get(`http://localhost:4000/user/measure/list/${id}`) // id = id seguimiento
 	.then(res => res.data)
+	.catch(err => err);
 
 export const getMeasure = (id) => axios.get(`http://localhost:4000/user/measure/${id}`)
-	.then(res => res.data);
+	.then(res => res.data)
+	.catch(err => err);
 
 export const updateMeasure = (measure,id) => axios.post(`http://localhost:4000/user/measure/${id}`, measure, {
 	data: measure
-});
+})
+	.catch(err => err);
 
 export const deleteMeasure = (trackingid, id) => axios.delete(`http://localhost:4000/user/measure/${trackingid}/${id}`)
+	.catch(err => err);

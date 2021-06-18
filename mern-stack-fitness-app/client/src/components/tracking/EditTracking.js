@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { TrackingForm } from '../common/forms/tracking/TrackingForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditTracking = () => {
 	const match = useRouteMatch();
 	const [tracking, setTracking] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditTracking = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateTracking(data, match.params.id);
-		history.push(`/tracking/list/${match.params.userid}`);
+		const updatedTracking = await updateTracking(data, match.params.id);
+		if(updatedTracking.response) {
+			setError(updatedTracking.response);
+		}
+		else {
+			history.push(`/tracking/list/${match.params.userid}`);
+		}
 	}
 
 	return tracking ? (
@@ -31,6 +38,9 @@ export const EditTracking = () => {
 				Editar seguimiento
 			</CustomTypography>
 			<TrackingForm tracking={tracking} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

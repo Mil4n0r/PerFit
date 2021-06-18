@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { FoodForm } from '../common/forms/food/FoodForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditFood = () => {
 	const match = useRouteMatch();
 	const [food, setFood] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditFood = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateFood(data, match.params.id);
-		history.push("/food/list");
+		const updatedFood = await updateFood(data, match.params.id);
+		if(updatedFood.response) {
+			setError(updatedFood.response);
+		}
+		else {
+			history.push("/food/list");
+		}
 	}
 
 	return food ? (
@@ -31,6 +38,9 @@ export const EditFood = () => {
 				Editar alimento
 			</CustomTypography>
 			<FoodForm food={food} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

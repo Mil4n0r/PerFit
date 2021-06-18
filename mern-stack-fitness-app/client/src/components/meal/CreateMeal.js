@@ -4,14 +4,22 @@ import { addMeal } from '../../api';
 import { MealForm } from '../common/forms/meal/MealForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const CreateMeal = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
 
+	const [error, setError] = useState();
+
 	const onSubmit = async (data) => {
-		const meal = await addMeal(data, match.params.id); // ID dieta
-		history.push(`/associate/diet/meal/${match.params.id}`);
+		const createdMeal = await addMeal(data, match.params.id); // ID dieta
+		if(createdMeal.response) {
+			setError(createdMeal.response);
+		}
+		else {
+			history.push(`/associate/diet/meal/${match.params.id}`);
+		}
 	};
 
 	return (
@@ -20,6 +28,9 @@ export const CreateMeal = () => {
 				Crear comida
 			</CustomTypography>
 			<MealForm onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 }

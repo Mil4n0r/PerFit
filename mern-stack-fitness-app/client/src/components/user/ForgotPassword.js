@@ -8,15 +8,22 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 
 import {BodyContainer, LoginAvatar, CustomTypography} from '../../style/style'
 import { CircularProgress } from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const ForgotPassword = () => {
 	const history = useHistory();
 	const [loading, setLoading] = useState(false);
+	const [error, setError] = useState();
 
 	const onSubmit = async (data) => {
 		setLoading(true)
-		await forgotPassword(data.email);
-		history.push("/");
+		const passwordRes = await forgotPassword(data.email);
+		if(passwordRes.response) {
+			setError(passwordRes.response);
+		}
+		else {
+			history.push("/");
+		}
 	};
 
 	return (
@@ -30,6 +37,9 @@ export const ForgotPassword = () => {
 			<ForgotPasswordForm onSubmit={onSubmit} />
 			{
 				loading && <CircularProgress/>
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	);

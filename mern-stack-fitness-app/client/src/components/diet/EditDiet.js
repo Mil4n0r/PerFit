@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { DietForm } from '../common/forms/diet/DietForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditDiet = () => {
 	const match = useRouteMatch();
 	const [diet, setDiet] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditDiet = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateDiet(data, match.params.id);
-		history.push(`/diet/list/${match.params.userid}`);
+		const updatedDiet = await updateDiet(data, match.params.id);
+		if(updatedDiet.response) {
+			setError(updatedDiet.response);
+		}
+		else {
+			history.push(`/diet/list/${match.params.userid}`);
+		}
 	}
 
 	return diet ? (
@@ -31,6 +38,9 @@ export const EditDiet = () => {
 				Editar dieta
 			</CustomTypography>
 			<DietForm diet={diet} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

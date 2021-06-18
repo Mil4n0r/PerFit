@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from 'react-router-dom';
 import { ClassForm } from '../common/forms/class/ClassForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditClass = () => {
 	const match = useRouteMatch();
 	const [sclass, setClass] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditClass = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateClass(data, match.params.id);
-		history.push("/class/list");
+		const updatedClass = await updateClass(data, match.params.id);
+		if(updatedClass.response) {
+			setError(updatedClass.response);
+		}
+		else {
+			history.push("/class/list");
+		}
 	}
 
 	return sclass ? (
@@ -31,6 +38,9 @@ export const EditClass = () => {
 				Editar clase
 			</CustomTypography>
 			<ClassForm sclass={sclass} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

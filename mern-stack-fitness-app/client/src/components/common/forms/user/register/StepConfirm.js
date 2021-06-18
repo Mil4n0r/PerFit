@@ -38,8 +38,10 @@ export const StepConfirm = ({ onSubmit }) => {
 
 	useEffect(() => {
 		const fetchSubscription = async () => {
-			const subscription = await getSubscriptionName(data.subscription);	// Llamamos a la API para obtener la información de las suscripciones
-			setSubscription(subscription);	// Actualizamos la información de nuestra variable de estado para que contenga la información de las salas
+			if(data.subscription) {
+				const subscription = await getSubscriptionName(data.subscription);	// Llamamos a la API para obtener la información de las suscripciones
+				setSubscription(subscription);	// Actualizamos la información de nuestra variable de estado para que contenga la información de las salas
+			}
 		}
 		fetchSubscription();
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())

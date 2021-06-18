@@ -4,10 +4,12 @@ import { getWorkout, updateWorkout } from '../../api';
 import { WorkoutForm } from '../common/forms/training/WorkoutForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditWorkout = () => {
 	const match = useRouteMatch();
 	const [workout, setWorkout] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditWorkout = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateWorkout(match.params.routineid, match.params.id, data);
-		history.push(`/associate/routine/training/${match.params.routineid}`);
+		const updatedWorkout = await updateWorkout(match.params.routineid, match.params.id, data);
+		if(updatedWorkout.response) {
+			setError(updatedWorkout.response);
+		}
+		else {
+			history.push(`/associate/routine/training/${match.params.routineid}`);
+		}
 	};
 
 	return workout ? (
@@ -31,6 +38,9 @@ export const EditWorkout = () => {
 				Editar series de ejercicios
 			</CustomTypography>
 			<WorkoutForm workout={workout} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

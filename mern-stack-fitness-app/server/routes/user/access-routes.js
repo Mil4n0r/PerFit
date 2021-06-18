@@ -125,14 +125,20 @@ router.post("/forgot/password", async (req, res, next) => {
 });
 
 router.post("/reset/password/:token", async (req, res, next) => {
-	passport.authenticate("reset", {session: false, badRequestMessage: "Faltan datos por rellenar"}, (err, user, info) => {
+	passport.authenticate("reset", {session: false, badRequestMessage: "Faltan datos por rellenar"}, async (err, user, info) => {
 		try {
-			if(!user) {
-				res.status(404).send("El email introducido no corresponde a ningún usuario registrado.")
+			if(err) {
+				next(err);
+			}
+			else if(!user) {
+				if(info.name === "TokenExpiredError")
+					info.message = "El link para cambiar su contraseña ha caducado. Solicite uno nuevo."
+				const error = new Error(info.message);
+				next(error);
 			}
 			else {
 				user.passwordUsuario = req.body.newpassword;
-				const savedUser = user.save();
+				const savedUser = await user.save();
 				return res.json(savedUser);
 			}
 		} catch(err) {

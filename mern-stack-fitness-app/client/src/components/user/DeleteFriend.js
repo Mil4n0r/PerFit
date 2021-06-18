@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 import { deleteFriend } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
 
@@ -8,13 +9,19 @@ import { Button, Typography, Grid } from '@material-ui/core';
 export const DeleteFriend = (props) => {
 	const match = useRouteMatch();
 	const history = useHistory();
+	const [error, setError] = useState();
 
 	const setOpen = props.setOpen;
 	const friendid = props.friend;
 
 	const onClick = async () => {
-		await deleteFriend(match.params.id, friendid);	// Llamamos a la API para eliminar la relación de amistad entre ambos usuarios
-		setOpen(false);
+		const deletedFriend = await deleteFriend(match.params.id, friendid);	// Llamamos a la API para eliminar la relación de amistad entre ambos usuarios
+		if(deletedFriend.response) {
+			setError(deletedFriend.response);
+		}
+		else {
+			setOpen(false);
+		}
 	}
 	
 	const onClose = async () => {
@@ -53,6 +60,9 @@ export const DeleteFriend = (props) => {
 					</Grid>
 				</Grid>
 			</ButtonsContainer>	
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 };

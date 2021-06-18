@@ -7,12 +7,11 @@ import { Step3 } from '../common/forms/user/register/Step3';
 import { StepConfirm } from '../common/forms/user/register/StepConfirm';
 
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import CloseOutlinedIcon from '@material-ui/icons/CloseOutlined';
-import ErrorOutlineOutlinedIcon from '@material-ui/icons/ErrorOutlineOutlined';
 
 import { Modal, Button } from '@material-ui/core';
 import {HorizontalGrid, BodyContainer, RegisterAvatar, CustomTypography as Typography, CenterPaper, ErrorDrawer, CustomErrorOutlineOutlinedIcon} from '../../style/style'
 
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 import { RegisteredMessage } from './RegisteredMessage';
 import Confetti from 'react-confetti';
 
@@ -31,11 +30,6 @@ export const Register = () => {
 		else {
 			setOpen(true);
 		}
-		//history.push("/");	// Redireccionamos al listado de usuarios
-	};
-
-	const closeError = () => {
-		setError();
 	};
 
 	const selectStep = (step) => {
@@ -79,26 +73,7 @@ export const Register = () => {
 				)
 			}
 			{
-				error && (
-					<ErrorDrawer
-						color='secondary'
-						anchor="top"
-						open={error}
-						onClose={closeError}
-					>
-						<HorizontalGrid container spacing={1}>
-							<HorizontalGrid item xs={3}>
-								<ErrorOutlineOutlinedIcon/>
-							</HorizontalGrid>
-							<HorizontalGrid item xs={6}>
-								<Typography>{error.data}</Typography>
-							</HorizontalGrid>
-							<HorizontalGrid item xs={3}>
-								<Button onClick={closeError}><CloseOutlinedIcon	/></Button>
-							</HorizontalGrid>
-						</HorizontalGrid>
-					</ErrorDrawer>
-				)
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	);

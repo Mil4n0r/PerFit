@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 import { deleteTracking } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
 
@@ -8,13 +9,19 @@ import { Button, Typography, Grid } from '@material-ui/core';
 export const DeleteTracking = (props) => {
 	const match = useRouteMatch();
 	const history = useHistory();
+	const [error, setError] = useState();
 
 	const setOpen = props.setOpen;
 	const userId = props.userId;
 
 	const onClick = async () => {
-		await deleteTracking(match.params.id);	// Llamamos a la API para eliminar el seguimiento
-		history.push(`/tracking/list/${userId}`);	// Redireccionamos al listado de seguimientos
+		const deletedTracking = await deleteTracking(match.params.id);	// Llamamos a la API para eliminar el seguimiento
+		if(deletedTracking.response) {
+			setError(deletedTracking.response);
+		}
+		else {
+			history.push(`/tracking/list/${userId}`);	// Redireccionamos al listado de seguimientos
+		}
 	}
 
 	const onClose = async () => {
@@ -53,6 +60,9 @@ export const DeleteTracking = (props) => {
 					</Grid>
 				</Grid>
 			</ButtonsContainer>	
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 };

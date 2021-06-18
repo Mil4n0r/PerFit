@@ -5,10 +5,12 @@ import { getExercise } from '../../api/exercise_api';
 import { WorkoutForm } from '../common/forms/training/WorkoutForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const CreateWorkout = () => {
 	const match = useRouteMatch();
 	const [exercise, setExercise] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 	
 	useEffect(() => {
@@ -22,8 +24,13 @@ export const CreateWorkout = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		const training = await addWorkout(match.params.routineid, match.params.trainingid, data);
-		history.push(`/associate/routine/training/${match.params.routineid}`);
+		const savedTraining = await addWorkout(match.params.routineid, match.params.trainingid, data);
+		if(savedTraining.response) {
+			setError(savedTraining.response);
+		}
+		else {
+			history.push(`/associate/routine/training/${match.params.routineid}`);
+		}
 	};
 
 	return exercise ? (
@@ -32,6 +39,9 @@ export const CreateWorkout = () => {
 				Crear series de ejercicios
 			</CustomTypography>
 			<WorkoutForm exercise={exercise} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

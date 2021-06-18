@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 import { joinClass } from '../../api'; 
 import { useRouteMatch, useHistory } from 'react-router-dom';
 
@@ -8,12 +9,18 @@ import { Button, Typography, Grid } from '@material-ui/core';
 export const JoinClass = (props) => {
 	const match = useRouteMatch();
 	const history = useHistory();
+	const [error, setError] = useState();
 
 	const setOpen = props.setOpen;
 
 	const onClick = async () => {
-		await joinClass(match.params.id);	// Llamamos a la API para crear el ejercicio
-		history.push("/class/list");	// Redireccionamos al listado de ejercicios
+		const joinedClass = await joinClass(match.params.id);	// Llamamos a la API para crear el ejercicio
+		if(joinedClass.response) {
+			setError(joinedClass.response);
+		}
+		else {
+			history.push("/class/list");	// Redireccionamos al listado de clases
+		}
 	}
 
 	const onClose = async () => {
@@ -52,6 +59,9 @@ export const JoinClass = (props) => {
 					</Grid>
 				</Grid>
 			</ButtonsContainer>
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 };

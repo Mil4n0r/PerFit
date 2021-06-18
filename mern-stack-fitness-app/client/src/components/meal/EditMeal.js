@@ -4,10 +4,12 @@ import { updateMeal, getMeal } from '../../api';
 import { MealForm } from '../common/forms/meal/MealForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditMeal = () => {
 	const match = useRouteMatch();
 	const [meal, setMeal] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 	useEffect(() => {
 		const fetchMeal = async() => {
@@ -20,8 +22,13 @@ export const EditMeal = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateMeal(match.params.dietid, match.params.id, data);
-		history.push(`/associate/diet/meal/${match.params.dietid}`);
+		const updatedMeal = await updateMeal(match.params.dietid, match.params.id, data);
+		if(updatedMeal.response) {
+			setError(updatedMeal.response);
+		}
+		else {
+			history.push(`/associate/diet/meal/${match.params.dietid}`);
+		}
 	};
 
 	return meal ? (
@@ -30,6 +37,9 @@ export const EditMeal = () => {
 				Editar comida
 			</CustomTypography>
 			<MealForm meal={meal} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

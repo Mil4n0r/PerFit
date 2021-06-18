@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 import { deleteActivity } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
 
@@ -8,12 +9,18 @@ import { Button, Typography, Grid } from '@material-ui/core';
 export const DeleteActivity = (props) => {
 	const match = useRouteMatch();
 	const history = useHistory();
+	const [error, setError] = useState();
 
 	const setOpen = props.setOpen;
 
 	const onClick = async () => {
-		await deleteActivity(match.params.id);
-		history.push("/activity/list");
+		const deletedActivity = await deleteActivity(match.params.id);
+		if(deletedActivity.response) {
+			setError(deletedActivity.response);
+		}
+		else {
+			history.push("/activity/list");
+		}	
 	}
 
 	const onClose = async () => {
@@ -52,6 +59,9 @@ export const DeleteActivity = (props) => {
 					</Grid>
 				</Grid>
 			</ButtonsContainer>	
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 };

@@ -29,6 +29,7 @@ export const Profile = () => {
 	const [openFriendModal, setOpenFriendModal] = useState(false);
 	const [openActivateModal, setOpenActivateModal] = useState(false);
 	const [openTrainingModal, setOpenTrainingModal] = useState(false);
+	const [error, setError] = useState();
 
 	useEffect(() => {
 		const fetchUser = async () => {

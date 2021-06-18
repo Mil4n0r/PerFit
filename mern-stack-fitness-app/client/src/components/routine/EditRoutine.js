@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { RoutineForm } from '../common/forms/routine/RoutineForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditRoutine = () => {
 	const match = useRouteMatch();
 	const [routine, setRoutine] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditRoutine = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateRoutine(data, match.params.id);
-		history.push(`/routine/list/${match.params.userid}`);
+		const updatedRoutine = await updateRoutine(data, match.params.id);
+		if(updatedRoutine.response) {
+			setError(updatedRoutine.response);
+		}
+		else {
+			history.push(`/routine/list/${match.params.userid}`);
+		}
 	}
 
 	return routine ? (
@@ -31,6 +38,9 @@ export const EditRoutine = () => {
 				Editar rutina
 			</CustomTypography>
 			<RoutineForm routine={routine} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

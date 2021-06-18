@@ -73,8 +73,7 @@ function Footer() {
 						@ 2021 PerFit - Universidad de Granada
 					</Typography>
 				</VerticalGrid>
-			</VerticalGrid>
-			
+			</VerticalGrid>		
 		</Box>
 	</FooterContainer>
 	);

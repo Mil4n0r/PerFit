@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { RoomForm } from '../common/forms/room/RoomForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditRoom = () => {
 	const match = useRouteMatch();
 	const [room, setRoom] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditRoom = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateRoom(data, match.params.id);
-		history.push("/room/list");
+		const updatedRoom = await updateRoom(data, match.params.id);
+		if(updatedRoom.response) {
+			setError(updatedRoom.response);
+		}
+		else {
+			history.push("/room/list");
+		}
 	}
 
 	return room ? (
@@ -31,6 +38,9 @@ export const EditRoom = () => {
 				Editar sala
 			</CustomTypography>
 			<RoomForm room={room} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

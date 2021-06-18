@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { ExerciseForm } from '../common/forms/exercise/ExerciseForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditExercise = () => {
 	const match = useRouteMatch();
 	const [exercise, setExercise] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditExercise = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateExercise(data, match.params.id);
-		history.push("/exercise/list");
+		const updatedExercise = await updateExercise(data, match.params.id);
+		if(updatedExercise.response) {
+			setError(updatedExercise.response);
+		}
+		else {
+			history.push("/exercise/list");
+		}
 	}
 
 	return exercise ? (
@@ -31,6 +38,9 @@ export const EditExercise = () => {
 				Editar ejercicio
 			</CustomTypography>
 			<ExerciseForm exercise={exercise} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

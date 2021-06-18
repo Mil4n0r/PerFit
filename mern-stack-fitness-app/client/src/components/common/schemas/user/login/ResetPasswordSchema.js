@@ -8,5 +8,5 @@ export const ResetPasswordSchema = yup.object().shape({
 		.matches(/^.{8,}$/, "La contraseña debe contener al menos 8 caracteres"),
 	passwordConfirm: yup.string()
 		.oneOf([yup.ref('password'), null], "Las contraseñas deben coincidir")
-		.required("Por favor introduzca la contraseña de nuevo")
+		.required("Por favor introduzca la contraseña de nuevo"),
 });

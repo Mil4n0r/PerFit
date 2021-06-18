@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState} from 'react';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 import { deleteRoutine } from '../../api'; 
 import { useRouteMatch, useHistory } from "react-router-dom";
 
@@ -8,13 +9,19 @@ import { Button, Typography, Grid } from '@material-ui/core';
 export const DeleteRoutine = (props) => {
 	const match = useRouteMatch();
 	const history = useHistory();
+	const [error, setError] = useState();
 
 	const setOpen = props.setOpen;
 	const userId = props.userId;
 
 	const onClick = async () => {
-		await deleteRoutine(match.params.id);	// Llamamos a la API para borrrar la rutina
-		history.push(`/routine/list/${userId}`);	// Redireccionamos al listado de rutinas del usuario
+		const deletedRoutine = await deleteRoutine(match.params.id);	// Llamamos a la API para borrrar la rutina
+		if(deletedRoutine.response) {
+			setError(deletedRoutine.response);
+		}
+		else {
+			history.push(`/routine/list/${userId}`);	// Redireccionamos al listado de rutinas del usuario
+		}
 	}
 
 	const onClose = async () => {
@@ -53,6 +60,9 @@ export const DeleteRoutine = (props) => {
 					</Grid>
 				</Grid>
 			</ButtonsContainer>	
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 };

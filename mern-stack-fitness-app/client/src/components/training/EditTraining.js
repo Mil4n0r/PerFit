@@ -4,10 +4,12 @@ import { updateTraining, getTraining } from '../../api';
 import { TrainingForm } from '../common/forms/training/TrainingForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditTraining = () => {
 	const match = useRouteMatch();
 	const [training, setTraining] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditTraining = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateTraining(match.params.routineid, match.params.id, data);
-		history.push(`/associate/routine/training/${match.params.routineid}`);
+		const updatedTraining = await updateTraining(match.params.routineid, match.params.id, data);
+		if(updatedTraining.response) {
+			setError(updatedTraining.response);
+		}
+		else {
+			history.push(`/associate/routine/training/${match.params.routineid}`);
+		}
 	};
 
 	return training ? (
@@ -31,6 +38,9 @@ export const EditTraining = () => {
 				Editar entrenamiento
 			</CustomTypography>
 			<TrainingForm training={training} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

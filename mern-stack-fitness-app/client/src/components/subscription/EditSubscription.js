@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { SubscriptionForm } from '../common/forms/subscription/SubscriptionForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditSubscription = () => {
 	const match = useRouteMatch();
 	const [subscription, setSubscription] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditSubscription = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateSubscription(data, match.params.id);
-		history.push("/subscription/list");
+		const updatedSubscription = await updateSubscription(data, match.params.id);
+		if(updatedSubscription.response) {
+			setError(updatedSubscription.response);
+		}
+		else {
+			history.push("/subscription/list");
+		}
 	}
 
 	return subscription ? (
@@ -31,6 +38,9 @@ export const EditSubscription = () => {
 				Editar suscripción
 			</CustomTypography>
 			<SubscriptionForm subscription={subscription} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

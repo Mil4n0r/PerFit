@@ -207,8 +207,8 @@ export const AssociateMealToDiet = () => {
 								</TableRow>
 								{
 									meal.racionesComida.map(ration => (
-										<TableRow>
-											<TableCell key={ration._id}>
+										<TableRow key={ration._id}>
+											<TableCell>
 												<HorizontalGrid container spacing={1}>
 													<HorizontalGrid item xs={8}>
 														{rationFormat(ration)}

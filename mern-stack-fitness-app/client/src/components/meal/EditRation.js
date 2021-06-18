@@ -4,10 +4,12 @@ import { getRation, updateRation } from '../../api';
 import { RationForm } from '../common/forms/meal/RationForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditRation = () => {
 	const match = useRouteMatch();
 	const [ration, setRation] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 	useEffect(() => {
 		const fetchRation = async() => {
@@ -20,8 +22,13 @@ export const EditRation = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateRation(match.params.dietid, match.params.id, data);
-		history.push(`/associate/diet/meal/${match.params.dietid}`);
+		const updatedRation = await updateRation(match.params.dietid, match.params.id, data);
+		if(updatedRation.response) {
+			setError(updatedRation.response);
+		}
+		else {
+			history.push(`/associate/diet/meal/${match.params.dietid}`);
+		}
 	};
 
 	return ration ? (
@@ -30,6 +37,9 @@ export const EditRation = () => {
 				Editar ración
 			</CustomTypography>
 			<RationForm ration={ration} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

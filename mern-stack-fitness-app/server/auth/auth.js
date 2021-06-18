@@ -20,7 +20,10 @@ passport.use("register",
 		async (req, email, password, done) => {
 			try {
 				const userExists = await UserModel.findOne({ emailUsuario: email });
-				if(!userExists) {
+				if(passwordConfirm !== password) {
+					return done(null, false, { message: "Las contraseñas introducidas no coinciden." });
+				}
+				else if(!userExists) {
 					var user;
 					if(req.body.role === "Miembro") {
 						user = await MemberModel.create({
@@ -170,21 +173,26 @@ passport.use("reset",
 		{
 			secretOrKey: process.env.RESET_PASSWORD_SECRET,
 			jwtFromRequest: req => req.params.token,
+			passReqToCallback: true
 		},
-		(token, done) => {
-			const email = token.body.email;
-			console.log(token)
-			UserModel.findOne({emailUsuario: email}, (err, user) => {
-				if(err) {
-					return done(err)
-				}
-				else if(!user) {
-					return done(null, false, { message: "Usuario no encontrado"});
-				}
-				else {
-					return done(null, user, { message: "Ha sido validado satisfactoriamente"});
-				}
-			})			
+		(req, token, done) => {
+			if(req.body.newpassword !== req.body.passwordConfirm) {
+				return done(null, false, { message: "Las contraseñas introducidas no coinciden." });
+			}
+			else {
+				const email = token.body.email;
+				UserModel.findOne({emailUsuario: email}, (err, user) => {
+					if(err) {
+						return done(err)
+					}
+					else if(!user) {
+						return done(null, false, { message: "Usuario no encontrado"});
+					}
+					else {
+						return done(null, user, { message: "Ha sido validado satisfactoriamente"});
+					}
+				})
+			}
 		}
 	)
 );

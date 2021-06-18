@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { UserForm } from '../common/forms/user/UserForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditUser = () => {
 	const match = useRouteMatch();
 	const [user, setUser] = useState();	// Creamos una variable de estado para almacenar la información del usuario y una función para actualizarla
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	useEffect(() => {
@@ -21,8 +23,13 @@ export const EditUser = () => {
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
 	const onSubmit = async (data) => {
-		await updateUser(data, match.params.id);	// Llamamos a la API para modificar los datos del usuario
-		history.push(`/user/profile/${match.params.id}`);	// Redireccionamos al listado de usuarios
+		const updatedUser = await updateUser(data, match.params.id);	// Llamamos a la API para modificar los datos del usuario
+		if(updatedUser.response) {
+			setError(updatedUser.response);
+		}
+		else {
+			history.push(`/user/profile/${match.params.id}`);	// Redireccionamos al listado de usuarios
+		}
 	}
 
 	return user ? (
@@ -31,6 +38,9 @@ export const EditUser = () => {
 				Editar usuario
 			</CustomTypography>
 			<UserForm user={user} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

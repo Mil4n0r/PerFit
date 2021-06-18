@@ -4,10 +4,12 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { MeasureForm } from '../common/forms/measure/MeasureForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const EditMeasure = () => {
 	const match = useRouteMatch();
 	const [measure, setMeasure] = useState();
+	const [error, setError] = useState();
 	const history = useHistory();
 
 	const [trackingUnit, setTrackingUnit] = useState()
@@ -28,8 +30,13 @@ export const EditMeasure = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await updateMeasure(data, match.params.id);
-		history.push(`/associate/tracking/measure/${match.params.trackingid}`);
+		const updatedMeasure = await updateMeasure(data, match.params.id);
+		if(updatedMeasure.response) {
+			setError(updatedMeasure.response);
+		}
+		else {
+			history.push(`/associate/tracking/measure/${match.params.trackingid}`);
+		}
 	}
 
 	return measure ? (
@@ -38,6 +45,9 @@ export const EditMeasure = () => {
 				Editar medida
 			</CustomTypography>
 			<MeasureForm measure={measure} unit={trackingUnit} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	) : (
 		<>

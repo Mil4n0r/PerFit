@@ -152,19 +152,19 @@ function NavigationBar() {
 						{
 							loggedIn && 
 							[
-								<MenuItem>
+								<MenuItem key="profileitem">
 									<NavTab icon={<AccountBoxOutlinedIcon/>} key="myprofile" label = "PERFIL" to = {`/user/profile/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {9} wrapped/>
 								</MenuItem>,
-								<MenuItem>
+								<MenuItem key="subscriptionitem">
 									<NavTab icon={<StarBorderOutlinedIcon/>} key="subscriptionlist" label = "SUSCRIPCIONES" to = "/subscription/list" component = {NavLink} value = {9} wrapped/>
 								</MenuItem>,
-								<MenuItem>
+								<MenuItem key="requestitem">
 									<NavTab icon={loggedIn.peticionesPendientes.length > 0 ? <Badge badgeContent={loggedIn.peticionesPendientes.length} color="secondary"><NotificationsActiveOutlinedIcon color="secondary"/></Badge> : <NotificationsOutlinedIcon/>} key="requestlist" label = "SOLICITUDES" to = {`/request/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {11} wrapped/>,
 								</MenuItem>,
-								<MenuItem>
+								<MenuItem key="frienditem">
 									<NavTab icon={<GroupOutlinedIcon/>} key="friendlist" label = "AMIGOS" to = {`/friend/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {12} wrapped/>,
 								</MenuItem>,
-								<MenuItem>
+								<MenuItem key="logoutitem">
 									<NavTab icon={<ExitToAppOutlinedIcon/>} key="logout" label = "CERRAR SESIÓN" to = "/logout" onClick={handleCloseMenu} component = {NavLink} value = {13} wrapped/>,
 								</MenuItem>,
 								
@@ -188,13 +188,13 @@ function NavigationBar() {
 						{
 							loggedIn && 
 							[
-								<MenuItem>
+								<MenuItem key="useritem">
 									<NavTab icon={<GroupOutlinedIcon/>} key="userlist" label = "USUARIOS" to = "/user/list" onClick={handleCloseControlMenu} component = {NavLink} value = {14} wrapped/>
 								</MenuItem>,
-								<MenuItem>
+								<MenuItem key="roomitem">
 									<NavTab icon={<MeetingRoomOutlinedIcon/>} key="roomlist" label = "SALAS" to = "/room/list" onClick={handleCloseControlMenu} component = {NavLink} value = {15} wrapped/>
 								</MenuItem>,
-								<MenuItem>
+								<MenuItem key="activityitem">
 									<NavTab icon={<SportsTennisOutlinedIcon/>} key="activitylist" label = "ACTIVIDADES" to = "/activity/list" onClick={handleCloseControlMenu} component = {NavLink} value = {16} wrapped/>
 								</MenuItem>
 							]
@@ -207,79 +207,3 @@ function NavigationBar() {
 }
 
 export default NavigationBar;
-
-/*
-<NavBar position="static">
-			<HeaderContainer>
-				<img src={logo} alt="Logo" />
-			</HeaderContainer>
-			{
-				loggedIn !== undefined && (
-					<NavTabs indicatorColor='secondary' value={value} onClick={handleChange} variant='fullWidth'>
-						{tabs}
-					</NavTabs>
-				)
-			}
-			<AuxMenu 
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'center',
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'center',
-				}}
-				open={Boolean(openMenu)}
-				onClose={handleCloseMenu}
-				getContentAnchorEl={null}
-				anchorEl={openMenu}
-			>
-				{
-					loggedIn && 
-					[
-						<MenuItem>
-							<NavTab icon={<AccountBoxOutlinedIcon/>} key="myprofile" label = "PERFIL" to = {`/user/profile/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {10} wrapped/>
-						</MenuItem>,
-						<MenuItem>
-							<NavTab icon={loggedIn.peticionesPendientes.length > 0 ? <NotificationsActiveOutlinedIcon color='secondary'/> : <NotificationsOutlinedIcon/>} key="requestlist" label = "SOLICITUDES" to = {`/request/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {11} wrapped/>,
-						</MenuItem>,
-						<MenuItem>
-							<NavTab icon={<GroupOutlinedIcon/>} key="friendlist" label = "AMIGOS" to = {`/friend/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {12} wrapped/>,
-						</MenuItem>,
-						<MenuItem>
-							<NavTab icon={<ExitToAppOutlinedIcon/>} key="logout" label = "CERRAR SESIÓN" to = "/logout" onClick={handleCloseMenu} component = {NavLink} value = {13} wrapped/>,
-						</MenuItem>,
-					]
-				}
-			</AuxMenu>
-			<AuxMenu 
-				anchorOrigin={{
-					vertical: 'bottom',
-					horizontal: 'center',
-				}}
-				transformOrigin={{
-					vertical: 'top',
-					horizontal: 'center',
-				}}
-				open={Boolean(openControlMenu)}
-				onClose={handleCloseControlMenu}
-				getContentAnchorEl={null}
-				anchorEl={openControlMenu}
-			>
-				{
-					loggedIn && 
-					[
-						<MenuItem>
-							<NavTab icon={<GroupOutlinedIcon/>} key="userlist" label = "USUARIOS" to = "/user/list" onClick={handleCloseControlMenu} component = {NavLink} value = {14} wrapped/>
-						</MenuItem>,
-						<MenuItem>
-							<NavTab icon={<MeetingRoomOutlinedIcon/>} key="roomlist" label = "SALAS" to = "/room/list" onClick={handleCloseControlMenu} component = {NavLink} value = {15} wrapped/>
-						</MenuItem>,
-						<MenuItem>
-							<NavTab icon={<SportsTennisOutlinedIcon/>} key="activitylist" label = "ACTIVIDADES" to = "/activity/list" onClick={handleCloseControlMenu} component = {NavLink} value = {16} wrapped/>
-						</MenuItem>
-					]
-				}
-			</AuxMenu>
-		</NavBar>
-*/

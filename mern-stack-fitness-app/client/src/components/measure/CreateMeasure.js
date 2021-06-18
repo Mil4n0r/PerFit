@@ -3,12 +3,14 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { addMeasure, getTracking } from '../../api';
 import { MeasureForm } from '../common/forms/measure/MeasureForm';
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const CreateMeasure = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
 
-	const [trackingUnit, setTrackingUnit] = useState()
+	const [trackingUnit, setTrackingUnit] = useState();
+	const [error, setError] = useState();
 
 	useEffect(() => {
 		const fetchTrackingUnit = async () => {
@@ -21,8 +23,13 @@ export const CreateMeasure = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		await addMeasure(data, match.params.id); // ID seguimiento
-		history.push(`/associate/tracking/measure/${match.params.id}`);
+		const createdMeasure = await addMeasure(data, match.params.id); // ID seguimiento
+		if(createdMeasure.response) {
+			setError(createdMeasure.response);
+		}
+		else {
+			history.push(`/associate/tracking/measure/${match.params.id}`);
+		}
 	};
 
 	return (
@@ -31,6 +38,9 @@ export const CreateMeasure = () => {
 				Crear medida
 			</CustomTypography>
 			<MeasureForm unit={trackingUnit} onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	)
 }

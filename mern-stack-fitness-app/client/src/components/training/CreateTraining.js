@@ -1,17 +1,25 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import { useRouteMatch, useHistory } from "react-router-dom";
 import { addTraining} from '../../api';
 import { TrainingForm } from '../common/forms/training/TrainingForm';
 
 import { BodyContainer, CustomTypography } from '../../style/style';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 export const CreateTraining = () => {
 	const match = useRouteMatch();
 	const history = useHistory();
 
+	const [error, setError] = useState();
+
 	const onSubmit = async (data) => {
-		await addTraining(data, match.params.id); // ID rutina
-		history.push(`/associate/routine/training/${match.params.id}`);
+		const createdTraining = await addTraining(data, match.params.id); // ID rutina
+		if(createdTraining.response) {
+			setError(createdTraining.response);
+		}
+		else {
+			history.push(`/associate/routine/training/${match.params.id}`);
+		}
 	};
 
 	return (
@@ -20,6 +28,9 @@ export const CreateTraining = () => {
 				Crear entrenamiento
 			</CustomTypography>
 			<TrainingForm onSubmit={onSubmit} />
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
+			}
 		</BodyContainer>
 	);
 }

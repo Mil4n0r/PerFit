@@ -1,4 +1,5 @@
 const logErrors = (err, req, res, next) => {
+	//console.log("LOGERROR:", err);
 	next(err);
 }
 
