@@ -122,15 +122,6 @@ export const AssociateMealToDiet = () => {
 		fetchMeals();
 	}, [deleted, selectedDate]);
 
-/*
-	useEffect(() => {
-		const fetchMeals = async () => {
-			const meals = await getMeals(match.params.id);
-			setMeals(meals);
-		}
-		fetchMeals();
-	}, [deleted]);
-*/
 	const deleteMealFromDiet = async (mealid) => {
 		await deleteMeal(match.params.id, mealid); // Debemos borrar tanto la comida como su referencia en la dieta...
 		setDeleted(mealid);
@@ -151,21 +142,6 @@ export const AssociateMealToDiet = () => {
 					<TableHead>
 						<TableRow>
 							<TableHeaderCell>
-								{
-									/*
-									<HorizontalGrid container spacing={1}>
-										<HorizontalGrid item xs={8}>
-											{mealFormat(meal)}
-										</HorizontalGrid>
-										<HorizontalGrid item xs={2}>
-											<Link to={`/edit/meal/${diet._id}/${meal._id}`}><CustomEditOutlinedIcon /></Link>
-										</HorizontalGrid>
-										<HorizontalGrid item xs={2}>
-											<Link to={"#"} onClick={() => { deleteMealFromDiet(meal._id) } }><CustomDeleteForeverOutlinedIcon /></Link>
-										</HorizontalGrid>
-									</HorizontalGrid>
-									*/
-								}
 								<HorizontalGrid container spacing={1}>
 									<HorizontalGrid item xs={8}>
 										Comidas del {format(selectedDate, 'PPPP', {locale: es})}

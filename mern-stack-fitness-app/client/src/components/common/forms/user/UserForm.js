@@ -1,18 +1,32 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import { useForm, Controller } from 'react-hook-form';
+import { Link } from 'react-router-dom';
 import { ErrorMessage } from '@hookform/error-message';
 
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { UserSchema } from '../../schemas/user/UserSchema';
 
+import { getSubscriptions } from '../../../../api';
+
 import { Button, Typography, MenuItem, Chip, Card, Tooltip, Box, Container } from '@material-ui/core';
 import { FormContainer, FullWidthForm, ButtonsContainer, SelectWithMargin as Select, InputLabelWithMargin as InputLabel, TextFieldWithMargin as TextField } from '../../../../style/style';
 import { KeyboardDatePicker } from '@material-ui/pickers';
+import AuthContext from '../../../../context/AuthContext';
 
 export const UserForm = ({ user, onSubmit }) => {
 	const [selectedDate, handleDateChange] = useState(new Date(2000, 0, 1));
 	const [subscriptions, setSubscriptions] = useState([])	// Creamos una variable de estado para almacenar la información de las suscripciones y una función para actualizarla
+	const { loggedIn } = useContext(AuthContext);
+	useEffect(() => {
+		const fetchSubscriptions = async () => {
+			const subscriptions = await getSubscriptions();	// Llamamos a la API para obtener la información de las suscripciones
+			setSubscriptions(subscriptions);	// Actualizamos la información de nuestra variable de estado para que contenga la información de las salas
+		}
+		fetchSubscriptions();
+	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
+
+	console.log(user.userInfo.suscripcionMiembro.planSuscripcion.nombreSuscripcion)
 
 	const { register, errors, handleSubmit, watch, control } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: {
@@ -27,7 +41,7 @@ export const UserForm = ({ user, onSubmit }) => {
 			role: user.userInfo.role ? user.userInfo.role : "",
 			privacy: user.userInfo.privacidadUsuario ? user.userInfo.privacidadUsuario : "",
 			specialty: user.userInfo.especialidadesMonitor ? user.userInfo.especialidadesMonitor : [],
-			subscription: user.userInfo.suscripcionMiembro ? user.userInfo.suscripcionMiembro : "",
+			subscription: user.userInfo.suscripcionMiembro ? user.userInfo.suscripcionMiembro.planSuscripcion._id : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(UserSchema),
 		criteriaMode: 'all',
@@ -180,29 +194,6 @@ export const UserForm = ({ user, onSubmit }) => {
 						readOnly: true,
 					}}
 				/>
-				{
-					/*
-					<Controller
-						control={control}
-						name="role"
-						id="role"
-						as={
-							<Select
-								variant="outlined"
-								fullWidth
-							>
-								<MenuItem value="Miembro">Miembro</MenuItem>
-								<MenuItem value="Entrenador">Entrenador personal</MenuItem>
-								<MenuItem value="Monitor">Monitor</MenuItem>
-								<MenuItem value="Administrador">Administrador</MenuItem>
-							</Select>
-						}
-						defaultValue={"Miembro"}
-					/>
-					<ErrorMessage className="error" errors={errors} name="role" as={Typography} />
-					*/
-				}
-				
 				<InputLabel htmlFor="privacy">
 					Configuración de seguridad
 				</InputLabel>
@@ -273,6 +264,7 @@ export const UserForm = ({ user, onSubmit }) => {
 									<Select
 										variant="outlined"
 										fullWidth
+										disabled={loggedIn.role !== "Administrador"}
 									>
 									{
 										subscriptions && ( 
@@ -284,7 +276,7 @@ export const UserForm = ({ user, onSubmit }) => {
 															<>
 																<Typography>Descripción: {subscription.descripcionSuscripcion}</Typography><br/>
 																<Typography>Coste: {subscription.costeSuscripcion}€</Typography>
-																<Typography>Fecha de vencimiento: {}</Typography>
+																<Typography>Duración: {subscription.duracionSuscripcion} días</Typography>
 															</>
 														}
 													>

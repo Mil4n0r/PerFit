@@ -155,9 +155,11 @@ function NavigationBar() {
 								<MenuItem key="profileitem">
 									<NavTab icon={<AccountBoxOutlinedIcon/>} key="myprofile" label = "PERFIL" to = {`/user/profile/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {9} wrapped/>
 								</MenuItem>,
-								<MenuItem key="subscriptionitem">
-									<NavTab icon={<StarBorderOutlinedIcon/>} key="subscriptionlist" label = "SUSCRIPCIONES" to = "/subscription/list" component = {NavLink} value = {9} wrapped/>
-								</MenuItem>,
+								loggedIn.role === "Miembro" && (
+									<MenuItem key="subscriptionitem">
+										<NavTab icon={<StarBorderOutlinedIcon/>} key="subscriptionlist" label = "SUSCRIPCIONES" to = {`/subscription/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {9} wrapped/>
+									</MenuItem>
+								),
 								<MenuItem key="requestitem">
 									<NavTab icon={loggedIn.peticionesPendientes.length > 0 ? <Badge badgeContent={loggedIn.peticionesPendientes.length} color="secondary"><NotificationsActiveOutlinedIcon color="secondary"/></Badge> : <NotificationsOutlinedIcon/>} key="requestlist" label = "SOLICITUDES" to = {`/request/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {11} wrapped/>,
 								</MenuItem>,
@@ -196,6 +198,9 @@ function NavigationBar() {
 								</MenuItem>,
 								<MenuItem key="activityitem">
 									<NavTab icon={<SportsTennisOutlinedIcon/>} key="activitylist" label = "ACTIVIDADES" to = "/activity/list" onClick={handleCloseControlMenu} component = {NavLink} value = {16} wrapped/>
+								</MenuItem>,
+								<MenuItem key="subscriptionitem">
+									<NavTab icon={<StarBorderOutlinedIcon/>} key="subscriptionlist" label = "SUSCRIPCIONES" to = "/subscription/list" onClick={handleCloseControlMenu} component = {NavLink} value = {9} wrapped/>
 								</MenuItem>
 							]
 						}

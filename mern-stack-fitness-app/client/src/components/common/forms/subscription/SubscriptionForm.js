@@ -13,21 +13,20 @@ import { KeyboardDatePicker } from '@material-ui/pickers';
 import { SubscriptionSchema } from '../../schemas/subscription/SubscriptionSchema';
 
 export const SubscriptionForm = ({ subscription, onSubmit }) => {
-	const [selectedDate, handleDateChange] = useState(new Date());
 
 	const { register, errors, handleSubmit, control } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
 			subscriptionname: subscription ? subscription.subscriptionInfo.nombreSuscripcion : "",
 			subscriptiondescription: subscription ? subscription.subscriptionInfo.descripcionSuscripcion : "",
 			subscriptioncost: subscription ? subscription.subscriptionInfo.costeSuscripcion : "",
-			subscriptionend: subscription ? subscription.subscriptionInfo.vencimientoSuscripcion : selectedDate,
+			subscriptionpcoincost: subscription ? subscription.subscriptionInfo.costeSuscripcionPCoins : "",
+			subscriptionduration: subscription ? subscription.subscriptionInfo.duracionSuscripcion : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(SubscriptionSchema),
 		mode: "onTouched"
 	});
 
 	const submitHandler = handleSubmit((data) => {	// Pasamos los datos del formulario
-		handleDateChange(data.subscriptionend);
 		onSubmit(data);
 	});
 
@@ -58,7 +57,7 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 					variant="outlined"
 					inputRef={register}
 					fullWidth
-					label="Coste de la suscripción"
+					label="Coste de la suscripción (€)"
 					type="number"
 					name="subscriptioncost"
 					id="subscriptioncost"
@@ -66,25 +65,29 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 					InputProps={{endAdornment: <InputAdornment position="end">€</InputAdornment>}}
 				/>
 				<ErrorMessage className="error" errors={errors} name="subscriptioncost" as={Typography} />
-				<InputLabel htmlFor="subscriptionend">
-					Fecha de vencimiento de la suscripción
-				</InputLabel>
-				<Controller
-					control={control}
-					name="subscriptionend"
-					id="subscriptionend"
-					render={({ ref, ...rest }) => (
-						<KeyboardDatePicker
-							inputVariant="outlined"
-							format="dd/MM/yyyy"
-							autoOk
-							value={selectedDate}
-							cancelLabel="Cancelar"
-							{...rest}
-						/>
-					)}
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Coste de la suscripción (P-Coins)"
+					type="number"
+					name="subscriptionpcoincost"
+					id="subscriptionpcoincost"
+					inputProps={{ min: "0", step: "1"}}
+					InputProps={{endAdornment: <InputAdornment position="end">P-Coins</InputAdornment>}}
 				/>
-				<ErrorMessage className="error" errors={errors} name="subscriptionend" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="subscriptioncost" as={Typography} />
+				<TextField
+					variant="outlined"
+					inputRef={register}
+					fullWidth
+					label="Días de duración de la suscripción"
+					type="number"
+					name="subscriptionduration"
+					id="subscriptionduration"
+					inputProps={{ min: "0", step: "1"}}
+					InputProps={{endAdornment: <InputAdornment position="end">días</InputAdornment>}}
+				/>
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar suscripción

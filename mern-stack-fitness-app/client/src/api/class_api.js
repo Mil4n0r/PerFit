@@ -27,3 +27,8 @@ export const joinClass = (id) => axios.post(`http://localhost:4000/admin/join/cl
 
 export const leaveClass = (id) => axios.post(`http://localhost:4000/admin/leave/class/${id}`)
 	.catch(err => err);
+
+export const checkClassAssistance = (assistance, id) => axios.post(`http://localhost:4000/admin/check/class/assistance/${id}`, assistance, {
+	data: assistance
+})
+	.catch(err => err);

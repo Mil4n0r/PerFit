@@ -10,7 +10,12 @@ export const SubscriptionSchema = yup.object().shape({
 		.typeError("Introduzca el coste (€) de la suscripción")
 		.required("Introduzca el coste (€) de la suscripción")
 		.min(0, "El número introducido debe ser positivo"),
-	subscriptionend: yup.date()
-		.typeError("Por favor introduzca una fecha válida")
-		.required("Por favor introduzca la fecha límite de la suscripción"),
+	subscriptionpcoincost: yup.number()
+		.typeError("Introduzca el coste (€) de la suscripción")
+		.required("Introduzca el coste (€) de la suscripción")
+		.min(0, "El número introducido debe ser positivo"),
+	subscriptionduration: yup.number()
+		.typeError("Introduzca la duración (en días) de la suscripción")
+		.required("Introduzca la duración (en días) de la suscripción")
+		.min(0, "El número introducido debe ser positivo"),
 });

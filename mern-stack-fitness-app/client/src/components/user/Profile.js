@@ -77,6 +77,22 @@ export const Profile = () => {
 						<VerticalGrid container spacing={1}>
 							<HorizontalGrid container spacing={1}>
 								<Grid item xs={3}>
+									<InputLabel>Alias</InputLabel>
+								</Grid>
+								<Grid item xs={9}>
+									<TextField
+										variant="outlined"
+										fullWidth
+										type="text"
+										defaultValue={user.userInfo.aliasUsuario}
+										InputProps={{
+											readOnly: true,
+										}}
+									/>
+								</Grid>
+							</HorizontalGrid>
+							<HorizontalGrid container spacing={1}>
+								<Grid item xs={3}>
 									<InputLabel>Email</InputLabel>
 								</Grid>
 								<Grid item xs={9}>
@@ -107,6 +123,47 @@ export const Profile = () => {
 									/>
 								</Grid>
 							</HorizontalGrid>
+							{
+								user && user.userInfo.role === "Miembro" && (
+									<>
+										<HorizontalGrid container spacing={1}>
+											<Grid item xs={3}>
+												<InputLabel>Suscripción</InputLabel>
+											</Grid>
+											<Grid item xs={9}>
+												<TextField
+													variant="outlined"
+													fullWidth
+													type="text"
+													defaultValue={user.userInfo.suscripcionMiembro.planSuscripcion.nombreSuscripcion}
+													InputProps={{
+														readOnly: true,
+													}}
+												/>
+												{
+													console.log(user.userInfo.suscripcionMiembro)
+												}
+											</Grid>
+										</HorizontalGrid>
+										<HorizontalGrid container spacing={1}>
+											<Grid item xs={3}>
+												<InputLabel>P-Coins</InputLabel>
+											</Grid>
+											<Grid item xs={9}>
+												<TextField
+													variant="outlined"
+													fullWidth
+													type="text"
+													defaultValue={user.userInfo.balanceMonedas}
+													InputProps={{
+														readOnly: true,
+													}}
+												/>
+											</Grid>
+										</HorizontalGrid>
+									</>
+								)
+							}
 							{
 								user && user.permission.includes('checkplans') && (
 									<ContainerWithPadding>

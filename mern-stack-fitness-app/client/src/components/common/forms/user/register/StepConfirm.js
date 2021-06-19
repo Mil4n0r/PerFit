@@ -7,7 +7,6 @@ import { getSubscriptionName } from '../../../../../api';
 import { Step, StepLabel, Button, Grid, Modal } from '@material-ui/core';
 import { NoBackgroundStepper, FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField, CenterPaper } from '../../../../../style/style';
 import { RegisteredMessage } from '../../../../user/RegisteredMessage';
-import Confetti from 'react-confetti';
 
 const dateToISO = (date) => {
 	const day = date.getDate().toString().padStart(2,0);

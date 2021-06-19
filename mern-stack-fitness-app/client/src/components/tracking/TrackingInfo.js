@@ -91,10 +91,7 @@ export const TrackingInfo = () => {
 			x: {
 				type: 'time',
 				time: {
-					tooltipFormat: 'dd/MM/yyyy',
-					/*displayFormats: {
-						day: 'dd/MM/yyyy'
-					}*/
+					tooltipFormat: 'dd/MM/yyyy'
 				},
 				adapters: {
 					date: {

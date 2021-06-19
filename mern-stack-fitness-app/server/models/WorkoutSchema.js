@@ -9,7 +9,7 @@ const WorkoutSchema = mongoose.Schema({
 	numSeries: { 
 		type: Number,
 		required: true, 
-		min: [0, "El número de repeticiones introducido debe ser mayor que 0"],
+		min: [0, "El número de series introducido debe ser mayor que 0"],
 	},
 	numRepeticiones: [{ 
 		type: Number, 

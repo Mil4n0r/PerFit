@@ -1,7 +1,7 @@
 import styled from 'styled-components'
 import {Card, Menu, FormControlLabel, Tooltip, Stepper, Divider, Tab, Tabs, AppBar, Button, TableHead, TableRow, TableCell, TableContainer, Container, Avatar, Typography, Grid, TextField, Select, InputLabel, Modal, Paper, CircularProgress, List, ListItem, ListItemText, LinearProgress, Drawer, CardContent } from '@material-ui/core';
 import { Link } from 'react-router-dom';
-import {green, red, orange, lightGreen} from '@material-ui/core/colors'
+import {green, red, orange, lightGreen, indigo} from '@material-ui/core/colors'
 import { ErrorMessage } from '@hookform/error-message';
 
 import { KeyboardDatePicker } from "@material-ui/pickers";
@@ -545,6 +545,12 @@ const FullWidthCard = styled(Card)`
 	}
 	& .hometab * {
 		width: 100%;
+	}
+	&.bg {
+		background: #c5cae9;
+	}
+	&.bg * {
+		//color: white;
 	}
 `
 

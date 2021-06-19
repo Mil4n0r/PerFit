@@ -51,7 +51,7 @@ export const ClassList = () => {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{classes.map(sclass => (
+						{classes.length>0 && classes.map(sclass => (
 							<TableRow key={sclass._id}>
 								<TableCell component="th" scope="row"> {sclass.actividadClase?.nombreActividad}</TableCell>
 								<TableCell>{format(parseISO(sclass.diaClase), 'dd/MM/yyyy HH:mm', {locale: es})}</TableCell>

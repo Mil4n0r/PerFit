@@ -5,10 +5,6 @@ import { AssociateMeasureToTracking } from '../../components/measure/AssociateMe
 import { EditMeasure } from '../../components/measure/EditMeasure';
 import { CreateMeasure } from '../../components/measure/CreateMeasure';
 
-/*
-<Route path="/measure/list" component={ MeasureList } />
-*/
-
 function ExerciseRoutes() {
 	return (
 		<>

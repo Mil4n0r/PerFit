@@ -14,7 +14,12 @@ const TrackingModel = require('../models/TrackingSchema');
 const checkPermissionsUser = async (activeUser, req) => {
 	try {
 		const id = req.params.id;
-		const checkedUser = await UserModel.findById(id, "-passwordUsuario");
+		const checkedUser = await UserModel.findById(id, "-passwordUsuario").populate({
+			path: "suscripcionMiembro",
+			populate: {
+				path: "planSuscripcion"
+			}
+		});
 		var error;
 		var user;
 		var permission;
@@ -28,12 +33,12 @@ const checkPermissionsUser = async (activeUser, req) => {
 				if(!checkedUser.cuentaActivada) {
 					error = null;
 					user = checkedUser;
-					permission = ["read", "write", "delete", "checkplans", "activateaccount", "readrequests"];
+					permission = ["read", "write", "delete", "checkplans", "activateaccount", "readrequests", "changesubscription"];
 				}
 				else {
 					error = null;
 					user = checkedUser;
-					permission = ["read", "write", "delete", "checkplans"];
+					permission = ["read", "write", "delete", "checkplans", "changesubscription", "readrequests"];
 				}
 			}
 			else if(activeUser.role === "Entrenador") {
@@ -68,6 +73,19 @@ const checkPermissionsUser = async (activeUser, req) => {
 				user = false;
 				permission = [];
 			}
+			if(!activeUser.amigosUsuario.includes(checkedUser._id)) {
+				const pendingRequests = await RequestModel.find(
+					{_id: {$in: checkedUser.peticionesPendientes}}
+				)	
+				const friendRequests = pendingRequests.filter(
+					record => (
+						record.usuarioSolicitante.equals(activeUser._id) && 
+						record.tipoPeticion === 'Amistad'
+					)
+				)	
+				if(friendRequests.length === 0)
+					permission.push("allowfriends")
+			}
 		}
 		if(checkedUser.role === "Entrenador" && !checkedUser.tieneEntrenador &&
 		  !checkedUser._id.equals(activeUser._id) ) {// && activeUser.suscripcionUsuario.permisosSuscripcion.includes("Entrenador Personal")))
@@ -83,19 +101,7 @@ const checkPermissionsUser = async (activeUser, req) => {
 			if(trainingRequests.length === 0)
 				permission.push("allowtraining");
 		}
-		if(!activeUser.amigosUsuario.includes(checkedUser._id)) {
-			const pendingRequests = await RequestModel.find(
-				{_id: {$in: checkedUser.peticionesPendientes}}
-			)	
-			const friendRequests = pendingRequests.filter(
-				record => (
-					record.usuarioSolicitante.equals(activeUser._id) && 
-					record.tipoPeticion === 'Amistad'
-				)
-			)	
-			if(friendRequests.length === 0)
-				permission.push("allowfriends")
-		}
+		
 		return {
 			error: error,
 			user: user,
@@ -302,10 +308,19 @@ const checkPermissionsClass = async (activeUser, req) => {
 				}
 			}
 			else {
-				return {
-					error: null,
-					class: checkedClass,
-					permission: ["read", "join"]
+				if(checkedClass.monitorClase._id.equals(activeUser._id)) {
+					return {
+						error: null,
+						class: checkedClass,
+						permission: ["read", "checkassistance"]
+					}
+				}
+				else {
+					return {
+						error: null,
+						class: checkedClass,
+						permission: ["read", "join"]
+					}
 				}
 			}
 		}
@@ -342,11 +357,20 @@ const checkPermissionsSubscription = async (activeUser, req) => {
 			};
 		}
 		else {
-			return {
-				error: null,
-				subscription: checkedSubscription,
-				permission: ["read"]
-			};
+			if(activeUser.role === "Miembro") {
+				return {
+					error: null,
+					subscription: checkedSubscription,
+					permission: ["read", "renew"]
+				};
+			}
+			else {
+				return {
+					error: null,
+					subscription: checkedSubscription,
+					permission: ["read"]
+				};
+			}
 		}
 	} catch(err) {
 		return {
@@ -376,15 +400,6 @@ const checkPermissionsPlan = async (activeUser, kind, req) => {
 				checkedPlan = await RoutineModel.findById(id)
 				break;
 		}
-		/*
-		if(kind === "Seguimiento") {
-			checkedPlan = await TrackingModel.findById(id);
-			await TrackingModel.populate(checkedPlan, "medidasSeguidas")
-		}
-		var checkedPlan = await PlanModel.findById(id)
-		if(checkedPlan.kind === "Seguimiento") {
-			await PlanModel.populate(checkedPlan, "medidasSeguidas")
-		}*/
 		if(activeUser.role === "Administrador" || activeUser._id.equals(checkedPlan.usuarioPlan) ||
 		  (activeUser.role === "Entrenador" && activeUser.alumnosEntrenados.includes(checkedPlan.usuarioPlan))) {
 			return {

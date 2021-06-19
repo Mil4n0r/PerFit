@@ -7,16 +7,19 @@ import {Grid, Paper, Modal, Button} from '@material-ui/core';
 
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 
 import {ContainerWithPadding, BodyContainer, CustomTypography as Typography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin as InputLabel, PrimaryLink, CenterPaper, FullWidthPaper} from '../../style/style'
 
 import { DeleteSubscription } from './DeleteSubscription';
+import { ContractSubscription } from './ContractSubscription';
 
 export const SubscriptionInfo = () => {
 
 	const match = useRouteMatch();
 	const [subscription, setSubscription] = useState();
 	const [open, setOpen] = useState(false);
+	const [openContract, setOpenContract] = useState(false);
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -24,6 +27,14 @@ export const SubscriptionInfo = () => {
 	
 	const handleClose = () => {
 		setOpen(false);
+	};
+
+	const handleContractOpen = () => {
+		setOpenContract(true);
+	};
+	
+	const handleContractClose = () => {
+		setOpenContract(false);
 	};
 
 	useEffect(() => {
@@ -86,7 +97,7 @@ export const SubscriptionInfo = () => {
 										variant="outlined"
 										fullWidth
 										type="text"
-										defaultValue={subscription.subscriptionInfo.costeSuscripcion}
+										defaultValue={`${subscription.subscriptionInfo.costeSuscripcion}€ / ${subscription.subscriptionInfo.costeSuscripcionPCoins} P-Coins`}
 										InputProps={{
 											readOnly: true,
 										}}
@@ -95,14 +106,14 @@ export const SubscriptionInfo = () => {
 							</HorizontalGrid>
 							<HorizontalGrid container spacing={1}>
 								<Grid item xs={3}>
-									<InputLabel>Fecha límite</InputLabel>
+									<InputLabel>Duración suscripción</InputLabel>
 								</Grid>
 								<Grid item xs={9}>
 									<TextField
 										variant="outlined"
 										fullWidth
-										type="date"
-										defaultValue={subscription.subscriptionInfo.vencimientoSuscripcion.substr(0,10)}
+										type="number"
+										defaultValue={subscription.subscriptionInfo.duracionSuscripcion}
 										InputProps={{
 											readOnly: true,
 										}}
@@ -150,11 +161,33 @@ export const SubscriptionInfo = () => {
 										</Grid>
 									)
 								}
+								{
+									subscription.permission.includes('renew') && (
+										<Grid item xs={12}>
+											<PrimaryLink to={"#"} onClick={handleContractOpen}>
+												<FullWidthPaper>												
+													<VerticalGrid item xs className="zoom">
+														<ButtonAvatar><AddCircleOutlineOutlinedIcon /></ButtonAvatar>
+														<Typography color='primary' className="caps">
+															Contratar
+														</Typography>
+													</VerticalGrid>
+												</FullWidthPaper>
+											</PrimaryLink>
+										</Grid>
+									)
+								}
 								<Modal
 									open={open}
 									onClose={handleClose}
 								>
 									<CenterPaper><DeleteSubscription setOpen={setOpen}/></CenterPaper>
+								</Modal>
+								<Modal
+									open={openContract}
+									onClose={handleContractClose}
+								>
+									<CenterPaper><ContractSubscription setOpen={setOpenContract}/></CenterPaper>
 								</Modal>
 							</Grid>
 						</ContainerWithPadding>

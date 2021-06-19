@@ -20,9 +20,15 @@ const SubscriptionSchema = mongoose.Schema({
 		required: true,
 		min: [0, "El número introducido debe ser positivo"],
 	},
-	vencimientoSuscripcion: { 
-		type: Date, 
-		required: true
+	costeSuscripcionPCoins: { 
+		type: Number, 
+		required: true,
+		min: [0, "El número introducido debe ser positivo"],
+	},
+	duracionSuscripcion: {
+		type: Number,
+		required: true,
+		min: [0, "El número introducido debe ser positivo"],
 	}
 });
 

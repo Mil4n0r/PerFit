@@ -10,12 +10,6 @@ const ClassSchema = mongoose.Schema({
 		type: mongoose.Schema.Types.ObjectId, 
 		ref: "Monitor",
 		required: true,
-		validate: {
-			validator: function(v) {
-				return /^[a-zA-Z\'\/\-\.\"\% À-ú0-9]+$/.test(v);
-			},
-			message: "Ha empleado caracteres no válidos para darle nombre a la actividad"
-		},
 	},
 	asistentesClase: [{ 
 		type: mongoose.Schema.Types.ObjectId, 

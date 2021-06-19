@@ -49,6 +49,18 @@ export const Register = () => {
 
 	return (
 		<BodyContainer>
+			{
+				open && (
+					<>
+						<Confetti/>
+						{<Modal
+							open={open}
+						>
+							<CenterPaper><RegisteredMessage/></CenterPaper>
+						</Modal>}
+					</>
+				)
+			}
 			<RegisterAvatar>
 				<LockOutlinedIcon />
 			</RegisterAvatar>
@@ -59,18 +71,6 @@ export const Register = () => {
 				<>
 					{selectStep(match.params.step)}
 				</>
-			}
-			{
-				open && (
-					<>
-						<Confetti/>
-						<Modal
-							open={open}
-						>
-							<CenterPaper><RegisteredMessage/></CenterPaper>
-						</Modal>
-					</>
-				)
 			}
 			{
 				<ErrorDisplayer error={error} setError={setError}/>

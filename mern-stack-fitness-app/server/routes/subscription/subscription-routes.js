@@ -28,7 +28,8 @@ router.post("/create/subscription", async (req, res, next) => {
 						nombreSuscripcion: req.body.subscriptionname,
 						descripcionSuscripcion: req.body.subscriptiondescription,
 						costeSuscripcion: req.body.subscriptioncost,
-						vencimientoSuscripcion: req.body.subscriptionend
+						costeSuscripcionPCoins: req.body.subscriptionpcoincost,
+						duracionSuscripcion: req.body.subscriptionduration
 					});
 					const savedSubscription = await Subscription.save();
 					res.json(savedSubscription);
@@ -66,7 +67,8 @@ router.post("/subscription/:id", async (req, res, next) => {
 					resSubscription.nombreSuscripcion = req.body.subscriptionname;
 					resSubscription.descripcionSuscripcion = req.body.subscriptiondescription;
 					resSubscription.costeSuscripcion = req.body.subscriptioncost;
-					resSubscription.vencimientoSuscripcion = req.body.subscriptionend;
+					resSubscription.costeSuscripcionPCoins = req.body.subscriptionpcoincost;
+					resSubscription.duracionSuscripcion = req.body.subscriptionduration;
 					const savedSubscription = await resSubscription.save();
 					res.json(savedSubscription);
 				}
@@ -81,7 +83,7 @@ router.post("/subscription/:id", async (req, res, next) => {
 	})(req,res,next);
 });
 
-router.get("/subscription/list", async (req, res, next) => {
+router.get("/subscription/list/:id?", async (req, res, next) => {
 	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
 		if(err) {
 			next(err);
@@ -158,6 +160,50 @@ router.delete("/subscription/:id", async (req, res, next) => {
 				else if(permissionsResData && resPermission.includes("delete")) {
 					const removedSubscription = await resSubscription.deleteOne();
 					res.json(removedSubscription);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
+			
+		}
+	})(req,res,next);
+});
+
+router.post("/contract/subscription/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			try {
+				const permissionsResData = await checkPermissionsSubscription(user, req);
+				const resError = permissionsResData.error;
+				const resSubscription = permissionsResData.subscription;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("renew")) {
+					const today_date = new Date();
+					const expire_date = new Date(today_date.setDate(today_date.getDate()+resSubscription.duracionSuscripcion));
+					user.suscripcionMiembro.planSuscripcion = resSubscription._id;
+					user.suscripcionMiembro.fechaVencimiento = expire_date;
+					if(user.balanceMonedas >=resSubscription.costeSuscripcionPCoins) {
+						user.balanceMonedas -= resSubscription.costeSuscripcionPCoins;
+						const savedUser = await user.save();
+						res.json(savedUser);
+					}
+					else {
+						res.status(403).send("No hay suficientes P-Coins")
+					}
+					
 				}
 				else {
 					res.status(401).send("Usuario no autorizado");

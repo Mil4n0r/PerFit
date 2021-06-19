@@ -7,6 +7,8 @@ import AdminClassRoutes from './routes/admin/AdminClassRoutes';
 import AdminRoomRoutes from './routes/admin/AdminRoomRoutes';
 import AdminSubscriptionRoutes from './routes/admin/AdminSubscriptionRoutes';
 
+import MonitorClassRoutes from './routes/admin/MonitorClassRoutes';
+
 import ActivityRoutes from './routes/user/ActivityRoutes';
 import AuthenticationProtectedRoutes from './routes/user/AuthenticationRoutes';
 import ClassRoutes from './routes/user/ClassRoutes';
@@ -56,6 +58,13 @@ function Router() {
 										{AdminActivityRoutes()}
 										{AdminClassRoutes()}
 										{AdminRoomRoutes()}
+									</>
+								)
+							}
+							{
+								loggedIn.role === "Monitor" && (
+									<>
+										{MonitorClassRoutes()}
 									</>
 								)
 							}

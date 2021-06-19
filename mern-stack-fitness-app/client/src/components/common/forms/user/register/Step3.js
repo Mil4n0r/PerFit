@@ -167,7 +167,7 @@ export const Step3 = () => {
 															<>
 																<Typography>Descripción: {subscription.descripcionSuscripcion}</Typography><br/>
 																<Typography>Coste: {subscription.costeSuscripcion}€</Typography>
-																<Typography>Fecha de vencimiento: {}</Typography>
+																<Typography>Duración: {subscription.duracionSuscripcion} días</Typography>
 															</>
 														}
 													>

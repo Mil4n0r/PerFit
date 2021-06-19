@@ -5,6 +5,7 @@ const mailer = require('nodemailer');
 const UserModel = require('../../models/UserSchema');
 const MonitorModel = require('../../models/MonitorSchema');
 const TrainerModel = require('../../models/TrainerSchema');
+const SubscriptionModel = require('../../models/SubscriptionSchema');
 const { checkPermissionsUser } = require('../../auth/checkPermissions');
 
 const mongoose = require('mongoose');
@@ -110,6 +111,7 @@ router.post("/user/:id", async (req, res, next) => {
 				const resError = permissionsResData.error;
 				const resUser = permissionsResData.user;
 				const resPermission = permissionsResData.permission;
+
 				if(resError) {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 				}
@@ -123,10 +125,16 @@ router.post("/user/:id", async (req, res, next) => {
 					resUser.datosPersonales.telefonoUsuario = req.body.telephone;
 					resUser.datosPersonales.fechaNacUsuario = req.body.birthdate;
 					resUser.privacidadUsuario = req.body.privacy;
-					if(req.body.specialty)
+					if(req.body.specialty) {
 						resUser.especialidadesMonitor = req.body.specialty;
-					if(req.body.subscription)
-						resUser.suscripcionMiembro = req.body.specialty;
+					}
+					if(resPermission.includes("changesubscription") && req.body.subscription) {	
+						resUser.suscripcionMiembro.planSuscripcion = req.body.subscription;
+						const subscription = await SubscriptionModel.findById(req.body.subscription, "duracionSuscripcion");
+						const today_date = new Date();
+						const expire_date = new Date(today_date.setDate(today_date.getDate()+subscription.duracionSuscripcion));
+						resUser.suscripcionMiembro.fechaVencimiento = expire_date;
+					}
 					const savedUser = await resUser.save();
 					res.json(savedUser);
 				}

@@ -13,6 +13,7 @@ import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined'
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import MeetingRoomOutlinedIcon from '@material-ui/icons/MeetingRoomOutlined';
 import NoMeetingRoomOutlinedIcon from '@material-ui/icons/NoMeetingRoomOutlined';
+import AssignmentTurnedInOutlinedIcon from '@material-ui/icons/AssignmentTurnedInOutlined';
 
 import {CustomListItem as ListItem, ContainerWithPadding, CustomListItemText as ListItemText, HorizontalList, FullWidthPaper, BodyContainer, CustomTypography as Typography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin as InputLabel, PrimaryLink, CenterPaper, CapacityInputLabel} from '../../style/style'
 
@@ -229,6 +230,22 @@ export const ClassInfo = () => {
 															<ButtonAvatar><DeleteForeverOutlinedIcon /></ButtonAvatar>
 															<Typography color='primary' className="caps">
 																Eliminar
+															</Typography>
+														</VerticalGrid>
+													</FullWidthPaper>
+												</PrimaryLink>
+											</Grid>
+										)
+									}
+									{
+										sclass.permission.includes('checkassistance') && (
+											<Grid item xs>
+												<PrimaryLink to={`/check/class/assistance/${sclass.classInfo._id}`}>
+													<FullWidthPaper>
+														<VerticalGrid item xs className="zoom">
+															<ButtonAvatar><AssignmentTurnedInOutlinedIcon /></ButtonAvatar>
+															<Typography color='primary' className="caps">
+																Pasar asistencia
 															</Typography>
 														</VerticalGrid>
 													</FullWidthPaper>

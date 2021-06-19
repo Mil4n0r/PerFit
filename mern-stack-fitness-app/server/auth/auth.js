@@ -5,6 +5,7 @@ const TrainerModel = require('../models/TrainerSchema.js');
 const MemberModel = require('../models/MemberSchema.js');
 const AdminModel = require('../models/AdminSchema.js');
 const MonitorModel = require('../models/MonitorSchema.js');
+const SubscriptionModel = require('../models/SubscriptionSchema.js');
 
 const JWTstrategy = require('passport-jwt').Strategy;
 
@@ -19,13 +20,17 @@ passport.use("register",
 		},
 		async (req, email, password, done) => {
 			try {
+				
 				const userExists = await UserModel.findOne({ emailUsuario: email });
-				if(passwordConfirm !== password) {
+				if(req.body.passwordConfirm !== password) {
 					return done(null, false, { message: "Las contraseñas introducidas no coinciden." });
 				}
 				else if(!userExists) {
 					var user;
 					if(req.body.role === "Miembro") {
+						const subscription = await SubscriptionModel.findById(req.body.subscription, "duracionSuscripcion");
+						const today_date = new Date();
+						const expire_date = new Date(today_date.setDate(today_date.getDate()+subscription.duracionSuscripcion));
 						user = await MemberModel.create({
 							emailUsuario: email,
 							passwordUsuario: password,
@@ -40,7 +45,10 @@ passport.use("register",
 							privacidadUsuario: req.body.privacy,
 							aliasUsuario: req.body.alias,
 							balanceMonedas: 0,
-							suscripcionMiembro: req.body.subscription,
+							suscripcionMiembro: {
+								planSuscripcion: subscription._id,
+								fechaVencimiento: expire_date
+							},
 							cuentaActivada: false,
 							tieneEntrenador: false,
 						});

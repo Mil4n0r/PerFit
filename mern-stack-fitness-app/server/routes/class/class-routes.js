@@ -3,7 +3,7 @@ const passport = require('passport');
 const router = express.Router();
 
 const ClassModel = require('../../models/ClassSchema');
-
+const MemberModel = require('../../models/MemberSchema');
 const { checkPermissionsClass } = require('../../auth/checkPermissions');
 
 const mongoose = require('mongoose');
@@ -198,12 +198,18 @@ router.post("/join/class/:id", async (req, res, next) => {
 				const resError = permissionsResData.error;
 				const resClass = permissionsResData.class;
 				const resPermission = permissionsResData.permission;
+				
 				if(resError) {
 					res.status(resError.code).send(resError.message);
 				}
 				else if(permissionsResData && resPermission.includes("join")) {
 					await resClass.asistentesClase.push(mongoose.Types.ObjectId(user._id))
+					//console.log(resClass.depopulate("asistentesClase"));
+					//console.log(resClass.depopulate("monitorClase"));
+					//console.log(resClass.depopulate("actividadClase"));
+					//console.log(resClass.depopulate("salaClase"));
 					const savedClass = await resClass.save();
+					console.log(savedClass)
 					res.json(savedClass)
 				}
 				else {
@@ -238,6 +244,51 @@ router.post("/leave/class/:id", async (req, res, next) => {
 					await resClass.asistentesClase.pull(mongoose.Types.ObjectId(user._id))
 					const savedClass = await resClass.save();
 					res.json(savedClass);
+				}
+				else {
+					res.status(401).send("Usuario no autorizado");
+				}
+			} catch(err) {
+				next(err);
+			}
+		}
+	})(req,res,next);
+});
+
+// Modificación de la clase con la id correspondiente
+router.post("/check/class/assistance/:id", async (req, res, next) => {
+	passport.authenticate("jwt", {session: false}, async (err, user, info) => {
+		if(err) {
+			next(err);
+		}
+		else if(!user) {
+			const error = new Error(info.message)
+			next(error);
+		}
+		else {
+			try {
+				const permissionsResData = await checkPermissionsClass(user, req);
+				const resError = permissionsResData.error;
+				const resClass = permissionsResData.class;
+				const resPermission = permissionsResData.permission;
+				if(resError) {
+					res.status(resError.code).send(resError.message);
+				}
+				else if(permissionsResData && resPermission.includes("checkassistance")) {
+					Object.keys(req.body.checkassistance).map(async (userid) => {
+						const hasAssisted = req.body.checkassistance[userid];
+						try {
+							if(hasAssisted) {
+								await MemberModel.findByIdAndUpdate(userid, {$inc: {balanceMonedas: 1}},{useFindAndModify: false});
+							}
+							else {
+								await MemberModel.findOneAndUpdate({_id: userid, balanceMonedas: {$gt: 0}}, {$inc: {balanceMonedas: -1}},{useFindAndModify: false});
+							}
+						} catch(err) {
+							// Este error no es importante, ya que indica que el usuario no es un miembro, por lo que no se incrementa el balance de monedas
+						}
+					})
+					res.json(resClass)
 				}
 				else {
 					res.status(401).send("Usuario no autorizado");

@@ -63,7 +63,7 @@ export const Step1 = () => {
 									<Box key={"alias " + typeArray}>
 										{Array.isArray(messageArray) ? (
 											messageArray.map((message, id) => <Typography className="error" key={"alias" + id}>{message}</Typography>)
-										) : <Typography>{messageArray}</Typography>}
+										) : <Typography className="error" >{messageArray}</Typography>}
 									</Box>
 								))
 					}
