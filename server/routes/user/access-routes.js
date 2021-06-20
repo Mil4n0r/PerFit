@@ -112,7 +112,7 @@ router.post("/forgot/password", async (req, res, next) => {
 					to: `${user.emailUsuario}`,
 					subject: "Restablecer tu contraseña en PerFit",
 					html: '<h1>Restauración de contraseña</h1>' +
-					`<p>Acceda al siguiente link para establecer una nueva: <a href="https://ecstatic-stonebraker-b24b77.netlify.app/reset/password/${token}">Link</a>` +
+					`<p>Acceda al siguiente link para establecer una nueva: <a href="https://perfit.netlify.app/reset/password/${token}">Link</a>` +
 					'<p>Si no ha sido usted quien ha solicitado esta acción, le recomendamos ponerse en contacto con nosotros.</p>'
 				});
 				return res.status(200).send(mailinfo);

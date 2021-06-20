@@ -1,12 +1,12 @@
 import React from 'react'
 import { useForm } from 'react-hook-form';
 import { ErrorMessage } from '@hookform/error-message';
-
+import { Link } from 'react-router-dom';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { LoginSchema } from '../../../schemas/user/login/LoginSchema';
 
-import {Grid, Typography, Link, Checkbox, FormControlLabel} from '@material-ui/core';
+import {Grid, Typography, Checkbox, FormControlLabel} from '@material-ui/core';
 
 import {FormContainer, LoginButton, FullWidthForm, TextFieldWithMargin as TextField} from '../../../../../style/style'
 
@@ -65,12 +65,12 @@ export const LoginForm = ({ onSubmit }) => {
 				</LoginButton>
 				<Grid container>
 					<Grid item xs>
-						<Link href="./forgot/password" color="primary">
+						<Link to="/forgot/password" color="primary">
 							He olvidado mi contraseña
 						</Link>
 					</Grid>
 					<Grid item>
-						<Link href="./register/step/1" color="primary">
+						<Link to="/register/step/1" color="primary">
 							No tengo cuenta y deseo registrarme
 						</Link>
 					</Grid>
