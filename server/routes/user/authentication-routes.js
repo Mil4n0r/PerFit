@@ -29,7 +29,10 @@ router.get("/logout", (req, res, next) => {
 		else {
 			const message = "Se ha cerrado sesión de manera satisfactoria"
 			req.logout()
-			res.clearCookie("token");
+			res.clearCookie("token", {
+				sameSite: 'none',
+				secure: true
+			});
 			res.status(200).send(message);
 		}
 	})(req,res,next);

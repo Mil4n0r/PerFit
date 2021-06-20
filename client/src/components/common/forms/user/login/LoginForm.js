@@ -46,6 +46,7 @@ export const LoginForm = ({ onSubmit }) => {
 					type="password"
 					name="password"
 					id="password"
+					autoComplete="current-password"
 				/>
 				<ErrorMessage className="error" errors={errors} name="password" as={Typography} />
 				<FormControlLabel
