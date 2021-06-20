@@ -26,14 +26,17 @@ const checkPermissionsUser = async (activeUser, req) => {
 		if(checkedUser._id.equals(activeUser._id)) {
 			error = null;
 			user = checkedUser;
-			permission = ["read", "write", "checkplans", "managefriends", "readrequests"];
+			permission = ["read", "write", "managefriends", "readrequests"];
+			if(checkedUser.role !== "Miembro" || (checkedUser.role === "Miembro" && checkedUser.suscripcionMiembro.planSuscripcion.permisosSuscripcion.includes("Planes"))) {
+				permission.push("checkplans");
+			}
 		}
 		else {
 			if(activeUser.role === "Administrador") {
 				if(!checkedUser.cuentaActivada) {
 					error = null;
 					user = checkedUser;
-					permission = ["read", "write", "delete", "checkplans", "activateaccount", "readrequests", "changesubscription"];
+					permission = ["read", "activateaccount"];
 				}
 				else {
 					error = null;
@@ -87,8 +90,10 @@ const checkPermissionsUser = async (activeUser, req) => {
 					permission.push("allowfriends")
 			}
 		}
-		if(checkedUser.role === "Entrenador" && !checkedUser.tieneEntrenador &&
-		  !checkedUser._id.equals(activeUser._id) ) {// && activeUser.suscripcionUsuario.permisosSuscripcion.includes("Entrenador Personal")))
+		const activeSubscription = await SubscriptionModel(activeUser.suscripcionMiembro);
+		if(checkedUser.role === "Entrenador" && !activeUser.tieneEntrenador &&
+		  !checkedUser._id.equals(activeUser._id) && (activeUser.role !== "Miembro" ||
+		  (activeUser.role === "Miembro" && activeSubscription.permisosSuscripcion.includes("Entrenador")))) {
 			const pendingRequests = await RequestModel.find(
 				{_id: {$in: checkedUser.peticionesPendientes}}
 			)	
@@ -282,6 +287,9 @@ const checkPermissionsClass = async (activeUser, req) => {
 			.populate("asistentesClase", "aliasUsuario")
 			.populate("actividadClase")
 			.populate("salaClase");
+		
+		const activeSubscription = await SubscriptionModel.findById(activeUser.suscripcionMiembro.planSuscripcion);
+		
 		if(activeUser.role === "Administrador") {
 			if(checkedClass && checkedClass.asistentesClase.some(a => a._id.equals(activeUser._id))) {
 				return {
@@ -298,8 +306,7 @@ const checkPermissionsClass = async (activeUser, req) => {
 				};
 			}
 		}
-		else if(activeUser)//.suscripcionUsuario.permisosSuscripcion.includes("Clases Dirigidas")) { // AÑADIR SUSCRIPCIONES
-		{
+		else if(activeUser.role !== "Miembro" || (activeUser.role === "Miembro" && activeSubscription.permisosSuscripcion.includes("Clases dirigidas"))) {
 			if(checkedClass.asistentesClase.some(a => a._id.equals(activeUser._id))) {
 				return {
 					error: null,

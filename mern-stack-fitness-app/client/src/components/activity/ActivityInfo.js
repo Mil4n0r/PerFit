@@ -4,6 +4,7 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 
 import {Grid, Paper, Modal, Button, Card, CardActionArea} from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -17,6 +18,7 @@ export const ActivityInfo = () => {
 	const match = useRouteMatch();
 	const [activity, setActivity] = useState();
 	const [open, setOpen] = useState(false);
+	const [error, setError] = useState();
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -29,7 +31,12 @@ export const ActivityInfo = () => {
 	useEffect(() => {
 		const fetchActivity = async () => {
 			const activity = await getActivity(match.params.id);
-			setActivity(activity);
+			if(activity.response) {
+				setError(activity.response);
+			}
+			else {
+				setActivity(activity);
+			}
 		}
 		fetchActivity();
 		// (Evita que salte warning por usar cadena vacía)
@@ -161,6 +168,9 @@ export const ActivityInfo = () => {
 						</ContainerWithPadding>
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

@@ -4,6 +4,7 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 
 import {Grid, Paper, Modal, Button, List, Avatar, ListItemAvatar, Divider, InputLabel, InputAdornment} from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import FastfoodOutlinedIcon from '@material-ui/icons/FastfoodOutlined';
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
@@ -41,6 +42,7 @@ export const FoodInfo = () => {
 	const match = useRouteMatch();
 	const [food, setFood] = useState();
 	const [open, setOpen] = useState(false);
+	const [error, setError] = useState();
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -53,7 +55,12 @@ export const FoodInfo = () => {
 	useEffect(() => {
 		const fetchFood = async () => {
 			const food = await getFood(match.params.id);
-			setFood(food);
+			if(food.response) {
+				setError(food.response);
+			}
+			else {
+				setFood(food);
+			}
 		}
 		fetchFood();
 		// (Evita que salte warning por usar cadena vacía)
@@ -196,6 +203,9 @@ export const FoodInfo = () => {
 						</ContainerWithPadding>
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

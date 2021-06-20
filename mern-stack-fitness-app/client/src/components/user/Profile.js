@@ -7,6 +7,7 @@ import { SendTrainingRequest } from '../request/SendTrainingRequest';
 import { DeleteUser } from './DeleteUser';
 
 import {Grid, Paper, Modal, Button, List, Avatar, ListItemAvatar, Divider, CardActionArea} from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -34,7 +35,12 @@ export const Profile = () => {
 	useEffect(() => {
 		const fetchUser = async () => {
 			const user = await getUser(match.params.id);
-			setUser(user);
+			if(user.response) {
+				setError(user.response);
+			}
+			else {
+				setUser(user)
+			}
 		}
 		fetchUser();
 		// (Evita que salte warning por usar cadena vacía)
@@ -140,9 +146,6 @@ export const Profile = () => {
 														readOnly: true,
 													}}
 												/>
-												{
-													console.log(user.userInfo.suscripcionMiembro)
-												}
 											</Grid>
 										</HorizontalGrid>
 										<HorizontalGrid container spacing={1}>
@@ -330,6 +333,9 @@ export const Profile = () => {
 						</VerticalGrid>
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

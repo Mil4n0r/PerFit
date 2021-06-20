@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { DeleteRoom } from './DeleteRoom';
 
 import {Grid, Modal} from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -16,6 +17,7 @@ export const RoomInfo = () => {
 	const match = useRouteMatch();
 	const [room, setRoom] = useState();
 	const [open, setOpen] = useState(false);
+	const [error, setError] = useState();
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -28,7 +30,12 @@ export const RoomInfo = () => {
 	useEffect(() => {
 		const fetchRoom = async () => {
 			const room = await getRoom(match.params.id);
-			setRoom(room);
+			if(room.response) {
+				setError(room.response);
+			}
+			else {
+				setRoom(room);
+			}
 		}
 		fetchRoom();
 		// (Evita que salte warning por usar cadena vacía)
@@ -144,6 +151,9 @@ export const RoomInfo = () => {
 						</ContainerWithPadding>
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

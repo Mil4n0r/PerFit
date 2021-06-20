@@ -4,6 +4,7 @@ import { useRouteMatch, useHistory } from "react-router-dom";
 import { Link } from 'react-router-dom';
 
 import {Grid, Paper, Modal, Button} from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -20,6 +21,7 @@ export const SubscriptionInfo = () => {
 	const [subscription, setSubscription] = useState();
 	const [open, setOpen] = useState(false);
 	const [openContract, setOpenContract] = useState(false);
+	const [error, setError] = useState();
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -40,7 +42,12 @@ export const SubscriptionInfo = () => {
 	useEffect(() => {
 		const fetchSubscription = async () => {
 			const subscription = await getSubscription(match.params.id);
-			setSubscription(subscription);
+			if(subscription.response) {
+				setError(subscription.response);
+			}
+			else {
+				setSubscription(subscription);
+			}
 		}
 		fetchSubscription();
 		// (Evita que salte warning por usar cadena vacía)
@@ -120,6 +127,26 @@ export const SubscriptionInfo = () => {
 									/>
 								</Grid>
 							</HorizontalGrid>
+							<HorizontalGrid container spacing={1}>
+								<Grid item xs={3}>
+									<InputLabel htmlFor="permissions">
+										Permisos
+									</InputLabel>
+								</Grid>
+								<Grid item xs={9}>
+									<TextField
+										variant="outlined"
+										fullWidth
+										type="text"
+										defaultValue={subscription.subscriptionInfo.permisosSuscripcion}
+										InputProps={{
+											readOnly: true,
+										}}
+									/>
+								</Grid>
+							</HorizontalGrid>
+							
+							
 						</VerticalGrid>
 						{
 							subscription.permission.includes('write') || subscription.permission.includes('delete') ? (
@@ -193,6 +220,9 @@ export const SubscriptionInfo = () => {
 						</ContainerWithPadding>
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

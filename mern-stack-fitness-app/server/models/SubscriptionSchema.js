@@ -29,7 +29,12 @@ const SubscriptionSchema = mongoose.Schema({
 		type: Number,
 		required: true,
 		min: [0, "El número introducido debe ser positivo"],
-	}
+	},
+	permisosSuscripcion: [{ 
+		type: String,
+		enum: ['Clases dirigidas', 'Planes', 'Entrenador personal'],
+		required: true
+	}]
 });
 
 module.exports = mongoose.model("Suscripción", SubscriptionSchema);

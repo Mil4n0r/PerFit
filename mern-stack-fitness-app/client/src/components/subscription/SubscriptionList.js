@@ -57,6 +57,9 @@ export const SubscriptionList = () => {
 								<Typography variant="subtitle2" color={new Date(user.userInfo.suscripcionMiembro.fechaVencimiento) > new Date() ? "textSecondary" : "error"}>
 									Fecha de caducidad: {format(parseISO(user.userInfo.suscripcionMiembro.fechaVencimiento), 'dd/MM/yyyy')}
 								</Typography>
+								<Typography variant="subtitle2" color="textSecondary">
+									Permisos: {`${user.userInfo.suscripcionMiembro.planSuscripcion.permisosSuscripcion}`}
+								</Typography>
 							</CardContent>
 						</FullWidthCard>
 					</ContainerWithPadding>
@@ -73,6 +76,7 @@ export const SubscriptionList = () => {
 							<TableHeaderCell>Descripción</TableHeaderCell>
 							<TableHeaderCell>Coste de la suscripción</TableHeaderCell>
 							<TableHeaderCell>Duración de la suscripción</TableHeaderCell>
+							<TableHeaderCell>Permisos de la suscripción</TableHeaderCell>
 							{
 								loggedIn && loggedIn.role === "Administrador" ? (
 									<TableHeaderCell align='center'><Link to={'/create/subscription'}><AddCircleOutlinedIcon color='secondary'/></Link></TableHeaderCell>
@@ -89,6 +93,7 @@ export const SubscriptionList = () => {
 								<TableCell>{subscription.descripcionSuscripcion}</TableCell>
 								<TableCell>{subscription.costeSuscripcion}€ / {subscription.costeSuscripcionPCoins} P-Coins</TableCell>
 								<TableCell>{subscription.duracionSuscripcion} días</TableCell>
+								<TableCell>{`${subscription.permisosSuscripcion}`}</TableCell>
 								<TableCell align='center'><Link to={`/subscription/info/${subscription._id}`}><VisibilityOutlinedIcon/></Link></TableCell>
 							</TableRow>
 						))}

@@ -23,9 +23,7 @@ export const CheckClassAssistance = () => {
 	}, []);
 
 	const onSubmit = async (data) => {
-		console.log("SUBMITTING")
 		const checkedClass = await checkClassAssistance(data, match.params.id);
-		console.log("CLASS", JSON.stringify(checkedClass))
 		if(checkedClass.response) {
 			setError(checkedClass.response);
 		}

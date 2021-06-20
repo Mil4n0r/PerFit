@@ -3,6 +3,7 @@ import { getRoutine, getUser } from '../../api';
 import { useRouteMatch } from "react-router-dom";
 
 import {Grid, Modal, InputLabel, } from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import FitnessCenterOutlinedIcon from '@material-ui/icons/FitnessCenterOutlined';
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
@@ -18,6 +19,7 @@ export const RoutineInfo = () => {
 	const [routine, setRoutine] = useState();
 	const [user, setUser] = useState();
 	const [open, setOpen] = useState(false);
+	const [error, setError] = useState();
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -30,9 +32,19 @@ export const RoutineInfo = () => {
 	useEffect(() => {
 		const fetchRoutineAndUser = async () => {
 			const routine = await getRoutine(match.params.id);
-			setRoutine(routine);
+			if(routine.response) {
+				setError(routine.response);
+			}
+			else {
+				setRoutine(routine);
+			}
 			const user = await getUser(routine.usuarioPlan);
-			setUser(user);
+			if(user.response) {
+				setError(user.response);
+			}
+			else {
+				setUser(user);
+			}
 		}
 		fetchRoutineAndUser();
 		// (Evita que salte warning por usar cadena vacía)
@@ -142,6 +154,9 @@ export const RoutineInfo = () => {
 						}
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

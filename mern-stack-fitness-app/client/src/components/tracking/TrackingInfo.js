@@ -3,6 +3,7 @@ import { getTracking, getUser } from '../../api';
 import { useRouteMatch, useHistory } from "react-router-dom";
 
 import {Grid, Paper, Modal, Button, List, Avatar, ListItemAvatar, Divider, InputLabel, ListItemIcon, InputAdornment } from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import FolderIcon from '@material-ui/icons/Folder';
 import DescriptionOutlinedIcon from '@material-ui/icons/DescriptionOutlined';
@@ -25,6 +26,7 @@ export const TrackingInfo = () => {
 	const [tracking, setTracking] = useState();
 	const [user, setUser] = useState();
 	const [open, setOpen] = useState(false);
+	const [error, setError] = useState();
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -114,9 +116,20 @@ export const TrackingInfo = () => {
 	useEffect(() => {
 		const fetchTrackingAndUser = async () => {
 			const tracking = await getTracking(match.params.id);
-			setTracking(tracking);
+			if(tracking.response) {
+				setError(tracking.response);
+			}
+			else {
+				setTracking(tracking);
+			}
 			const user = await getUser(tracking.usuarioPlan);
-			setUser(user);
+			if(user.response) {
+				setError(user.response);
+			}
+			else {
+				setUser(user);
+			}
+			
 		}
 		fetchTrackingAndUser();
 		// (Evita que salte warning por usar cadena vacía)
@@ -236,6 +249,9 @@ export const TrackingInfo = () => {
 						</VerticalGrid>
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

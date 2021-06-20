@@ -6,7 +6,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 
 //import { SubscriptionSchema } from '../../schemas/subscription/SubscriptionSchema';
 
-import { Button, Typography, InputAdornment } from '@material-ui/core';
+import { Button, Typography, InputAdornment, Select, Chip, MenuItem } from '@material-ui/core';
 import { FormContainer, FullWidthForm, ButtonsContainer, TextFieldWithMargin as TextField, InputLabelWithMargin as InputLabel } from '../../../../style/style';
 import { KeyboardDatePicker } from '@material-ui/pickers';
 
@@ -21,6 +21,7 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 			subscriptioncost: subscription ? subscription.subscriptionInfo.costeSuscripcion : "",
 			subscriptionpcoincost: subscription ? subscription.subscriptionInfo.costeSuscripcionPCoins : "",
 			subscriptionduration: subscription ? subscription.subscriptionInfo.duracionSuscripcion : "",
+			subscriptionpermissions: subscription ? subscription.subscriptionInfo.permisosSuscripcion : [],
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(SubscriptionSchema),
 		mode: "onTouched"
@@ -76,7 +77,7 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 					inputProps={{ min: "0", step: "1"}}
 					InputProps={{endAdornment: <InputAdornment position="end">P-Coins</InputAdornment>}}
 				/>
-				<ErrorMessage className="error" errors={errors} name="subscriptioncost" as={Typography} />
+				<ErrorMessage className="error" errors={errors} name="subscriptionpcoincost" as={Typography} />
 				<TextField
 					variant="outlined"
 					inputRef={register}
@@ -88,6 +89,34 @@ export const SubscriptionForm = ({ subscription, onSubmit }) => {
 					inputProps={{ min: "0", step: "1"}}
 					InputProps={{endAdornment: <InputAdornment position="end">días</InputAdornment>}}
 				/>
+				<InputLabel htmlFor="specialty">
+					Permisos
+				</InputLabel>
+				<Controller
+					control={control}
+					name="subscriptionpermissions"
+					id="subscriptionpermissions"
+					as={
+						<Select
+							multiple
+							variant="outlined"
+							fullWidth
+							renderValue={(selected) => (
+								<>
+									{selected.map((value) => (
+										<Chip key={value} label={value} />
+									))}
+								</>
+							)}
+						>
+							<MenuItem value="Clases dirigidas">Clases dirigidas</MenuItem>
+							<MenuItem value="Planes">Planes</MenuItem>
+							<MenuItem value="Entrenador personal">Entrenador personal</MenuItem>
+						</Select>
+					}
+					defaultValue={[]}
+				/>
+				<ErrorMessage className="error" errors={errors} name="permissions" as={Typography} />
 				<ButtonsContainer>
 					<Button type="submit" variant="contained" color='primary'>
 						Guardar suscripción

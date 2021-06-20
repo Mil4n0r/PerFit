@@ -29,7 +29,8 @@ router.post("/create/subscription", async (req, res, next) => {
 						descripcionSuscripcion: req.body.subscriptiondescription,
 						costeSuscripcion: req.body.subscriptioncost,
 						costeSuscripcionPCoins: req.body.subscriptionpcoincost,
-						duracionSuscripcion: req.body.subscriptionduration
+						duracionSuscripcion: req.body.subscriptionduration,
+						permisosSuscripcion: req.body.subscriptionpermissions
 					});
 					const savedSubscription = await Subscription.save();
 					res.json(savedSubscription);
@@ -69,6 +70,7 @@ router.post("/subscription/:id", async (req, res, next) => {
 					resSubscription.costeSuscripcion = req.body.subscriptioncost;
 					resSubscription.costeSuscripcionPCoins = req.body.subscriptionpcoincost;
 					resSubscription.duracionSuscripcion = req.body.subscriptionduration;
+					resSubscription.permisosSuscripcion = req.body.subscriptionpermissions
 					const savedSubscription = await resSubscription.save();
 					res.json(savedSubscription);
 				}

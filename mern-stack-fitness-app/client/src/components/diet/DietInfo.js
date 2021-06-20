@@ -3,6 +3,7 @@ import { getDiet, getUser } from '../../api';
 import { useRouteMatch } from "react-router-dom";
 
 import {Grid, Modal, InputLabel, } from '@material-ui/core';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import FastfoodOutlinedIcon from '@material-ui/icons/FastfoodOutlined';
 import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined';
@@ -19,6 +20,7 @@ export const DietInfo = () => {
 	const [diet, setDiet] = useState();
 	const [user, setUser] = useState();
 	const [open, setOpen] = useState(false);
+	const [error, setError] = useState();
 
 	const handleOpen = () => {
 		setOpen(true);
@@ -31,9 +33,20 @@ export const DietInfo = () => {
 	useEffect(() => {
 		const fetchDietAndUser = async () => {
 			const diet = await getDiet(match.params.id);
-			setDiet(diet);
+			if(diet.response) {
+				setError(diet.response);
+			}
+			else {
+				setDiet(diet);
+			}
 			const user = await getUser(diet.usuarioPlan);
-			setUser(user);
+			if(user.response) {
+				setError(user.response);
+			}
+			else {
+				setUser(user);
+			}
+			
 		}
 		fetchDietAndUser();
 		// (Evita que salte warning por usar cadena vacía)
@@ -137,6 +150,9 @@ export const DietInfo = () => {
 						</VerticalGrid>
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

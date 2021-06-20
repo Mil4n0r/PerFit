@@ -18,4 +18,9 @@ export const SubscriptionSchema = yup.object().shape({
 		.typeError("Introduzca la duración (en días) de la suscripción")
 		.required("Introduzca la duración (en días) de la suscripción")
 		.min(0, "El número introducido debe ser positivo"),
+	subscriptionpermissions: yup.array()
+		.of(yup.string()
+			.required("Las suscripciones deben tener seleccionadas sus permisos")
+		)
+		.min(1, "Las suscripciones deben tener seleccionados al menos un permiso")
 });

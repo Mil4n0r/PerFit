@@ -204,12 +204,7 @@ router.post("/join/class/:id", async (req, res, next) => {
 				}
 				else if(permissionsResData && resPermission.includes("join")) {
 					await resClass.asistentesClase.push(mongoose.Types.ObjectId(user._id))
-					//console.log(resClass.depopulate("asistentesClase"));
-					//console.log(resClass.depopulate("monitorClase"));
-					//console.log(resClass.depopulate("actividadClase"));
-					//console.log(resClass.depopulate("salaClase"));
 					const savedClass = await resClass.save();
-					console.log(savedClass)
 					res.json(savedClass)
 				}
 				else {

@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import {format, parseISO, parse, formatISO} from 'date-fns';
 import { es } from 'date-fns/locale'
 import { utcToZonedTime } from 'date-fns-tz';
+import ErrorDisplayer from '../common/layout/ErrorDisplayer';
 
 import {Grid, Paper, Modal, Button, List, Avatar, ListItemAvatar, Divider} from '@material-ui/core';
 
@@ -46,11 +47,17 @@ export const ClassInfo = () => {
 	const [openJoinModal, setOpenJoinModal] = useState(false);
 	const [openLeaveModal, setOpenLeaveModal] = useState(false);
 	const [openDeleteModal, setOpenDeleteModal] = useState(false);
+	const [error, setError] = useState();
 
 	useEffect(() => {
 		const fetchClass = async () => {
 			const sclass = await getClass(match.params.id);
-			setClass(sclass);
+			if(sclass.response) {
+				setError(sclass.response);
+			}
+			else {
+				setClass(sclass);
+			}
 		}
 		fetchClass();
 		// (Evita que salte warning por usar cadena vacía)
@@ -275,6 +282,9 @@ export const ClassInfo = () => {
 						</ContainerWithPadding>
 					</>
 				)
+			}
+			{
+				<ErrorDisplayer error={error} setError={setError}/>
 			}
 		</BodyContainer>
 	)

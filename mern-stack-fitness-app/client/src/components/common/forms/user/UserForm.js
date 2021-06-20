@@ -26,8 +26,6 @@ export const UserForm = ({ user, onSubmit }) => {
 		fetchSubscriptions();
 	}, []);		// La cadena vacía hace que solo se ejecute una vez (al pasar a estado componentDidMount())
 
-	console.log(user.userInfo.suscripcionMiembro.planSuscripcion.nombreSuscripcion)
-
 	const { register, errors, handleSubmit, watch, control } = useForm({	// Creamos el formulario de creación de usuario
 		defaultValues: {
 			alias: user ? user.userInfo.aliasUsuario : "",
@@ -277,6 +275,7 @@ export const UserForm = ({ user, onSubmit }) => {
 																<Typography>Descripción: {subscription.descripcionSuscripcion}</Typography><br/>
 																<Typography>Coste: {subscription.costeSuscripcion}€</Typography>
 																<Typography>Duración: {subscription.duracionSuscripcion} días</Typography>
+																<Typography>Permisos: {subscription.permisosSuscripcion}</Typography>
 															</>
 														}
 													>
