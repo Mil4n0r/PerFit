@@ -1,23 +1,23 @@
 import axios from 'axios';
 
-export const createActivity = (activity) => axios.post("http://localhost:4000/admin/create/activity", activity, {
+export const createActivity = (activity) => axios.post("https://perfit-fitness.herokuapp.com/admin/create/activity", activity, {
 	data: activity
 })
 	.then(res => res.data)
 	.catch(err => err);
 
-export const getActivities = () => axios.get("http://localhost:4000/admin/activity/list")
+export const getActivities = () => axios.get("https://perfit-fitness.herokuapp.com/admin/activity/list")
 	.then(res => res.data)
 	.catch(err => err);
 
-export const getActivity = (id) => axios.get(`http://localhost:4000/admin/activity/${id}`)
+export const getActivity = (id) => axios.get(`https://perfit-fitness.herokuapp.com/admin/activity/${id}`)
 	.then(res => res.data)
 	.catch(err => err);
 
-export const updateActivity = (activity,id) => axios.post(`http://localhost:4000/admin/activity/${id}`, activity, {
+export const updateActivity = (activity,id) => axios.post(`https://perfit-fitness.herokuapp.com/admin/activity/${id}`, activity, {
 	data: activity
 })
 	.catch(err => err);
 
-export const deleteActivity = (id) => axios.delete(`http://localhost:4000/admin/activity/${id}`)
+export const deleteActivity = (id) => axios.delete(`https://perfit-fitness.herokuapp.com/admin/activity/${id}`)
 	.catch(err => err);
