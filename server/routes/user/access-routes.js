@@ -75,7 +75,9 @@ router.post("/login/:remember", (req, res, next) => {
 						const expire_date = req.params.remember === "true" ? new Date(today_date.setMonth(today_date.getMonth()+1)) : false;
 						res.cookie("token", token, {
 							expires: expire_date,
-							httpOnly: true
+							httpOnly: true,
+							sameSite: 'none',
+							secure: true
 						});
 						return res.status(200).send(body);
 					}
