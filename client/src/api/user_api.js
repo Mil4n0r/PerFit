@@ -25,7 +25,7 @@ export const getUser = (id) => axios.get(`https://perfit-fitness.herokuapp.com/a
 export const logIn = (email, password,rememberme) => axios.post(`https://perfit-fitness.herokuapp.com/login/${rememberme}`, {email,password}, {	// Por defecto se le aplica JSON.stringify al segundo argumento
 	data: {email,password,rememberme}
 })
-	.catch(err => console.log("AAAAAAAAAAAA", err));
+	.catch(err => err);
 
 export const logOut = () => axios.get("https://perfit-fitness.herokuapp.com/user/logout")
 	.catch(err => err);
