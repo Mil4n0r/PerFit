@@ -179,7 +179,7 @@ router.post("/user/activate/:id", async (req, res, next) => {
 							subject: "Aprobado su registro en PerFit",
 							html: '<h1>Bienvenido a PerFit</h1>' +
 							`<p>Hola ${resUser.aliasUsuario}, su solicitud de registro en PerFit ha sido validada por un administrador.</p>` +
-							'<p>Pulse <a href="http://localhost:3000/login">AQUÍ</a> para iniciar sesión:</p>'
+							'<p>Pulse <a href="https://ecstatic-stonebraker-b24b77.netlify.app/login">AQUÍ</a> para iniciar sesión:</p>'
 						});
 					} catch(err) {
 						next(err);

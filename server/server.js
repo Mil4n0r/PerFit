@@ -26,7 +26,7 @@ const PORT = process.env.PORT || 4000;
 const app = express();
 app.use(cors({	// Middleware que permite a ciertos dominios llamar a las funciones del back-end
 	credentials: true,	// Permite emitir cookies desde el origen
-	origin: ['http://localhost:3000']	// Dominio del front-end
+	origin: ['https://ecstatic-stonebraker-b24b77.netlify.app/']	// Dominio del front-end
 }));	
 
 app.use(express.json());	// Middleware que permite procesar las peticiones que tienen Content-Type: application/json
