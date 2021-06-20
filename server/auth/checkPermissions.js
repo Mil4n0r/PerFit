@@ -288,7 +288,7 @@ const checkPermissionsClass = async (activeUser, req) => {
 			.populate("actividadClase")
 			.populate("salaClase");
 		
-		const activeSubscription = await SubscriptionModel.findById(activeUser.suscripcionMiembro.planSuscripcion);
+		const activeSubscription = activeUser.role === "Miembro" && await SubscriptionModel.findById(activeUser.suscripcionMiembro.planSuscripcion);
 		
 		if(activeUser.role === "Administrador") {
 			if(checkedClass && checkedClass.asistentesClase.some(a => a._id.equals(activeUser._id))) {
