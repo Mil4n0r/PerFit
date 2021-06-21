@@ -41,7 +41,6 @@ const getClassStatus = (usersJoined, roomCapacity) => {
 }
 
 export const ClassInfo = () => {
-
 	const match = useRouteMatch();
 	const [sclass, setClass] = useState();
 	const [openJoinModal, setOpenJoinModal] = useState(false);

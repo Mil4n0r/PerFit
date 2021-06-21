@@ -162,7 +162,7 @@ router.post("/user/activate/:id", async (req, res, next) => {
 				if(resError) {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 				}
-				else if(permissionsResData && resPermission.includes("write")) {	// Se reasignan los campos del usuario
+				else if(permissionsResData && resPermission.includes("activateaccount")) {	// Se reasignan los campos del usuario
 					resUser.cuentaActivada = true;
 					const savedUser = await resUser.save();
 					try {

@@ -20,9 +20,15 @@ const checkPermissionsUser = async (activeUser, req) => {
 				path: "planSuscripcion"
 			}
 		});
+		const pendingRequests = await RequestModel.find(
+			{_id: {$in: checkedUser.peticionesPendientes}}
+		)	
+		const activeSubscription = activeUser.role === "Miembro" && await SubscriptionModel.findById(activeUser.suscripcionMiembro.planSuscripcion);
+
 		var error;
 		var user;
 		var permission;
+
 		if(checkedUser._id.equals(activeUser._id)) {
 			error = null;
 			user = checkedUser;
@@ -36,7 +42,7 @@ const checkPermissionsUser = async (activeUser, req) => {
 				if(!checkedUser.cuentaActivada) {
 					error = null;
 					user = checkedUser;
-					permission = ["read", "activateaccount"];
+					permission = ["read", "activateaccount", "delete"];
 				}
 				else {
 					error = null;
@@ -77,9 +83,6 @@ const checkPermissionsUser = async (activeUser, req) => {
 				permission = [];
 			}
 			if(!activeUser.amigosUsuario.includes(checkedUser._id)) {
-				const pendingRequests = await RequestModel.find(
-					{_id: {$in: checkedUser.peticionesPendientes}}
-				)	
 				const friendRequests = pendingRequests.filter(
 					record => (
 						record.usuarioSolicitante.equals(activeUser._id) && 
@@ -90,13 +93,9 @@ const checkPermissionsUser = async (activeUser, req) => {
 					permission.push("allowfriends")
 			}
 		}
-		const activeSubscription = await SubscriptionModel(activeUser.suscripcionMiembro);
 		if(checkedUser.role === "Entrenador" && !activeUser.tieneEntrenador &&
 		  !checkedUser._id.equals(activeUser._id) && (activeUser.role !== "Miembro" ||
 		  (activeUser.role === "Miembro" && activeSubscription.permisosSuscripcion.includes("Entrenador")))) {
-			const pendingRequests = await RequestModel.find(
-				{_id: {$in: checkedUser.peticionesPendientes}}
-			)	
 			const trainingRequests = pendingRequests.filter(
 				record => (
 					record.usuarioSolicitante.equals(activeUser._id) && 
@@ -106,7 +105,6 @@ const checkPermissionsUser = async (activeUser, req) => {
 			if(trainingRequests.length === 0)
 				permission.push("allowtraining");
 		}
-		
 		return {
 			error: error,
 			user: user,
