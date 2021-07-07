@@ -81,17 +81,14 @@ router.get("/user/:id", async (req, res, next) => {
 				const resError = permissionsRes.error;
 				const resUser = permissionsRes.user;
 				const resPermission = permissionsRes.permission;
-				if(resError || !resUser) {
-					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
+				if(resError) {
+					res.status(resError.code).send(resError.message);
 				}
-				else if(resUser) {
+				else {
 					res.json({
 						userInfo: resUser,
 						permission: resPermission
 					});
-				}
-				else {
-					res.status(401).send("Usuario no autorizado");
 				}
 			} catch(err) {
 				next(err);
@@ -323,7 +320,9 @@ router.delete("/friend/:id/:id2", async (req, res, next) => {
 				const resError = permissionsResData.error;
 				const resUser = permissionsResData.user;
 				const resPermission = permissionsResData.permission;
-
+				console.log("RESUSER", resUser);
+				console.log("RESERROR", resError);
+				console.log("RESPERMISSION", resPermission)
 				if(resError) {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 				}

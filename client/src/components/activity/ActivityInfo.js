@@ -113,22 +113,6 @@ export const ActivityInfo = () => {
 								{
 									activity.permission.includes('write') && (
 										<Grid item xs>
-											<Card >
-												<CardActionArea>
-													<VerticalGrid item xs className="zoom">
-														<ButtonAvatar><EditOutlinedIcon /></ButtonAvatar>
-														<Typography color='primary' className="caps">
-															Editar
-														</Typography>
-													</VerticalGrid>
-												</CardActionArea>
-											</Card>
-										</Grid>
-									)
-								}
-								{
-									activity.permission.includes('write') && (
-										<Grid item xs>
 											<PrimaryLink to={`/edit/activity/${activity.activityInfo._id}`}>
 												<FullWidthPaper>
 													<VerticalGrid item xs className="zoom">

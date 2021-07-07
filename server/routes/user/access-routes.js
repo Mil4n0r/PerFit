@@ -123,7 +123,6 @@ router.post("/forgot/password", async (req, res, next) => {
 	} catch(err) {
 		next(err);
 	}
-		
 });
 
 router.post("/reset/password/:token", async (req, res, next) => {

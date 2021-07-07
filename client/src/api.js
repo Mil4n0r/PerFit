@@ -1,4 +1,4 @@
-// Mediante la API Fetch realizaremos peticiones HTTP asíncronas para modificar el contenido
+// Mediante Axios realizaremos peticiones HTTP asíncronas para modificar el contenido
 
 import axios from 'axios';
 

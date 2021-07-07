@@ -23,11 +23,12 @@ const checkPermissionsUser = async (activeUser, req) => {
 		const pendingRequests = await RequestModel.find(
 			{_id: {$in: checkedUser.peticionesPendientes}}
 		)	
+
 		const activeSubscription = activeUser.role === "Miembro" && await SubscriptionModel.findById(activeUser.suscripcionMiembro.planSuscripcion);
 
-		var error;
-		var user;
-		var permission;
+		var error = null;
+		var user = false;
+		var permission = [];
 
 		if(checkedUser._id.equals(activeUser._id)) {
 			error = null;
@@ -93,6 +94,7 @@ const checkPermissionsUser = async (activeUser, req) => {
 					permission.push("allowfriends")
 			}
 		}
+
 		if(checkedUser.role === "Entrenador" && !activeUser.tieneEntrenador &&
 		  !checkedUser._id.equals(activeUser._id) && (activeUser.role !== "Miembro" ||
 		  (activeUser.role === "Miembro" && activeSubscription.permisosSuscripcion.includes("Entrenador")))) {

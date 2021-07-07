@@ -179,7 +179,7 @@ UserSchema.pre('deleteOne',{document:true, query: true}, async function() {
 	await TrackingModel.deleteMany({usuarioPlan: {$in: this._id} });
 });
 
-UserSchema.methods.comparePassword = async function(candidatePassword) {	// CB = Callback para recoger los errores
+UserSchema.methods.comparePassword = async function(candidatePassword) {
 	return bcrypt.compare(candidatePassword, this.passwordUsuario);
 };
 

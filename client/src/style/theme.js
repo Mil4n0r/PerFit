@@ -1,5 +1,4 @@
 import { createMuiTheme, responsiveFontSizes } from '@material-ui/core/styles';
-import { zhCN } from '@material-ui/core/locale';
 
 let theme = createMuiTheme({
 	spacing: factor => `${0.5 * factor}rem`,
@@ -47,6 +46,5 @@ let theme = createMuiTheme({
 });
 
 theme = responsiveFontSizes(theme);
-
 
 export default theme

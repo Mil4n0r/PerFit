@@ -5,7 +5,7 @@ import { AssociateMeasureToTracking } from '../../components/measure/AssociateMe
 import { EditMeasure } from '../../components/measure/EditMeasure';
 import { CreateMeasure } from '../../components/measure/CreateMeasure';
 
-function ExerciseRoutes() {
+function MeasureRoutes() {
 	return (
 		<>
 			<Route exact path="/create/measure/:id" component={ CreateMeasure } />
@@ -15,4 +15,4 @@ function ExerciseRoutes() {
 	)
 }
 
-export default ExerciseRoutes;
+export default MeasureRoutes;

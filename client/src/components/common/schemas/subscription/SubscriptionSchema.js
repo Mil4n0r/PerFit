@@ -20,7 +20,7 @@ export const SubscriptionSchema = yup.object().shape({
 		.min(0, "El número introducido debe ser positivo"),
 	subscriptionpermissions: yup.array()
 		.of(yup.string()
-			.required("Las suscripciones deben tener seleccionadas sus permisos")
+			.required("Las suscripciones deben tener asociados sus permisos")
 		)
-		.min(1, "Las suscripciones deben tener seleccionados al menos un permiso")
+		.min(1, "Las suscripciones deben tener asociado al menos un permiso")
 });

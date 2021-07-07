@@ -15,6 +15,7 @@ export const DeleteFriend = (props) => {
 	const friendid = props.friend;
 
 	const onClick = async () => {
+		console.log("USUARIO ", match.params.id, " BORRANDO AMIGO ", friendid)
 		const deletedFriend = await deleteFriend(match.params.id, friendid);	// Llamamos a la API para eliminar la relación de amistad entre ambos usuarios
 		if(deletedFriend.response) {
 			setError(deletedFriend.response);
