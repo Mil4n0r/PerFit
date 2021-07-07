@@ -16,6 +16,7 @@ import DietRoutes from './routes/user/DietRoutes';
 import ExerciseRoutes from './routes/user/ExerciseRoutes';
 import FoodRoutes from './routes/user/FoodRoutes';
 import MeasureRoutes from './routes/user/MeasureRoutes';
+import MessageRoutes from './routes/user/MessageRoutes';
 import RequestRoutes from './routes/user/RequestRoutes';
 import RoomRoutes from './routes/user/RoomRoutes';
 import RoutineRoutes from './routes/user/RoutineRoutes';
@@ -46,6 +47,7 @@ function Router() {
 							{TrackingRoutes()}
 							{SubscriptionRoutes()}
 							{RequestRoutes()}
+							{MessageRoutes()}
 							{ActivityRoutes()}
 							{ClassRoutes()}
 							{ExerciseRoutes()}

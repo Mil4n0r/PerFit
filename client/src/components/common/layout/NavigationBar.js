@@ -22,6 +22,7 @@ import AccountBoxOutlinedIcon from '@material-ui/icons/AccountBoxOutlined';
 import StarBorderOutlinedIcon from '@material-ui/icons/StarBorderOutlined';
 import AirplayOutlinedIcon from '@material-ui/icons/AirplayOutlined';
 import SportsTennisOutlinedIcon from '@material-ui/icons/SportsTennisOutlined';
+import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined';
 
 function NavigationBar() {
 	
@@ -166,8 +167,11 @@ function NavigationBar() {
 								<MenuItem key="frienditem">
 									<NavTab icon={<GroupOutlinedIcon/>} key="friendlist" label = "AMIGOS" to = {`/friend/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {12} wrapped/>,
 								</MenuItem>,
+								<MenuItem key="messageitem">
+									<NavTab icon={<EmailOutlinedIcon/>} key="messagelist" label = "MENSAJES" to = {`/message/list/${loggedIn._id}`} onClick={handleCloseMenu} component = {NavLink} value = {13} wrapped/>,
+								</MenuItem>,
 								<MenuItem key="logoutitem">
-									<NavTab icon={<ExitToAppOutlinedIcon/>} key="logout" label = "CERRAR SESIÓN" to = "/logout" onClick={handleCloseMenu} component = {NavLink} value = {13} wrapped/>,
+									<NavTab icon={<ExitToAppOutlinedIcon/>} key="logout" label = "CERRAR SESIÓN" to = "/logout" onClick={handleCloseMenu} component = {NavLink} value = {14} wrapped/>,
 								</MenuItem>,
 								
 							]
@@ -191,13 +195,13 @@ function NavigationBar() {
 							loggedIn && 
 							[
 								<MenuItem key="useritem">
-									<NavTab icon={<GroupOutlinedIcon/>} key="userlist" label = "USUARIOS" to = "/user/list" onClick={handleCloseControlMenu} component = {NavLink} value = {14} wrapped/>
+									<NavTab icon={<GroupOutlinedIcon/>} key="userlist" label = "USUARIOS" to = "/user/list" onClick={handleCloseControlMenu} component = {NavLink} value = {15} wrapped/>
 								</MenuItem>,
 								<MenuItem key="roomitem">
-									<NavTab icon={<MeetingRoomOutlinedIcon/>} key="roomlist" label = "SALAS" to = "/room/list" onClick={handleCloseControlMenu} component = {NavLink} value = {15} wrapped/>
+									<NavTab icon={<MeetingRoomOutlinedIcon/>} key="roomlist" label = "SALAS" to = "/room/list" onClick={handleCloseControlMenu} component = {NavLink} value = {16} wrapped/>
 								</MenuItem>,
 								<MenuItem key="activityitem">
-									<NavTab icon={<SportsTennisOutlinedIcon/>} key="activitylist" label = "ACTIVIDADES" to = "/activity/list" onClick={handleCloseControlMenu} component = {NavLink} value = {16} wrapped/>
+									<NavTab icon={<SportsTennisOutlinedIcon/>} key="activitylist" label = "ACTIVIDADES" to = "/activity/list" onClick={handleCloseControlMenu} component = {NavLink} value = {17} wrapped/>
 								</MenuItem>,
 								<MenuItem key="subscriptionitem">
 									<NavTab icon={<StarBorderOutlinedIcon/>} key="subscriptionlist" label = "SUSCRIPCIONES" to = "/subscription/list" onClick={handleCloseControlMenu} component = {NavLink} value = {9} wrapped/>

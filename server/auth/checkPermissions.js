@@ -10,6 +10,7 @@ const RequestModel = require('../models/RequestSchema');
 const DietModel = require('../models/DietSchema');
 const RoutineModel = require('../models/RoutineSchema');
 const TrackingModel = require('../models/TrackingSchema');
+const MessageModel = require('../models/MessageSchema');
 
 const checkPermissionsUser = async (activeUser, req) => {
 	try {
@@ -33,7 +34,7 @@ const checkPermissionsUser = async (activeUser, req) => {
 		if(checkedUser._id.equals(activeUser._id)) {
 			error = null;
 			user = checkedUser;
-			permission = ["read", "write", "managefriends", "readrequests"];
+			permission = ["read", "write", "managefriends", "readrequests", "readmessages"];
 			if(checkedUser.role !== "Miembro" || (checkedUser.role === "Miembro" && checkedUser.suscripcionMiembro.planSuscripcion.permisosSuscripcion.includes("Planes"))) {
 				permission.push("checkplans");
 			}
@@ -91,7 +92,10 @@ const checkPermissionsUser = async (activeUser, req) => {
 					)
 				)	
 				if(friendRequests.length === 0)
-					permission.push("allowfriends")
+					permission.push("allowfriends");
+			}
+			else {
+				permission.push("allowmessages");
 			}
 		}
 
@@ -382,7 +386,7 @@ const checkPermissionsSubscription = async (activeUser, req) => {
 	} catch(err) {
 		return {
 			error: {
-				code: 404, message: "Sala no encontrada"
+				code: 404, message: "Suscripción no encontrada"
 			},
 			subscription: false,
 			permission: []
@@ -437,6 +441,40 @@ const checkPermissionsPlan = async (activeUser, kind, req) => {
 	
 };
 
+const checkPermissionsMessage = async (activeUser, req) => {
+	try {
+		const id = req.params.id;
+		const checkedMessage = await MessageModel.findById(id);
+		if(checkedMessage.emisorMensaje.equals(activeUser._id) || checkedMessage.receptorMensaje.equals(activeUser._id)) {
+			return {
+				error: null,
+				message: checkedMessage,
+				permission: ["read"]
+			};
+		}
+		else {
+			
+			return {
+				error: {
+					code: 401,
+					message: "Usuario no autorizado"
+				},
+				message: false,
+				permission: []
+			};
+		}
+	} catch(err) {
+		return {
+			error: {
+				code: 404, message: "Mensaje no encontrado"
+			},
+			message: false,
+			permission: []
+		};
+	}
+	
+};
+
 module.exports = {
 	checkPermissionsUser,
 	checkPermissionsFood,
@@ -446,5 +484,6 @@ module.exports = {
 	checkPermissionsRoom,
 	checkPermissionsClass,
 	checkPermissionsSubscription,
-	checkPermissionsPlan
+	checkPermissionsPlan,
+	checkPermissionsMessage
 }

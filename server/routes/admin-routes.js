@@ -14,5 +14,6 @@ router.use('', require('./tracking/tracking-routes'));
 router.use('', require('./class/class-routes'));
 router.use('', require('./subscription/subscription-routes'));
 router.use('', require('./request/request-routes'));
+router.use('', require('./message/message-routes'));
 
 module.exports = router

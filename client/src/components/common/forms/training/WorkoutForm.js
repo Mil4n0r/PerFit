@@ -46,7 +46,7 @@ export const WorkoutForm = ({ workout, exercise, onSubmit }) => {
 				<HiddenTextField
 					inputRef={register}
 					fullWidth
-					label="Alimento"
+					label="Ejercicio"
 					type="text"
 					name="trainingexercise"
 					id="trainingexercise"

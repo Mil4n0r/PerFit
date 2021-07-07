@@ -15,6 +15,7 @@ import FitnessCenterOutlinedIcon from '@material-ui/icons/FitnessCenterOutlined'
 import RestaurantMenuOutlinedIcon from '@material-ui/icons/RestaurantMenuOutlined';
 import TrendingUpOutlinedIcon from '@material-ui/icons/TrendingUpOutlined';
 import FavoriteBorderOutlinedIcon from '@material-ui/icons/FavoriteBorderOutlined';
+import EmailOutlinedIcon from '@material-ui/icons/EmailOutlined';
 
 import {NavLink, CustomCardContent, FullWidthCard, ButtonAvatarSecondary, CustomListItem as ListItem, ContainerWithPadding, CustomListItemText as ListItemText, HorizontalList, FullWidthPaper, BodyContainer, CustomTypography as Typography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin as InputLabel, PrimaryLink, CenterPaper, CapacityInputLabel} from '../../style/style'
 
@@ -316,6 +317,28 @@ export const Profile = () => {
 																			<HorizontalGrid item xs>
 																				<Typography className="white caps" component="h2" variant="h5">
 																					Solicitar entrenamiento personal
+																				</Typography>
+																			</HorizontalGrid>
+																		</HorizontalGrid>
+																	</CustomCardContent>
+																</CardActionArea>
+															</FullWidthCard>
+														</Grid>
+													)
+												}
+												{
+													user.permission.includes('allowmessages') && (
+														<Grid item xs={12}>
+															<FullWidthCard className="card">
+																<CardActionArea component={NavLink} to={`/send/message/${user.userInfo._id}`}>
+																	<CustomCardContent className="secondary">
+																		<HorizontalGrid container spacing={4}>
+																			<HorizontalGrid className="logo" item xs>
+																				<ButtonAvatar><EmailOutlinedIcon /></ButtonAvatar>
+																			</HorizontalGrid>
+																			<HorizontalGrid item xs>
+																				<Typography className="white caps" component="h2" variant="h5">
+																					Enviar mensaje privado
 																				</Typography>
 																			</HorizontalGrid>
 																		</HorizontalGrid>

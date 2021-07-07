@@ -68,6 +68,10 @@ export * from './api/subscription_api';
 
 export * from './api/request_api';
 
+// MENSAJE
+
+export * from './api/message_api';
+
 //////////////////////////////////////////////
 
 // CONTEXTO
