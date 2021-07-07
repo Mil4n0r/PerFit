@@ -14,6 +14,8 @@ const options = {
 const TrackingModel = require('./TrackingSchema');
 const RoutineModel = require('./RoutineSchema');
 const DietModel = require('./DietSchema');
+const RequestModel = require('./RequestSchema');
+const ClassModel = require('./ClassSchema');
 
 const UserSchema = mongoose.Schema({
 	// _id se incluye por defecto (Clave primaria)
@@ -173,10 +175,33 @@ UserSchema.pre('save', async function(next) {
 });
 
 UserSchema.pre('deleteOne',{document:true, query: true}, async function() {
-	//await PlanModel.deleteMany({usuarioPlan: this._id });
 	await RoutineModel.deleteMany({usuarioPlan: {$in: this._id} });
 	await DietModel.deleteMany({usuarioPlan: {$in: this._id} });
 	await TrackingModel.deleteMany({usuarioPlan: {$in: this._id} });
+	const friends = await User.find({_id: {$in: this.amigosUsuario} });
+	friends.forEach(async (friend) => {
+		await friend.amigosUsuario.pull(this._id);
+		await friend.save();
+	});
+	if(this.tieneEntrenador) {
+		const trainer = await User.find({alumnosEntrenados: {$in: this._id} });
+		await trainer.alumnosEntrenados.pull(this._id);
+		await trainer.save();
+	}
+	const requests = await RequestModel.find({usuarioSolicitante: {$in: this._id} });
+	requests.forEach(async (request) => {
+		const usersWithRequest = await User.find({peticionesPendientes: {$in: [request._id]}});
+		usersWithRequest.forEach(async (userWithRequest) => {
+			await userWithRequest.peticionesPendientes.pull(request._id)
+			await userWithRequest.save();
+		});
+		await request.deleteOne();
+	});
+	const classes = await ClassModel.find({asistentesClase: {$in: [this._id]}})
+	classes.forEach(async (dclass) => {
+		await dclass.asistentesClase.pull(this._id);
+		await dclass.save();
+	})
 });
 
 UserSchema.methods.comparePassword = async function(candidatePassword) {
@@ -185,4 +210,5 @@ UserSchema.methods.comparePassword = async function(candidatePassword) {
 
 UserSchema.plugin(idvalidator);
 UserSchema.plugin(uniqueValidator, { message: 'Ya existe un usuario con ese alias'});
-module.exports = mongoose.model("Usuario", UserSchema);
+const User = mongoose.model("Usuario", UserSchema);
+module.exports = User;

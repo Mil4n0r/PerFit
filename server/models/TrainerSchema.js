@@ -14,5 +14,13 @@ const TrainerSchema = mongoose.Schema({
 	} ]
 }, options);
 
+TrainerSchema.pre('deleteOne',{document:true, query: true}, async function() {
+	const clients = await UserModel.find({_id: {$in: this.alumnosEntrenados}})
+	clients.forEach(async (client) => {
+		client.tieneEntrenador = false;
+		await client.save();
+	})
+});
+
 TrainerSchema.plugin(idvalidator);
 module.exports = UserModel.discriminator("Entrenador", TrainerSchema);

@@ -56,10 +56,10 @@ export const ClassForm = ({ sclass, onSubmit }) => {
 
 	const { register, errors, handleSubmit, control } = useForm({	// Creamos el formulario de creación de ejercicio
 		defaultValues: {
-			classday: sclass ? sclass.classInfo.diaClase : selectedDate,
-			classmonitor: sclass  ? sclass.classInfo.monitorClase._id : "",
-			classactivity: sclass ? sclass.classInfo.actividadClase._id : "",
-			classroom: sclass ? sclass.classInfo.salaClase._id : "",
+			classday: sclass.classInfo ? sclass.classInfo.diaClase : selectedDate,
+			classmonitor: sclass.classInfo.monitorClase  ? sclass.classInfo.monitorClase._id : "",
+			classactivity: sclass.classInfo.actividadClase ? sclass.classInfo.actividadClase._id : "",
+			classroom: sclass.classInfo.salaClase ? sclass.classInfo.salaClase._id : "",
 		},	// Asignamos valores por defecto en caso de estar modificando
 		resolver: yupResolver(ClassSchema),
 		mode: "onTouched"

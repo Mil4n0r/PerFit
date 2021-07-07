@@ -7,8 +7,7 @@ export const ClassSchema = yup.object().shape({
 	classday: yup.date()
 		.typeError("Por favor introduzca una fecha válida")
 		.required("Por favor introduzca la fecha de la clase"),
-	classmonitor: yup.string()
-		.required("Por favor introduzca un monitor para la clase"),
+	classmonitor: yup.string(),
 	classroom: yup.string()
 		.required("Por favor introduzca una sala para la clase"),
 });

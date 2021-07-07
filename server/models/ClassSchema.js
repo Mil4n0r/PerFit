@@ -17,8 +17,7 @@ const ClassSchema = mongoose.Schema({
 	}],
 	actividadClase: { 
 		type: mongoose.Schema.Types.ObjectId, 
-		ref: "Actividad",
-		required: true
+		ref: "Actividad"
 	},
 	salaClase: { 
 		type: mongoose.Schema.Types.ObjectId, 

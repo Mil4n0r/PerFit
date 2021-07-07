@@ -320,9 +320,6 @@ router.delete("/friend/:id/:id2", async (req, res, next) => {
 				const resError = permissionsResData.error;
 				const resUser = permissionsResData.user;
 				const resPermission = permissionsResData.permission;
-				console.log("RESUSER", resUser);
-				console.log("RESERROR", resError);
-				console.log("RESPERMISSION", resPermission)
 				if(resError) {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 				}
@@ -366,7 +363,7 @@ router.delete("/client/:id/:id2", async (req, res, next) => {
 				if(resError) {
 					res.status(resError.code).send(resError.message);	// En caso de no encontrarlo se lanza el mensaje 404 Not Found
 				}
-				else if(permissionsResData && resPermission.includes("managefriends")) {
+				else if(permissionsResData && resPermission.includes("managefriends")) { // ???
 					await resUser.alumnosEntrenados.pull(mongoose.Types.ObjectId(req.params.id2))
 					const savedUser = await resUser.save();
 					await UserModel.findByIdAndUpdate(

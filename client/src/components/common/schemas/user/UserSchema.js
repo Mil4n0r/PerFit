@@ -54,7 +54,6 @@ export const UserSchema = yup.object().shape({
 				.of(yup.string()
 					.required("Los monitores deben seleccionar sus especialidades")
 				)
-				.min(1, "Los monitores deben tener al menos una especialidad")
 		}),
 	subscription: yup.string()
 		.when('role', {
