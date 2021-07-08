@@ -12,7 +12,6 @@ import DeleteForeverOutlinedIcon from '@material-ui/icons/DeleteForeverOutlined'
 
 import {ContainerWithPadding, FullWidthPaper, BodyContainer, CustomTypography as Typography, VerticalGrid, HorizontalGrid, ButtonAvatar, TextFieldWithMargin as TextField, InputLabelWithoutMargin, PrimaryLink, CenterPaper} from '../../style/style'
 
-import { DeleteMessage } from './DeleteMessage';
 import { getUser } from '../../api/user_api';
 
 export const MessageInfo = () => {

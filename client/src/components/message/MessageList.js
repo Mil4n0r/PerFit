@@ -14,7 +14,6 @@ import { getMessagesReceivedByUser, getMessagesSentByUser } from '../../api';
 export const MessageList = () => {
 	const match = useRouteMatch();
 	const [messages, setMessages] = useState([]);	// Creamos una variable de estado para almacenar la información de los mensajes y una función para actualizarlos
-	const [search, setSearch] = useState();
 	const [toggleSent, setToggleSent] = useState(false);
 
 	useEffect(() => {

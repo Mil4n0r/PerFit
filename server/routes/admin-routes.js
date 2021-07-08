@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-// RUTAS SÓLO ACCESIBLES POR ADMINISTRADORES
+// RUTAS QUE REQUIEREN AUTENTICACIÓN ESPECIAL
 
 router.use('', require('./user/user-routes'));
 router.use('', require('./routine/routine-routes'));

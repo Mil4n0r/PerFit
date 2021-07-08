@@ -8,8 +8,7 @@ const ClassSchema = mongoose.Schema({
 	},
 	monitorClase: {
 		type: mongoose.Schema.Types.ObjectId, 
-		ref: "Monitor",
-		required: true,
+		ref: "Monitor"
 	},
 	asistentesClase: [{ 
 		type: mongoose.Schema.Types.ObjectId, 
@@ -17,7 +16,8 @@ const ClassSchema = mongoose.Schema({
 	}],
 	actividadClase: { 
 		type: mongoose.Schema.Types.ObjectId, 
-		ref: "Actividad"
+		ref: "Actividad",
+		required: true
 	},
 	salaClase: { 
 		type: mongoose.Schema.Types.ObjectId, 
