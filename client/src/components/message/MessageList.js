@@ -36,14 +36,6 @@ export const MessageList = () => {
 			<ContainerWithPadding>
 				<HorizontalGrid container spacing={1}>
 					<HorizontalGrid item xs={6}>
-						<TextField
-							variant="outlined"
-							fullWidth
-							type="text"
-							onChange={(e)=>setSearch(e.target.value)}
-							placeholder="Buscar mensajes"
-							InputProps={{endAdornment: <InputAdornment position="end"><SearchOutlinedIcon /></InputAdornment>}}
-						/>
 					</HorizontalGrid>
 					{
 						<HorizontalGrid item xs={3}>
